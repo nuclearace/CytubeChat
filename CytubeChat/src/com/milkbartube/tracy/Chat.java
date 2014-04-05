@@ -23,7 +23,20 @@ public class Chat extends Thread {
 	    e.printStackTrace();
 	}
     }
-
+    
+    public void disconnectChat() {
+	socket.disconnect();
+    }
+    
+    public void reconnectChat() {
+	try {
+	    socket = new SocketIO("http://sea.cytu.be:8880/", callback);
+	} catch (MalformedURLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+    }
+    
     public void sendMessage(String message) {
 	try {
 	    JSONObject json = new JSONObject();

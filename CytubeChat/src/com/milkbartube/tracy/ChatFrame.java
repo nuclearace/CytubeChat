@@ -99,7 +99,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     }
 
     private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
-	chat.sendMessage(NewMessageTextArea.getText());
+	this.handleGUICommand(NewMessageTextArea.getText());
 	NewMessageTextArea.setText(null);
     }
 
@@ -137,6 +137,21 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     public void enableNewMessages() {
 	NewMessageTextArea.setEnabled(true);
+    }
+
+    public void handleGUICommand(String data) {
+	if (data.equals("/disconnect")) {
+	    chat.disconnectChat();
+	}
+
+	else if (data.equals("/reconnect")) {
+	    MessagesTextArea.setText("Connecting...");
+	    chat.reconnectChat();
+	}
+
+	else {
+	    chat.sendMessage(data);
+	}
     }
 
     @Override
@@ -182,8 +197,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     @Override
     public void onDisconnect() {
-	JOptionPane.showMessageDialog(null, "Connection lost", "Error", JOptionPane.ERROR_MESSAGE);
-	disableNewMessages();
+	JOptionPane.showMessageDialog(null, "Disconnected", "Error", JOptionPane.ERROR_MESSAGE);
+	//disableNewMessages();
     }
 
     @Override
