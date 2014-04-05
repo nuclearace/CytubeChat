@@ -128,6 +128,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private javax.swing.JTextField NewMessageTextField;
     private javax.swing.JScrollPane userListScrollPane;
     private javax.swing.JTextArea userListTextArea;
+    private ArrayList<String> userList = new ArrayList<String>();
 
 
     public void disableNewMessages() {
@@ -169,6 +170,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 		MessagesTextArea.append(obj.getString("username") + ": " + cleanedString + "\n");
 		MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	    }
+	    else if (event.equals("addUser")) {
+		this.addUser(obj.getString("name"));
+	    }
+	    else if (event.equals("userLeave")) {
+		this.removeUser(obj.getString("name"));
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
@@ -212,14 +219,36 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     @Override
     public void onArray(String event, JSONArray data) throws JSONException {
 	if (event.equals("userlist")) {
-	    this.addUser(data.getJSONArray(0));
+	    userList.clear();
+	    JSONArray users = data.getJSONArray(0);
+	    for (int i=0; i<users.length();i++) {
+		String user = (String) users.getJSONObject(i).get("name");
+		userList.add(user);
+	    }
+	    this.updateUserList();
 	}
 
     }
-    public void addUser(JSONArray users) throws JSONException {
+
+    public void addUser(String user) {
+	if (!userList.contains(user)) {
+	    userList.add(user);
+	    this.updateUserList();
+	}
+    }
+
+    public void removeUser(String user) {
+	if (userList.contains(user)) {
+	    userList.remove(user);
+	    this.updateUserList();
+	}
+    }
+
+    public void updateUserList() {
+	userListTextArea.setText("");
 	String str = "";
-	for (int i=0; i<users.length();i++) {
-	    str += users.getJSONObject(i).get("name") + "\n";
+	for (String s : userList) {
+	    str += s + "\n";
 	}
 	userListTextArea.setText(str);
     }
