@@ -164,7 +164,6 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 		MessagesTextArea.append(obj.getString("username") + ": " + cleanedString + "\n");
 		MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
-
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
@@ -197,8 +196,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     @Override
     public void onDisconnect() {
-	JOptionPane.showMessageDialog(null, "Disconnected", "Error", JOptionPane.ERROR_MESSAGE);
-	//disableNewMessages();
+	MessagesTextArea.setText("Disconnected!");
     }
 
     @Override
