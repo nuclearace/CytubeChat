@@ -35,73 +35,72 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
 	MessagesScrollPane = new javax.swing.JScrollPane();
 	MessagesTextArea = new javax.swing.JTextArea();
+	userListScrollPane = new javax.swing.JScrollPane();
+	userListTextArea = new javax.swing.JTextArea();
 	NewMessageScrollPane = new javax.swing.JScrollPane();
-	NewMessageTextArea = new javax.swing.JTextField();;
-	OnlineUsersLabel = new javax.swing.JLabel();
-	OnlineUsers = new javax.swing.JLabel();
+	NewMessageTextField = new javax.swing.JTextField();
 
 	setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-	setTitle("Chat");
 
-
-	MessagesTextArea.setColumns(20);
 	MessagesTextArea.setEditable(false);
+	MessagesTextArea.setColumns(20);
+	MessagesTextArea.setLineWrap(true);
 	MessagesTextArea.setRows(5);
-	MessagesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	MessagesTextArea.setFocusable(false);
 	MessagesScrollPane.setViewportView(MessagesTextArea);
 
-	NewMessageTextArea.setColumns(20);
-	//NewMessageTextArea.setRows(5);
-	NewMessageScrollPane.setViewportView(NewMessageTextArea);
+	userListScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+	userListScrollPane.setFocusTraversalKeysEnabled(false);
+	userListScrollPane.setFocusable(false);
 
-	NewMessageTextArea.addActionListener(new ActionListener(){
-	    public void actionPerformed(ActionEvent event){
-		NewMessageActionPerformed(event);
+	userListTextArea.setEditable(false);
+	userListTextArea.setColumns(20);
+	userListTextArea.setRows(5);
+	userListTextArea.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+	userListTextArea.setFocusTraversalKeysEnabled(false);
+	userListTextArea.setFocusable(false);
+	userListScrollPane.setViewportView(userListTextArea);
+
+	NewMessageTextField.addActionListener(new java.awt.event.ActionListener() {
+	    public void actionPerformed(java.awt.event.ActionEvent evt) {
+		NewMessageActionPerformed(evt);
 	    }
-	}
-		);
-
-	OnlineUsersLabel.setText("Online:");
+	});
+	NewMessageScrollPane.setViewportView(NewMessageTextField);
 
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 	getContentPane().setLayout(layout);
 	layout.setHorizontalGroup(
 		layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-		.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+		.addGroup(layout.createSequentialGroup()
 			.addContainerGap()
-			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-				.addComponent(MessagesScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addComponent(NewMessageScrollPane)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(NewMessageScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 295, Short.MAX_VALUE)
-					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-					.addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-						.addComponent(OnlineUsersLabel)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(OnlineUsers, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)))
-						.addContainerGap())
+					.addComponent(userListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					.addComponent(MessagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)))
+					.addContainerGap())
 		);
 	layout.setVerticalGroup(
 		layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-		.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+		.addGroup(layout.createSequentialGroup()
 			.addContainerGap()
-			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-				.addComponent(OnlineUsersLabel)
-				.addComponent(OnlineUsers))
-				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-				.addComponent(MessagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addComponent(MessagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+				.addComponent(userListScrollPane))
 				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-					.addComponent(NewMessageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE))
-					.addContainerGap())
+				.addComponent(NewMessageScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+				.addContainerGap())
 		);
 
 	pack();
     }
 
-    private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
-	this.handleGUICommand(NewMessageTextArea.getText());
-	NewMessageTextArea.setText(null);
-    }
+    private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {                                           
+	this.handleGUICommand(NewMessageTextField.getText());
+	NewMessageTextField.setText(null);
+    }    
 
     /**
      * @param args the command line arguments
@@ -126,32 +125,38 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private javax.swing.JScrollPane MessagesScrollPane;
     private javax.swing.JTextArea MessagesTextArea;
     private javax.swing.JScrollPane NewMessageScrollPane;
-    private JTextField NewMessageTextArea;
-    private javax.swing.JLabel OnlineUsers;
-    private javax.swing.JLabel OnlineUsersLabel;
+    private javax.swing.JTextField NewMessageTextField;
+    private javax.swing.JScrollPane userListScrollPane;
+    private javax.swing.JTextArea userListTextArea;
 
 
     public void disableNewMessages() {
-	NewMessageTextArea.setEnabled(false);
+	NewMessageTextField.setEnabled(false);
     }
 
     public void enableNewMessages() {
-	NewMessageTextArea.setEnabled(true);
+	NewMessageTextField.setEnabled(true);
     }
 
     public void handleGUICommand(String data) {
-	if (data.equals("/disconnect")) {
-	    chat.disconnectChat();
-	}
+	data = data.replace("\n", "").replace("\r", "");
+	if (!data.equals("")) {
+	    if (data.equals("/disconnect")) {
+		chat.disconnectChat();
+		userListTextArea.setText("");
+	    }
 
-	else if (data.equals("/reconnect")) {
-	    MessagesTextArea.setText("Connecting...");
-	    chat.reconnectChat();
-	}
+	    else if (data.equals("/reconnect")) {
+		MessagesTextArea.setText("Connecting...");
+		chat.reconnectChat();
+	    }
 
-	else {
-	    chat.sendMessage(data);
+	    else {
+		chat.sendMessage(data);
+	    }
 	}
+	else
+	    return;
     }
 
     @Override
@@ -214,11 +219,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     public void addUser(JSONArray users) throws JSONException {
 	String str = "";
 	for (int i=0; i<users.length();i++) {
-	    if (i != 0) {
-		str += ", ";
-	    }
-	    str += users.getJSONObject(i).get("name");
+	    str += users.getJSONObject(i).get("name") + "\n";
 	}
-	OnlineUsers.setText(str);
+	userListTextArea.setText(str);
     }
 }
