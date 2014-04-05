@@ -10,14 +10,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter {
-    /**
-     * 
-     */
+
+    private static final long serialVersionUID = -3120953406569989166L;
 
     private Chat chat;
 
@@ -146,7 +146,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     public void on(String event, JSONObject obj) {
 	try {
 	    if (event.equals("chatMsg")) {
-		MessagesTextArea.append(obj.getString("username") + ": " + obj.getString("msg") + "\n");
+		String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
+		MessagesTextArea.append(obj.getString("username") + ": " + cleanedString + "\n");
 		MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    }
