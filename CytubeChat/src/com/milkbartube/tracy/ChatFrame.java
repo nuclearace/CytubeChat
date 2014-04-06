@@ -1,17 +1,7 @@
 package com.milkbartube.tracy;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
+import java.util.*;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
