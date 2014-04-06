@@ -63,6 +63,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	userListTextArea.setFocusable(false);
 	userListScrollPane.setViewportView(userListTextArea);
 
+	NewMessageTextField.setBorder(null);
 	NewMessageTextField.addActionListener(new java.awt.event.ActionListener() {
 	    public void actionPerformed(java.awt.event.ActionEvent evt) {
 		NewMessageActionPerformed(evt);
@@ -153,6 +154,38 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		MessagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
 	    }
+	    // Begin color prefs
+	    else if (data.equals("/grey")) {
+		MessagesTextArea.setBackground(new java.awt.Color(71, 77, 70));
+		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
+
+		userListTextArea.setBackground(new java.awt.Color(71, 77, 70));
+		userListTextArea.setForeground(new java.awt.Color(255, 255, 255));
+
+		NewMessageTextField.setBackground(new java.awt.Color(71, 77, 70));
+		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
+	    }
+	    else if (data.equals("/black")) {
+		MessagesTextArea.setBackground(new java.awt.Color(0, 0, 0));
+		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
+
+		userListTextArea.setBackground(new java.awt.Color(0, 0, 0));
+		userListTextArea.setForeground(new java.awt.Color(255, 255, 255));
+
+		NewMessageTextField.setBackground(new java.awt.Color(0, 0, 0));
+		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
+	    }
+	    else if (data.equals("/white")) {
+		MessagesTextArea.setBackground(new java.awt.Color(255, 255, 255));
+		MessagesTextArea.setForeground(new java.awt.Color(0, 0, 0));
+
+		userListTextArea.setBackground(new java.awt.Color(255, 255, 255));
+		userListTextArea.setForeground(new java.awt.Color(0, 0 , 0));
+
+		NewMessageTextField.setBackground(new java.awt.Color(255, 255, 255));
+		NewMessageTextField.setForeground(new java.awt.Color(0, 0, 0));
+	    }
+	    // End color prefs
 	    else {
 		chat.sendMessage(data);
 	    }
