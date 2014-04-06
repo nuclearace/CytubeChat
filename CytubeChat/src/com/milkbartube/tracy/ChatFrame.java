@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -146,12 +148,10 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		chat.disconnectChat();
 		userListTextArea.setText("");
 	    }
-
 	    else if (data.equals("/reconnect")) {
 		MessagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
 	    }
-
 	    else {
 		chat.sendMessage(data);
 	    }
@@ -247,6 +247,16 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     public void updateUserList() {
 	userListTextArea.setText("");
 	String str = "";
+	
+	//Sort userlist
+	Collections.sort(userList, new Comparator<String>() {
+	    @Override
+	    public int compare(String user1, String user2) {
+		return user1.compareToIgnoreCase(user2);
+	    }
+
+	});
+	
 	for (String s : userList) {
 	    str += s + "\n";
 	}
