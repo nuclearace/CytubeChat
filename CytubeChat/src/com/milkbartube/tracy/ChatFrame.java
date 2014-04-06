@@ -167,9 +167,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     public void on(String event, JSONObject obj) {
 	try {
 	    if (event.equals("chatMsg")) {
-		String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
-		MessagesTextArea.append(obj.getString("username") + ": " + cleanedString + "\n");
-		MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+		this.chatMsg(obj);
 	    }
 	    else if (event.equals("addUser")) {
 		this.addUser(obj.getString("name"));
@@ -239,9 +237,18 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    this.updateUserList();
 	}
     }
-    
+
     public void changeMedia(String media) {
 	setTitle("Now Playing: " + media);
+    }
+
+    public void chatMsg(JSONObject obj) throws JSONException {
+	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
+	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
+	if (!cleanedString.equals("")) {
+	    MessagesTextArea.append(obj.getString("username") + ": " + cleanedString + "\n");
+	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	}
     }
 
     public void removeUser(String user) {
@@ -253,7 +260,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     public void updateUserList() {
 	String str = "";
-	
+
 	//Sort userlist
 	Collections.sort(userList, new Comparator<String>() {
 	    @Override
@@ -262,7 +269,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 
 	});
-	
+
 	for (String s : userList) {
 	    str += s + "\n";
 	}
