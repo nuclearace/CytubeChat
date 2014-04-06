@@ -149,6 +149,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		userListTextArea.setText("");
 	    }
 	    else if (data.equals("/reconnect")) {
+		chat.disconnectChat();
 		MessagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
 	    }
@@ -209,7 +210,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     @Override
     public void onDisconnect() {
-	MessagesTextArea.setText("Disconnected!");
+	MessagesTextArea.setText("Disconnected!\n");
     }
 
     @Override
@@ -267,7 +268,6 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    public int compare(String user1, String user2) {
 		return user1.compareToIgnoreCase(user2);
 	    }
-
 	});
 
 	for (String s : userList) {

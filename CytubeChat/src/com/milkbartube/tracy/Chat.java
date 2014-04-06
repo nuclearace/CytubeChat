@@ -23,20 +23,22 @@ public class Chat extends Thread {
 	    e.printStackTrace();
 	}
     }
-    
+
     public void disconnectChat() {
-	socket.disconnect();
+	if (socket.isConnected())
+	    socket.disconnect();
     }
-    
+
     public void reconnectChat() {
 	try {
-	    socket = new SocketIO("http://sea.cytu.be:8880/", callback);
+	    if (!socket.isConnected())
+		socket = new SocketIO("http://sea.cytu.be:8880/", callback);
 	} catch (MalformedURLException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }
-    
+
     public void sendMessage(String message) {
 	try {
 	    JSONObject json = new JSONObject();
@@ -51,7 +53,6 @@ public class Chat extends Thread {
 	try {
 	    JSONObject json = new JSONObject();
 	    json.putOpt("name", room);
-	    System.out.println(json);
 	    socket.emit("initChannelCallbacks");
 	    socket.emit("joinChannel", json);
 
