@@ -176,6 +176,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		NewMessageTextField.setForeground(new java.awt.Color(0, 0, 0));
 	    }
 	    // End color prefs
+	    else if (data.equals("/clearchat")) {
+		MessagesTextArea.setText("");
+	    }
 	    else {
 		chat.sendMessage(data);
 	    }
