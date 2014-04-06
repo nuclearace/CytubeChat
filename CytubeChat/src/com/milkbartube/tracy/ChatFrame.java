@@ -177,6 +177,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    else if (event.equals("userLeave")) {
 		this.removeUser(obj.getString("name"));
 	    }
+	    else if (event.equals("changeMedia")) {
+		this.changeMedia(obj.getString("title"));
+	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
 	}
@@ -235,6 +238,10 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    userList.add(user);
 	    this.updateUserList();
 	}
+    }
+    
+    public void changeMedia(String media) {
+	setTitle("Now Playing: " + media);
     }
 
     public void removeUser(String user) {
