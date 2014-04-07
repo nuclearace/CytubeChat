@@ -382,7 +382,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		str += user.getName() + "\n";
 		break;
 	    }
-	    userListTextArea.setText(str);
 	}
+	userListTextArea.setText(str);
     }
 }
