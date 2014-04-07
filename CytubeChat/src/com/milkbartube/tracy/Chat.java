@@ -64,4 +64,9 @@ public class Chat extends Thread {
 	    ex.printStackTrace();
 	}
     }
+    
+    public void privateMessage(JSONObject json) {
+	socket.emit("pm", json);
+    }
+    
 }

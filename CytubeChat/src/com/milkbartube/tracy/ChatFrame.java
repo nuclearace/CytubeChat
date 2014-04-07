@@ -133,20 +133,22 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     }
 
     public void handleGUICommand(String data) {
+	String[] parts = data.split(" ");
+	String command = parts[0];
 	data = data.replace("\n", "").replace("\r", "");
 	if (!data.equals("")) {
-	    if (data.equals("/disconnect")) {
+	    if (command.equals("/disconnect")) {
 		chat.disconnectChat();
 		userListTextArea.setText("");
 		setTitle("Disconnected!");
 	    }
-	    else if (data.equals("/reconnect")) {
+	    else if (command.equals("/reconnect")) {
 		chat.disconnectChat();
 		MessagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
 	    }
 	    // Begin color prefs
-	    else if (data.equals("/grey")) {
+	    else if (command.equals("/grey")) {
 		MessagesTextArea.setBackground(new java.awt.Color(71, 77, 70));
 		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -156,7 +158,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		NewMessageTextField.setBackground(new java.awt.Color(71, 77, 70));
 		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
 	    }
-	    else if (data.equals("/black")) {
+	    else if (command.equals("/black")) {
 		MessagesTextArea.setBackground(new java.awt.Color(0, 0, 0));
 		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -166,7 +168,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		NewMessageTextField.setBackground(new java.awt.Color(0, 0, 0));
 		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
 	    }
-	    else if (data.equals("/white")) {
+	    else if (command.equals("/white")) {
 		MessagesTextArea.setBackground(new java.awt.Color(255, 255, 255));
 		MessagesTextArea.setForeground(new java.awt.Color(0, 0, 0));
 
@@ -177,8 +179,27 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		NewMessageTextField.setForeground(new java.awt.Color(0, 0, 0));
 	    }
 	    // End color prefs
-	    else if (data.equals("/clearchat")) {
+	    else if (command.equals("/clearchat")) {
 		MessagesTextArea.setText("");
+	    }
+	    else if (command.equals("/pm")) {
+		// This could be done better, But I don't want to take the time
+		if (parts.length > 2) {
+		    String to = parts[1];
+		    String message = "";
+		    String[] messageArray = Arrays.copyOfRange(parts, 2, parts.length);
+
+		    for (String word: messageArray) {
+			message += word + " ";
+		    }
+		    try {
+			this.privateMessage(to, message);
+		    } catch (JSONException e) {
+			e.printStackTrace();
+		    }
+		}
+		else
+		    return;
 	    }
 	    else {
 		chat.sendMessage(data);
@@ -187,6 +208,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	else
 	    return;
     }
+
+
 
     @Override
     public void callback(JSONArray data) throws JSONException {}
@@ -205,6 +228,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 	    else if (event.equals("changeMedia")) {
 		this.changeMedia(obj.getString("title"));
+	    }
+	    else if (event.equals("pm")) {
+		this.onPrivateMessage(obj);
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
@@ -252,11 +278,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    JSONArray users = data.getJSONArray(0);
 	    for (int i=0; i<users.length();i++) {
 		String user = (String) users.getJSONObject(i).get("name");
-		userList.add(user);
+		if (!userList.contains(user)) {
+		    userList.add(user);
+		}
 	    }
 	    this.updateUserList();
 	}
-
     }
 
     public void addUser(String user) {
@@ -277,6 +304,25 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    MessagesTextArea.append(obj.getString("username") + ": " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 	}
+    }
+
+    public void onPrivateMessage(JSONObject obj) throws JSONException {
+	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
+	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
+	if (!cleanedString.equals("")) {
+	    MessagesTextArea.append(obj.getString("username") + " [Private Message]: " + cleanedString + "\n");
+	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	}
+    }
+
+    private void privateMessage(String to, String message) throws JSONException {
+	JSONObject json = new JSONObject();
+	json.put("to", to);
+	json.putOpt("msg", message);
+	json.putOpt("meta", "");
+
+	chat.privateMessage(json);
+
     }
 
     public void removeUser(String user) {
