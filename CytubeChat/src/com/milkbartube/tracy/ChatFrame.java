@@ -124,7 +124,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private javax.swing.JTextField NewMessageTextField;
     private javax.swing.JScrollPane userListScrollPane;
     private javax.swing.JTextArea userListTextArea;
-    private ArrayList<String> userList = new ArrayList<String>();
+    private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
 
 
     public void disableNewMessages() {
@@ -222,7 +222,11 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		this.chatMsg(obj);
 	    }
 	    else if (event.equals("addUser")) {
-		this.addUser(obj.getString("name"));
+		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
+		String username = obj.getString("name") ;
+		int rank = (int) obj.get("rank");
+		CytubeUser user = new CytubeUser(afk, username, rank);
+		this.addUser(user, false);
 	    }
 	    else if (event.equals("userLeave")) {
 		this.removeUser(obj.getString("name"));
@@ -278,16 +282,23 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    userList.clear();
 	    JSONArray users = data.getJSONArray(0);
 	    for (int i=0; i<users.length();i++) {
-		String user = (String) users.getJSONObject(i).get("name");
-		if (!userList.contains(user)) {
-		    userList.add(user);
-		}
+		boolean afk = (boolean) users.getJSONObject(i).getJSONObject("meta")
+			.get("afk");
+		String username = (String) users.getJSONObject(i).get("name");
+		int rank = (int) users.getJSONObject(i).get("rank");
+		CytubeUser user = new CytubeUser(afk, username, rank);
+		this.addUser(user, true);
 	    }
 	    this.updateUserList();
 	}
     }
 
-    public void addUser(String user) {
+    public void addUser(CytubeUser user, boolean fromUserlist) {
+	if (fromUserlist) {
+	    userList.add(user);
+	    return;
+	}
+	System.out.println(userList.contains(user.hashCode()));
 	if (!userList.contains(user)) {
 	    userList.add(user);
 	    this.updateUserList();
@@ -337,10 +348,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	chat.privateMessage(json);
     }
 
-    public void removeUser(String user) {
-	if (userList.contains(user)) {
-	    userList.remove(user);
-	    this.updateUserList();
+    public void removeUser(String username) {
+	for (CytubeUser user : userList) {
+	    if (user.getName() == username) {
+		userList.remove(user);
+		this.updateUserList();
+	    }
 	}
     }
 
@@ -348,15 +361,15 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	String str = "";
 
 	//Sort userlist
-	Collections.sort(userList, new Comparator<String>() {
+	Collections.sort(userList, new Comparator<CytubeUser>() {
 	    @Override
-	    public int compare(String user1, String user2) {
-		return user1.compareToIgnoreCase(user2);
+	    public int compare(CytubeUser user1, CytubeUser user2) {
+		return user1.getName().compareToIgnoreCase(user2.getName());
 	    }
 	});
 
-	for (String s : userList) {
-	    str += s + "\n";
+	for (CytubeUser user : userList) {
+	    str += user.getName() + "\n";
 	}
 	userListTextArea.setText(str);
     }
