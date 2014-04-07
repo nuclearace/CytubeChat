@@ -50,8 +50,6 @@ public class CytubeUser {
 	this.rank = rank;
     }
 
-
-
     @Override
     public int hashCode() {
 	final int prime = 31;
