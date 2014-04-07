@@ -209,8 +209,6 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    return;
     }
 
-
-
     @Override
     public void callback(JSONArray data) throws JSONException {}
 
