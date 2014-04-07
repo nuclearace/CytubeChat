@@ -361,10 +361,28 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		return user1.getName().compareToIgnoreCase(user2.getName());
 	    }
 	});
-
 	for (CytubeUser user : userList) {
-	    str += user.getName() + "\n";
+	    switch (user.getRank()) {
+	    case 2:
+		str += "~" + user.getName() + "\n";
+		break;
+	    case 3:
+		str += "@" + user.getName() + "\n";
+		break;
+	    case 4:
+		str += "@" + user.getName() + "\n";
+		break;
+	    case 5:
+		str += "$" + user.getName() + "\n";
+		break;
+	    case 255:
+		str += "%" + user.getName() + "\n";
+		break;
+	    default:
+		str += user.getName() + "\n";
+		break;
+	    }
+	    userListTextArea.setText(str);
 	}
-	userListTextArea.setText(str);
     }
 }
