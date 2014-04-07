@@ -1,6 +1,9 @@
 package com.milkbartube.tracy;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+
 import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
@@ -183,7 +186,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		MessagesTextArea.setText("");
 	    }
 	    else if (command.equals("/pm")) {
-		// This could be done better, But I don't want to take the time
+		// This could be done better, but I don't want to take the time
 		if (parts.length > 2) {
 		    String to = parts[1];
 		    String message = "";
@@ -299,7 +302,13 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
-	    MessagesTextArea.append(obj.getString("username") + ": " + cleanedString + "\n");
+	    long time = (long) obj.get("time");
+	    Date date = new Date(time);
+	    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss z");
+	    formatter.setTimeZone(TimeZone.getDefault());
+	    String formattedTime = formatter.format(date);
+	    MessagesTextArea.append("[" + formattedTime + "] " +
+		    obj.getString("username") + ": " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 	}
     }
@@ -308,19 +317,24 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
-	    MessagesTextArea.append(obj.getString("username") + " [Private Message]: " + cleanedString + "\n");
+	    long time = (long) obj.get("time");
+	    Date date = new Date(time);
+	    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss z");
+	    formatter.setTimeZone(TimeZone.getDefault());
+	    String formattedTime = formatter.format(date);
+	    MessagesTextArea.append("[" + formattedTime + "] " + 
+		    obj.getString("username") + " [Private Message]: " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 	}
     }
 
     private void privateMessage(String to, String message) throws JSONException {
 	JSONObject json = new JSONObject();
-	json.put("to", to);
+	json.putOpt("to", to);
 	json.putOpt("msg", message);
 	json.putOpt("meta", "");
 
 	chat.privateMessage(json);
-
     }
 
     public void removeUser(String user) {
