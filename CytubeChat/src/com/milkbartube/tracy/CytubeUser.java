@@ -50,11 +50,12 @@ public class CytubeUser {
 	this.rank = rank;
     }
 
+
+
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result + (afk ? 1231 : 1237);
 	result = prime * result + ((name == null) ? 0 : name.hashCode());
 	result = prime * result + rank;
 	return result;
@@ -69,8 +70,6 @@ public class CytubeUser {
 	if (getClass() != obj.getClass())
 	    return false;
 	CytubeUser other = (CytubeUser) obj;
-	if (afk != other.afk)
-	    return false;
 	if (name == null) {
 	    if (other.name != null)
 		return false;
