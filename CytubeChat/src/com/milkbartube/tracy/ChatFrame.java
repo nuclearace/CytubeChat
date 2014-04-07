@@ -225,7 +225,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		String username = obj.getString("name") ;
 		int rank = (int) obj.get("rank");
 		CytubeUser user = new CytubeUser(afk, username, rank);
-		this.addUser(user, false);
+		this.addUser(user);
+		this.updateUserList();
 	    }
 	    else if (event.equals("userLeave")) {
 		this.removeUser(obj.getString("name"));
@@ -286,21 +287,15 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		String username = (String) users.getJSONObject(i).get("name");
 		int rank = (int) users.getJSONObject(i).get("rank");
 		CytubeUser user = new CytubeUser(afk, username, rank);
-		this.addUser(user, true);
+		this.addUser(user);
 	    }
 	    this.updateUserList();
 	}
     }
 
-    public void addUser(CytubeUser user, boolean fromUserlist) {
-	if (fromUserlist) {
-	    userList.add(user);
-	    return;
-	}
-	System.out.println(userList.contains(user.hashCode()));
+    public void addUser(CytubeUser user) {
 	if (!userList.contains(user)) {
-	    userList.add(user);
-	    this.updateUserList();
+	    userList.add(user);;
 	}
     }
 
