@@ -2,7 +2,7 @@ package com.milkbartube.tracy;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.File;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -25,7 +25,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	setLocationRelativeTo(null);
 	disableNewMessages();
 	try {
-	    File soundFile = new File("boop.wav");
+	    URL soundFile = new URL("http://cytu.be/boop.wav");
 	    AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
 
 	    this.clip = AudioSystem.getClip();
