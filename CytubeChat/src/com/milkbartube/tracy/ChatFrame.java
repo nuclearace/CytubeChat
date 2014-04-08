@@ -316,7 +316,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     public void addUser(CytubeUser user) {
 	if (!userList.contains(user)) {
-	    userList.add(user);;
+	    userList.add(user);
 	}
     }
 
@@ -395,6 +395,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	for (CytubeUser user : userList) {
 	    if (user.getName().equals(name)) {
 		user.setAfk(afk);
+		break;
 	    }
 	}
     }
