@@ -141,8 +141,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private Clip clip;
     private boolean muteBoop = false;
-
-
+    
 
     public void disableNewMessages() {
 	NewMessageTextField.setEnabled(false);
@@ -256,7 +255,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		this.onPrivateMessage(obj);
 	    }
 	    else if (event.equals("setAfk")) {
-		this.setAfk(obj.getString("name"));
+		this.setAfk(obj.getString("name"), (boolean) obj.get("afk"));
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
@@ -391,9 +390,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	this.muteBoop = muteBoop;
     }
 
-    private void setAfk(String string) {
-	// TODO Auto-generated method stub
-
+    private void setAfk(String name, boolean afk) {
+	for (CytubeUser user : userList) {
+	    if (user.getName() == name) {
+		user.setAfk(afk);
+	    }
+	}
     }
 
     public void updateUserList() {
