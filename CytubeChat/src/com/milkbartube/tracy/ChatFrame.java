@@ -352,7 +352,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     }
 
     public void updateUserList() {
-	String str = "";
+	
+	// Number of users. Note: I'm ignoring anons at this time
+	String str = "Users: " + userList.size() + "\n-----------------\n";
 
 	//Sort userlist
 	Collections.sort(userList, new Comparator<CytubeUser>() {
