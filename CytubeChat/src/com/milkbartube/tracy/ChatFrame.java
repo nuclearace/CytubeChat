@@ -2,6 +2,7 @@ package com.milkbartube.tracy;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -74,7 +75,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		NewMessageActionPerformed(evt);
 	    }
 	});
-	
+
 	addWindowFocusListener(this);
 	NewMessageScrollPane.setViewportView(NewMessageTextField);
 
@@ -141,7 +142,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private Clip clip;
     private boolean muteBoop = false;
-    
+
 
     public void disableNewMessages() {
 	NewMessageTextField.setEnabled(false);
@@ -247,6 +248,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 	    else if (event.equals("userLeave")) {
 		this.removeUser(obj.getString("name"));
+		this.updateUserList();
 	    }
 	    else if (event.equals("changeMedia")) {
 		this.changeMedia(obj.getString("title"));
@@ -375,9 +377,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     public void removeUser(String username) {
 	for (CytubeUser user : userList) {
-	    if (user.getName() == username) {
+	    if (user.getName().equals(username)) {
 		userList.remove(user);
-		this.updateUserList();
+		break;
 	    }
 	}
     }
@@ -392,7 +394,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     private void setAfk(String name, boolean afk) {
 	for (CytubeUser user : userList) {
-	    if (user.getName() == name) {
+	    if (user.getName().equals(name)) {
 		user.setAfk(afk);
 	    }
 	}
