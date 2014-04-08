@@ -1,26 +1,39 @@
 package com.milkbartube.tracy;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.sound.sampled.*;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter {
+public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter, WindowFocusListener {
 
     private static final long serialVersionUID = -3120953406569989166L;
 
     private Chat chat;
-
 
     public ChatFrame() {
 	initComponents();
 	setVisible(true);
 	setLocationRelativeTo(null);
 	disableNewMessages();
+	try {
+	    File soundFile = new File("boop.wav");
+	    AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+
+	    this.clip = AudioSystem.getClip();
+	    clip.open(audioIn);
+	} catch (Exception e) {
+	    this.clip = null;
+	    e.printStackTrace();
+	}
 
 	startChat();
     }
@@ -61,6 +74,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		NewMessageActionPerformed(evt);
 	    }
 	});
+	
+	addWindowFocusListener(this);
 	NewMessageScrollPane.setViewportView(NewMessageTextField);
 
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -124,6 +139,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private javax.swing.JScrollPane userListScrollPane;
     private javax.swing.JTextArea userListTextArea;
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
+    private Clip clip;
+    private boolean muteBoop = false;
+
 
 
     public void disableNewMessages() {
@@ -135,10 +153,10 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     }
 
     public void handleGUICommand(String data) {
-	String[] parts = data.split(" ");
-	String command = parts[0];
 	data = data.replace("\n", "").replace("\r", "");
 	if (!data.equals("")) {
+	    String[] parts = data.split(" ");
+	    String command = parts[0];
 	    if (command.equals("/disconnect")) {
 		chat.disconnectChat();
 		userListTextArea.setText("");
@@ -237,6 +255,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    else if (event.equals("pm")) {
 		this.onPrivateMessage(obj);
 	    }
+	    else if (event.equals("setAfk")) {
+		this.setAfk(obj.getString("name"));
+	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
 	}
@@ -315,6 +336,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    MessagesTextArea.append("[" + formattedTime + "] " +
 		    obj.getString("username") + ": " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	    if (this.clip != null && this.isMuteBoop()) {
+		this.playSound();
+	    }
 	}
     }
 
@@ -330,7 +354,15 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    MessagesTextArea.append("[" + formattedTime + "] " + 
 		    obj.getString("username") + " [Private Message]: " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	    if (this.clip != null && this.isMuteBoop()) {
+		this.playSound();
+	    }
 	}
+    }
+
+    private void playSound() {
+	this.clip.start();
+	this.clip.setFramePosition(0);
     }
 
     private void privateMessage(String to, String message) throws JSONException {
@@ -349,6 +381,19 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		this.updateUserList();
 	    }
 	}
+    }
+
+    public boolean isMuteBoop() {
+	return muteBoop;
+    }
+
+    public void setMuteBoop(boolean muteBoop) {
+	this.muteBoop = muteBoop;
+    }
+
+    private void setAfk(String string) {
+	// TODO Auto-generated method stub
+
     }
 
     public void updateUserList() {
@@ -385,5 +430,15 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 	}
 	userListTextArea.setText(str);
+    }
+
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+	this.muteBoop = false;
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent e) {
+	this.muteBoop = true;
     }
 }
