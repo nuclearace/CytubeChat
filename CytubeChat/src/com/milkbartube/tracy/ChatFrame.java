@@ -2,7 +2,6 @@ package com.milkbartube.tracy;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
