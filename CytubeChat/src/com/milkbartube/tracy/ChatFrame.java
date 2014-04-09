@@ -368,8 +368,9 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    for (String word : sentence) {
 		replacedSentence += word + " ";
 	    }
+	    NewMessageTextField.setText(replacedSentence);
 	}
-	NewMessageTextField.setText(replacedSentence);
+	
     }
 
     public void onPrivateMessage(JSONObject obj) throws JSONException {
