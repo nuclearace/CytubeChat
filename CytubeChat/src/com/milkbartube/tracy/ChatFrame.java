@@ -434,8 +434,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	}
 
 	@SuppressWarnings("rawtypes")
-	List smallestCompleteIntObject = 
-	Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
+	List smallestCompleteIntObject = Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
 
 	int smallestCompleteInt = Collections.min(smallestCompleteIntObject);
 
