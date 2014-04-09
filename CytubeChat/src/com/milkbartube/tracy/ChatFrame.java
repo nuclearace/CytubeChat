@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.sound.sampled.*;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -266,7 +266,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
 	String room = JOptionPane.showInputDialog(null, "Room", null, WIDTH);
 	String nickname = JOptionPane.showInputDialog(null, "Nickname", null, WIDTH);
-	String password = JOptionPane.showInputDialog(null, "Password", null, WIDTH);
+	String password = this.getPassword();
 
 	if (!nickname.isEmpty() && !room.isEmpty()) {
 	    chat.join(room, nickname, password);
@@ -347,6 +347,22 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 	}
     }
+    
+    @SuppressWarnings("deprecation")
+    public String getPassword() {
+	    JPasswordField passwordField = new JPasswordField(24);
+	    JLabel passwordLabel = new JLabel("Enter your password");
+	    Box box = Box.createHorizontalBox();
+	    box.add(passwordLabel);
+	    box.add(passwordField);
+	    int x = JOptionPane.showConfirmDialog(null, box, 
+		    "Enter Password", JOptionPane.OK_CANCEL_OPTION);
+
+	    if (x == JOptionPane.OK_OPTION) {
+	      return passwordField.getText();
+	    }
+	    return null;
+	  }
 
     public void handleTabComplete() {
 	String[] sentence = NewMessageTextField.getText().toString().split(" ");
