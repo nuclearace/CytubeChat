@@ -446,6 +446,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    smallestCompleteIntArray[i] = users.get(i).length();
 	}
 
+	@SuppressWarnings("rawtypes")
 	List smallestCompleteIntObject = 
 		Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
 
