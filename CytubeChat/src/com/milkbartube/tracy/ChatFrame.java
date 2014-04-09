@@ -156,7 +156,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private javax.swing.JTextArea userListTextArea;
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private Clip clip;
-    private boolean muteBoop = false;
+    private boolean windowFocus = false;
+    private boolean userMuteBoop = false;
 
 
     public void disableNewMessages() {
@@ -228,9 +229,10 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		    }
 		} else
 		    return;
+	    } else if (command.equals("/mutesound")) {
+		this.setUserMuteBoop(!this.isUserMuteBoop());
 	    } else 
 		chat.sendMessage(data);
-
 	} else
 	    return;
     }
@@ -341,7 +343,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		    obj.getString("username") + ": " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
-	    if (this.clip != null && this.isMuteBoop()) {
+	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop) {
 		this.playSound();
 	    }
 	}
@@ -360,7 +362,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 	}
 	System.out.println(users.toString());
-	
+
 	if (users.size() == 1) {
 	    sentence[sentence.length - 1] = users.get(0);
 	    for (String word : sentence) {
@@ -385,7 +387,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		    + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
-	    if (this.clip != null && this.isMuteBoop()) {
+	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop) {
 		this.playSound();
 	    }
 	}
@@ -414,12 +416,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	}
     }
 
-    public boolean isMuteBoop() {
-	return muteBoop;
+    public boolean isWindowFocus() {
+	return windowFocus;
     }
 
     public void setMuteBoop(boolean muteBoop) {
-	this.muteBoop = muteBoop;
+	this.windowFocus = muteBoop;
     }
 
     private void setAfk(String name, boolean afk) {
@@ -467,13 +469,21 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	userListTextArea.setText(str);
     }
 
+    public boolean isUserMuteBoop() {
+	return userMuteBoop;
+    }
+
+    public void setUserMuteBoop(boolean userMuteBoop) {
+	this.userMuteBoop = userMuteBoop;
+    }
+
     @Override
     public void windowGainedFocus(WindowEvent e) {
-	this.muteBoop = false;
+	this.windowFocus = false;
     }
 
     @Override
     public void windowLostFocus(WindowEvent e) {
-	this.muteBoop = true;
+	this.windowFocus = true;
     }
 }
