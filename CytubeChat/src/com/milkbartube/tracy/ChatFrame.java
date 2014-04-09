@@ -157,7 +157,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     
     private Clip clip;
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
-    private boolean userMuteBoop = false;
+    private boolean userMuteBoop = true;
     private String userName = "";
     private boolean windowFocus = false;
     // End variables
