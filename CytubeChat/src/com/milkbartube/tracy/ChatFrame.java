@@ -10,6 +10,8 @@ import java.util.*;
 
 import javax.sound.sampled.*;
 import javax.swing.JOptionPane;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -153,7 +155,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     private javax.swing.JTextField NewMessageTextField;
     private javax.swing.JScrollPane userListScrollPane;
     private javax.swing.JTextArea userListTextArea;
-    
+
     private Clip clip;
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private boolean userMuteBoop = true;
@@ -363,21 +365,32 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	String replacedSentence = "";
 
 	for (CytubeUser user : userList) {
-	    System.out.println(user.getName().toLowerCase());
 	    if (user.getName().toLowerCase().matches(partialName)) {
 		users.add(user.getName());
 	    }
 	}
-	System.out.println(users.toString());
-
+	if (users.size() == 0)
+	    return;
+	
 	if (users.size() == 1) {
 	    sentence[sentence.length - 1] = users.get(0);
 	    for (String word : sentence) {
 		replacedSentence += word + " ";
 	    }
 	    NewMessageTextField.setText(replacedSentence);
+	} else {
+	    this.smallestComplete(users);
+	    sentence[sentence.length - 1] = this.smallestComplete(users);
+	    for (String word : sentence) {
+		replacedSentence += word + " ";
+	    }
+	    replacedSentence = 
+		    replacedSentence.substring(0, replacedSentence.length() - 1);
+	    NewMessageTextField.setText(replacedSentence);
 	}
     }
+
+
 
     public void onPrivateMessage(JSONObject obj) throws JSONException {
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
@@ -424,11 +437,56 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	}
     }
 
+    @SuppressWarnings("unchecked")
+    private String smallestComplete(ArrayList<String> users) {
+	int[] smallestCompleteIntArray = new int[users.size()];
+	String[] trimmedArray = new String[users.size()];
+
+	for (int i = 0; i < users.size(); i++) {
+	    smallestCompleteIntArray[i] = users.get(i).length();
+	}
+
+	List smallestCompleteIntObject = 
+		Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
+
+	int smallestCompleteInt = Collections.min(smallestCompleteIntObject);
+
+	for (int i = 0; i < users.size(); i++) {
+	    trimmedArray[i] = users.get(i).substring(0, smallestCompleteInt);
+	}
+
+	boolean changed = true;
+	int maxIterations = 21;
+	while (changed) {
+	    changed = false;
+	    String first = trimmedArray[0];
+	    
+	    for (int i = 0; i < trimmedArray.length; i++) {
+		if (!trimmedArray[i].equals(first)) {
+		    changed = true;
+		    break;
+		}
+	    }
+
+	    if (changed) {
+		for (int i = 0; i < trimmedArray.length; i++) {
+		    trimmedArray[i] = trimmedArray[i]
+			    .substring(0, trimmedArray[i].length() - 1);
+		}
+	    }
+
+	    if (--maxIterations < 0) {
+		break;
+	    }
+	}
+	return trimmedArray[0];
+    }
+
     public boolean isWindowFocus() {
 	return windowFocus;
     }
 
-    public void setMuteBoop(boolean muteBoop) {
+    public void setWindowFocus(boolean muteBoop) {
 	this.windowFocus = muteBoop;
     }
 
