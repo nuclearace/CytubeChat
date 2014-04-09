@@ -349,7 +349,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     public void handleTabComplete() {
 	String[] sentence = NewMessageTextField.getText().toString().split(" ");
-	String partialName = sentence[sentence.length - 1] + "(.*)";
+	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
 	ArrayList<String> users = new ArrayList<String>();
 	String replacedSentence = "";
 
