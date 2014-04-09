@@ -354,7 +354,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	JPasswordField passwordField = new JPasswordField(10);
 	panel.add(label);
 	panel.add(passwordField);
-	String[] options = new String[]{"OK", "Cancel"};
+	String[] options = new String[]{"OK", "Guest Login"};
 	int x = JOptionPane.showOptionDialog(null, panel, "Enter Password",
 	                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
 	                         null, options, options[0]);
