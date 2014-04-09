@@ -147,17 +147,21 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	chat = new Chat(this);
 	chat.start();
     }
-
+    // Begin variables
     private javax.swing.JScrollPane MessagesScrollPane;
     private javax.swing.JTextArea MessagesTextArea;
     private javax.swing.JScrollPane NewMessageScrollPane;
     private javax.swing.JTextField NewMessageTextField;
     private javax.swing.JScrollPane userListScrollPane;
     private javax.swing.JTextArea userListTextArea;
-    private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
+    
     private Clip clip;
-    private boolean windowFocus = false;
+    private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private boolean userMuteBoop = false;
+    private String userName = "";
+    private boolean windowFocus = false;
+    // End variables
+
 
 
     public void disableNewMessages() {
@@ -285,6 +289,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	if (!nickname.isEmpty() && !room.isEmpty()) {
 	    chat.join(room, nickname, password);
 	    MessagesTextArea.append("You joined as " + nickname + "\n");
+	    this.setUserName(nickname.toLowerCase());
 	} else {
 	    JOptionPane.showMessageDialog(null, 
 		    "Error: room and username needed");
@@ -343,7 +348,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		    obj.getString("username") + ": " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
-	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop) {
+	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
+		    || cleanedString.toLowerCase().contains(this.getUserName())) {
 		this.playSound();
 	    }
 	}
@@ -387,7 +393,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		    + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
-	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop) {
+	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
+		    || cleanedString.toLowerCase().contains(this.getUserName())) {
 		this.playSound();
 	    }
 	}
@@ -475,6 +482,14 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     public void setUserMuteBoop(boolean userMuteBoop) {
 	this.userMuteBoop = userMuteBoop;
+    }
+
+    public String getUserName() {
+	return userName;
+    }
+
+    public void setUserName(String userName) {
+	this.userName = userName;
     }
 
     @Override
