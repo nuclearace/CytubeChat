@@ -350,14 +350,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     public void handleTabComplete() {
 	String[] sentence = NewMessageTextField.getText().toString().split(" ");
 	String partialName = sentence[sentence.length - 1] + "(.*)";
-	System.out.println(sentence[sentence.length - 1]);
 	ArrayList<String> users = new ArrayList<String>();
 	String replacedSentence = "";
 
 	for (CytubeUser user : userList) {
 	    System.out.println(user.getName().toLowerCase());
 	    if (user.getName().toLowerCase().matches(partialName)) {
-		System.out.println(user.getName());
 		users.add(user.getName());
 	    }
 	}
@@ -370,7 +368,6 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 	    NewMessageTextField.setText(replacedSentence);
 	}
-	
     }
 
     public void onPrivateMessage(JSONObject obj) throws JSONException {
