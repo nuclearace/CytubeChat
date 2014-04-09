@@ -351,7 +351,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     public String getPassword() {
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel("Enter a password:");
-	JPasswordField passwordField = new JPasswordField(10);
+	JPasswordField passwordField = new JPasswordField(20);
 	panel.add(label);
 	panel.add(passwordField);
 	String[] options = new String[]{"OK", "Guest Login"};
