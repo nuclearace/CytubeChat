@@ -160,14 +160,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		chat.disconnectChat();
 		userListTextArea.setText("");
 		setTitle("Disconnected!");
-	    }
-	    else if (command.equals("/reconnect")) {
+	    } else if (command.equals("/reconnect")) {
 		chat.disconnectChat();
 		MessagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
-	    }
-	    // Begin color prefs
-	    else if (command.equals("/grey")) {
+	    } else if (command.equals("/grey")) {
+		// Begin color prefs
 		MessagesTextArea.setBackground(new java.awt.Color(71, 77, 70));
 		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -176,8 +174,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
 		NewMessageTextField.setBackground(new java.awt.Color(71, 77, 70));
 		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
-	    }
-	    else if (command.equals("/black")) {
+	    } else if (command.equals("/black")) {
 		MessagesTextArea.setBackground(new java.awt.Color(0, 0, 0));
 		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -186,8 +183,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
 		NewMessageTextField.setBackground(new java.awt.Color(0, 0, 0));
 		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
-	    }
-	    else if (command.equals("/white")) {
+	    } else if (command.equals("/white")) {
 		MessagesTextArea.setBackground(new java.awt.Color(255, 255, 255));
 		MessagesTextArea.setForeground(new java.awt.Color(0, 0, 0));
 
@@ -196,12 +192,10 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
 		NewMessageTextField.setBackground(new java.awt.Color(255, 255, 255));
 		NewMessageTextField.setForeground(new java.awt.Color(0, 0, 0));
-	    }
-	    // End color prefs
-	    else if (command.equals("/clearchat")) {
+		// End color prefs
+	    } else if (command.equals("/clearchat")) {
 		MessagesTextArea.setText("");
-	    }
-	    else if (command.equals("/pm")) {
+	    } else if (command.equals("/pm")) {
 		// This could be done better, but I don't want to take the time
 		if (parts.length > 2) {
 		    String to = parts[1];
@@ -216,15 +210,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		    } catch (JSONException e) {
 			e.printStackTrace();
 		    }
-		}
-		else
+		} else
 		    return;
-	    }
-	    else {
+	    } else 
 		chat.sendMessage(data);
-	    }
-	}
-	else
+
+	} else
 	    return;
     }
 
@@ -236,26 +227,21 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	try {
 	    if (event.equals("chatMsg")) {
 		this.chatMsg(obj);
-	    }
-	    else if (event.equals("addUser")) {
+	    } else if (event.equals("addUser")) {
 		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
 		String username = obj.getString("name") ;
 		int rank = (int) obj.get("rank");
 		CytubeUser user = new CytubeUser(afk, username, rank);
 		this.addUser(user);
 		this.updateUserList();
-	    }
-	    else if (event.equals("userLeave")) {
+	    } else if (event.equals("userLeave")) {
 		this.removeUser(obj.getString("name"));
 		this.updateUserList();
-	    }
-	    else if (event.equals("changeMedia")) {
+	    } else if (event.equals("changeMedia")) {
 		this.changeMedia(obj.getString("title"));
-	    }
-	    else if (event.equals("pm")) {
+	    } else if (event.equals("pm")) {
 		this.onPrivateMessage(obj);
-	    }
-	    else if (event.equals("setAfk")) {
+	    } else if (event.equals("setAfk")) {
 		this.setAfk(obj.getString("name"), (boolean) obj.get("afk"));
 	    }
 	} catch (JSONException ex) {
@@ -273,14 +259,15 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
     public void onConnect() {
 	MessagesTextArea.append("done!\n");        
 	enableNewMessages();
+
 	String room = JOptionPane.showInputDialog(null, "Room", null, WIDTH);
 	String nickname = JOptionPane.showInputDialog(null, "Nickname", null, WIDTH);
 	String password = JOptionPane.showInputDialog(null, "Password", null, WIDTH);
+
 	if (!nickname.isEmpty() && !room.isEmpty()) {
 	    chat.join(room, nickname, password);
 	    MessagesTextArea.append("You joined as " + nickname + "\n");
-	}
-	else {
+	} else {
 	    JOptionPane.showMessageDialog(null, 
 		    "Error: room and username needed");
 	    this.onConnect();
@@ -333,9 +320,11 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
+
 	    MessagesTextArea.append("[" + formattedTime + "] " +
 		    obj.getString("username") + ": " + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+
 	    if (this.clip != null && this.isMuteBoop()) {
 		this.playSound();
 	    }
@@ -351,9 +340,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
+
 	    MessagesTextArea.append("[" + formattedTime + "] " + 
-		    obj.getString("username") + " [Private Message]: " + cleanedString + "\n");
+		    obj.getString("username") + " [Private Message]: " 
+		    + cleanedString + "\n");
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+
 	    if (this.clip != null && this.isMuteBoop()) {
 		this.playSound();
 	    }
