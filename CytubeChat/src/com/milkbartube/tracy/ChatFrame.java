@@ -190,32 +190,11 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		chat.reconnectChat();
 	    } else if (command.equals("/grey")) {
 		// Begin color prefs
-		MessagesTextArea.setBackground(new java.awt.Color(71, 77, 70));
-		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
-
-		userListTextArea.setBackground(new java.awt.Color(71, 77, 70));
-		userListTextArea.setForeground(new java.awt.Color(255, 255, 255));
-
-		NewMessageTextField.setBackground(new java.awt.Color(71, 77, 70));
-		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
+		this.changeColors(71, 77, 70, 255, 255, 255);
 	    } else if (command.equals("/black")) {
-		MessagesTextArea.setBackground(new java.awt.Color(0, 0, 0));
-		MessagesTextArea.setForeground(new java.awt.Color(255, 255, 255));
-
-		userListTextArea.setBackground(new java.awt.Color(0, 0, 0));
-		userListTextArea.setForeground(new java.awt.Color(255, 255, 255));
-
-		NewMessageTextField.setBackground(new java.awt.Color(0, 0, 0));
-		NewMessageTextField.setForeground(new java.awt.Color(255, 255, 255));
+		this.changeColors(0, 0, 0, 255, 255, 255);
 	    } else if (command.equals("/white")) {
-		MessagesTextArea.setBackground(new java.awt.Color(255, 255, 255));
-		MessagesTextArea.setForeground(new java.awt.Color(0, 0, 0));
-
-		userListTextArea.setBackground(new java.awt.Color(255, 255, 255));
-		userListTextArea.setForeground(new java.awt.Color(0, 0 , 0));
-
-		NewMessageTextField.setBackground(new java.awt.Color(255, 255, 255));
-		NewMessageTextField.setForeground(new java.awt.Color(0, 0, 0));
+		this.changeColors(255, 255, 255, 0, 0, 0);
 		// End color prefs
 	    } else if (command.equals("/clearchat")) {
 		MessagesTextArea.setText("");
@@ -333,6 +312,17 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	}
     }
 
+    public void changeColors(int r1, int g1, int b1, int r2, int g2, int b2) {
+	MessagesTextArea.setBackground(new java.awt.Color(r1, g1, b1));
+	MessagesTextArea.setForeground(new java.awt.Color(r2, g2, b2));
+
+	userListTextArea.setBackground(new java.awt.Color(r1, g1, b1));
+	userListTextArea.setForeground(new java.awt.Color(r2, g2, b2));
+
+	NewMessageTextField.setBackground(new java.awt.Color(r1, g1, b1));
+	NewMessageTextField.setForeground(new java.awt.Color(r2, g2, b2));
+    }
+
     public void changeMedia(String media) {
 	setTitle("Now Playing: " + media);
     }
@@ -371,7 +361,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	}
 	if (users.size() == 0)
 	    return;
-	
+
 	if (users.size() == 1) {
 	    sentence[sentence.length - 1] = users.get(0);
 	    for (String word : sentence) {
@@ -445,7 +435,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
 	@SuppressWarnings("rawtypes")
 	List smallestCompleteIntObject = 
-		Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
+	Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
 
 	int smallestCompleteInt = Collections.min(smallestCompleteIntObject);
 
@@ -458,7 +448,7 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	while (changed) {
 	    changed = false;
 	    String first = trimmedArray[0];
-	    
+
 	    for (int i = 0; i < trimmedArray.length; i++) {
 		if (!trimmedArray[i].equals(first)) {
 		    changed = true;
@@ -484,8 +474,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	return windowFocus;
     }
 
-    public void setWindowFocus(boolean muteBoop) {
-	this.windowFocus = muteBoop;
+    public void setWindowFocus(boolean windowFocus) {
+	this.windowFocus = windowFocus;
     }
 
     private void setAfk(String name, boolean afk) {
