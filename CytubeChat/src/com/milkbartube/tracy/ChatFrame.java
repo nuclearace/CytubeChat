@@ -379,7 +379,6 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    }
 	    NewMessageTextField.setText(replacedSentence);
 	} else {
-	    this.smallestComplete(users);
 	    sentence[sentence.length - 1] = this.smallestComplete(users);
 	    for (String word : sentence) {
 		replacedSentence += word + " ";
@@ -389,8 +388,6 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	    NewMessageTextField.setText(replacedSentence);
 	}
     }
-
-
 
     public void onPrivateMessage(JSONObject obj) throws JSONException {
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
