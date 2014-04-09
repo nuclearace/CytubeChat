@@ -1,5 +1,7 @@
 package com.milkbartube.tracy;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.net.URL;
@@ -69,12 +71,26 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	userListScrollPane.setViewportView(userListTextArea);
 
 	NewMessageTextField.setBorder(null);
+	NewMessageTextField.setFocusTraversalKeysEnabled(false);
 	NewMessageTextField.addActionListener(new java.awt.event.ActionListener() {
 	    public void actionPerformed(java.awt.event.ActionEvent evt) {
 		NewMessageActionPerformed(evt);
 	    }
 	});
+	NewMessageTextField.addKeyListener(new KeyListener() {
+	    @Override
+	    public void keyTyped(KeyEvent e) {
+		if (e.getKeyChar() == '\t') {
+		    handleTabComplete();
+		}
+	    }
 
+	    @Override
+	    public void keyPressed(KeyEvent e) {}
+
+	    @Override
+	    public void keyReleased(KeyEvent e) {}
+	});
 	addWindowFocusListener(this);
 	NewMessageScrollPane.setViewportView(NewMessageTextField);
 
@@ -329,6 +345,31 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		this.playSound();
 	    }
 	}
+    }
+
+    public void handleTabComplete() {
+	String[] sentence = NewMessageTextField.getText().toString().split(" ");
+	String partialName = sentence[sentence.length - 1] + "(.*)";
+	System.out.println(sentence[sentence.length - 1]);
+	ArrayList<String> users = new ArrayList<String>();
+	String replacedSentence = "";
+
+	for (CytubeUser user : userList) {
+	    System.out.println(user.getName().toLowerCase());
+	    if (user.getName().toLowerCase().matches(partialName)) {
+		System.out.println(user.getName());
+		users.add(user.getName());
+	    }
+	}
+	System.out.println(users.toString());
+	
+	if (users.size() == 1) {
+	    sentence[sentence.length - 1] = users.get(0);
+	    for (String word : sentence) {
+		replacedSentence += word + " ";
+	    }
+	}
+	NewMessageTextField.setText(replacedSentence);
     }
 
     public void onPrivateMessage(JSONObject obj) throws JSONException {
