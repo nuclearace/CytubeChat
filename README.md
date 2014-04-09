@@ -23,3 +23,4 @@ Commands
 - `/clearchat` Clears the chat buffer
 - `/disconnect` Disconnects from the server
 - `/reconnect` Disconnects and reconnects from the server (Useful for joining another room)
+- `/mutesound` Mutes the boop sound on incoming messages (Still boops if message contains your name)
