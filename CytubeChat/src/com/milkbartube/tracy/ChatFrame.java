@@ -348,21 +348,22 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	}
     }
     
-    @SuppressWarnings("deprecation")
     public String getPassword() {
-	    JPasswordField passwordField = new JPasswordField(24);
-	    JLabel passwordLabel = new JLabel("Enter your password");
-	    Box box = Box.createHorizontalBox();
-	    box.add(passwordLabel);
-	    box.add(passwordField);
-	    int x = JOptionPane.showConfirmDialog(null, box, 
-		    "Enter Password", JOptionPane.OK_CANCEL_OPTION);
-
-	    if (x == JOptionPane.OK_OPTION) {
-	      return passwordField.getText();
-	    }
-	    return null;
-	  }
+	JPanel panel = new JPanel();
+	JLabel label = new JLabel("Enter a password:");
+	JPasswordField passwordField = new JPasswordField(10);
+	panel.add(label);
+	panel.add(passwordField);
+	String[] options = new String[]{"OK", "Cancel"};
+	int x = JOptionPane.showOptionDialog(null, panel, "Enter Password",
+	                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+	                         null, options, options[0]);
+	if (x == 0) {
+	    char[] passwordCharArray = passwordField.getPassword();
+	    return new String(passwordCharArray);
+	}
+	return null;
+    }
 
     public void handleTabComplete() {
 	String[] sentence = NewMessageTextField.getText().toString().split(" ");
