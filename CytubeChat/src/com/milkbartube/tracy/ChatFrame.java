@@ -183,6 +183,8 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 		setTitle("Disconnected!");
 	    } else if (command.equals("/reconnect")) {
 		chat.disconnectChat();
+		this.setUserName("");
+		userListTextArea.setText("");
 		MessagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
 	    } else if (command.equals("/grey")) {
