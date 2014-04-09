@@ -55,7 +55,6 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	MessagesTextArea.setColumns(20);
 	MessagesTextArea.setLineWrap(true);
 	MessagesTextArea.setRows(5);
-	MessagesTextArea.setFocusable(false);
 	MessagesScrollPane.setViewportView(MessagesTextArea);
 
 	userListScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
