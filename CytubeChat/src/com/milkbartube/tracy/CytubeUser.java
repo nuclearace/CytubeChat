@@ -83,7 +83,4 @@ public class CytubeUser {
 	return "CyTubeUser [afk=" + afk + ", name=" + name + ", rank=" + rank
 		+ "]";
     }
-
-
-
 }

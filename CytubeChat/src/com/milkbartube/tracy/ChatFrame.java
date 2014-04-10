@@ -17,7 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter, WindowFocusListener {
+public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocusListener {
 
     private static final long serialVersionUID = -3120953406569989166L;
 
@@ -44,12 +44,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 
     private void initComponents() {
 
-	MessagesScrollPane = new javax.swing.JScrollPane();
-	MessagesTextArea = new javax.swing.JTextArea();
-	userListScrollPane = new javax.swing.JScrollPane();
-	userListTextArea = new javax.swing.JTextArea();
-	NewMessageScrollPane = new javax.swing.JScrollPane();
-	NewMessageTextField = new javax.swing.JTextField();
+	MessagesScrollPane = new JScrollPane();
+	MessagesTextArea = new JTextArea();
+	userListScrollPane = new JScrollPane();
+	userListTextArea = new JTextArea();
+	NewMessageScrollPane = new JScrollPane();
+	NewMessageTextField = new JTextField();
 
 	setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -149,12 +149,12 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	chat.start();
     }
     // Begin variables
-    private javax.swing.JScrollPane MessagesScrollPane;
-    private javax.swing.JTextArea MessagesTextArea;
-    private javax.swing.JScrollPane NewMessageScrollPane;
-    private javax.swing.JTextField NewMessageTextField;
-    private javax.swing.JScrollPane userListScrollPane;
-    private javax.swing.JTextArea userListTextArea;
+    private JScrollPane MessagesScrollPane;
+    private JTextArea MessagesTextArea;
+    private JScrollPane NewMessageScrollPane;
+    private JTextField NewMessageTextField;
+    private JScrollPane userListScrollPane;
+    private JTextArea userListTextArea;
 
     private Clip clip;
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
@@ -463,10 +463,10 @@ public class ChatFrame extends javax.swing.JFrame implements ChatCallbackAdapter
 	int maxIterations = 21;
 	while (changed) {
 	    changed = false;
-	    String first = trimmedArray[0];
+	    String first = trimmedArray[0].toLowerCase();
 
 	    for (int i = 0; i < trimmedArray.length; i++) {
-		if (!trimmedArray[i].equals(first)) {
+		if (!trimmedArray[i].toLowerCase().equals(first)) {
 		    changed = true;
 		    break;
 		}
