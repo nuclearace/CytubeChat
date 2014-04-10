@@ -215,7 +215,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		    }
 		} else
 		    return;
-	    } else if (command.equals("/mutesound")) {
+	    } else if (command.equals("/sound")) {
 		this.setUserMuteBoop(!this.isUserMuteBoop());
 	    } else 
 		chat.sendMessage(data);
