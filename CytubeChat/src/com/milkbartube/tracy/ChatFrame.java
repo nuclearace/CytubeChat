@@ -157,7 +157,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private JTextArea userListTextArea;
 
     private Clip clip;
-    LinkedList<String> messageBuffer = new LinkedList<String>();
+    private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private boolean userMuteBoop = true;
     private String userName;
