@@ -159,7 +159,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private Clip clip;
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private boolean userMuteBoop = true;
-    private String userName = "";
+    private String userName;
     private boolean windowFocus = false;
     // End variables
 
@@ -188,6 +188,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		userListTextArea.setText("");
 		MessagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
+	    } else if (command.equals("/login")) {
+		this.handleLogin();
 	    } else if (command.equals("/grey")) {
 		// Begin color prefs
 		this.changeColors(71, 77, 70, 255, 255, 255);
@@ -261,20 +263,16 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     @Override
     public void onConnect() {
-	MessagesTextArea.append("done!\n");        
+	MessagesTextArea.append("done!\n*Type /login to login*\n");
 	enableNewMessages();
 
 	String room = JOptionPane.showInputDialog(null, "Room", null, WIDTH);
-	String nickname = JOptionPane.showInputDialog(null, "Nickname", null, WIDTH);
-	String password = this.getPassword();
 
-	if (!nickname.isEmpty() && !room.isEmpty()) {
-	    chat.join(room, nickname, password);
-	    MessagesTextArea.append("You joined as " + nickname + "\n");
-	    this.setUserName(nickname.toLowerCase());
+	if (!room.isEmpty()) {
+	    chat.join(room);
 	} else {
 	    JOptionPane.showMessageDialog(null, 
-		    "Error: room and username needed");
+		    "Error: room needed");
 	    this.onConnect();
 	}
     }
@@ -347,7 +345,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    }
 	}
     }
-    
+
     public String getPassword() {
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel("Enter a password:");
@@ -356,8 +354,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	panel.add(passwordField);
 	String[] options = new String[]{"OK", "Guest Login"};
 	int x = JOptionPane.showOptionDialog(null, panel, "Enter Password",
-	                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-	                         null, options, options[0]);
+		JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+		null, options, options[0]);
 	if (x == 0) {
 	    char[] passwordCharArray = passwordField.getPassword();
 	    return new String(passwordCharArray);
@@ -393,6 +391,17 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    replacedSentence = 
 		    replacedSentence.substring(0, replacedSentence.length() - 1);
 	    NewMessageTextField.setText(replacedSentence);
+	}
+    }
+
+    public void handleLogin() {
+	String username = JOptionPane.showInputDialog(null, "Nickname", null, WIDTH);
+	String password = this.getPassword();
+
+	if (!username.isEmpty()) {
+	    chat.login(username, password);
+	    MessagesTextArea.append("You joined as " + username + "\n");
+	    this.setUserName(username.toLowerCase());
 	}
     }
 

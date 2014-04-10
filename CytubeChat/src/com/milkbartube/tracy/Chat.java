@@ -49,24 +49,30 @@ public class Chat extends Thread {
 	}
     }
 
-    public void join(String room, String nickname, String password) {
+    public void login(String username, String password) {
+	try {
+	    JSONObject json1 = new JSONObject();
+	    json1.putOpt("name", username);
+	    json1.putOpt("pw", password);
+	    socket.emit("login", callback, json1);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public void join(String room) {
 	try {
 	    JSONObject json = new JSONObject();
 	    json.putOpt("name", room);
 	    socket.emit("initChannelCallbacks");
 	    socket.emit("joinChannel", json);
-
-	    JSONObject json1 = new JSONObject();
-	    json1.putOpt("name", nickname);
-	    json1.putOpt("pw", password);
-	    socket.emit("login", callback, json1);
 	} catch (Exception ex) {
 	    ex.printStackTrace();
 	}
     }
-    
+
     public void privateMessage(JSONObject json) {
 	socket.emit("pm", json);
     }
-    
+
 }
