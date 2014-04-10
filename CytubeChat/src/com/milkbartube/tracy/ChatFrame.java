@@ -344,7 +344,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		    obj.getString("username") + ": " + cleanedString + "\n");
 
 	    MessageBuffer.add(message);
-	    MessagesTextArea.append(message);
+	    MessagesTextArea.append(MessageBuffer.peekLast());
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
@@ -436,7 +436,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		    obj.getString("username") + ": " + cleanedString + "\n");
 
 	    MessageBuffer.add(message);
-	    MessagesTextArea.append(message);
+	    MessagesTextArea.append(MessageBuffer.peekLast());
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
