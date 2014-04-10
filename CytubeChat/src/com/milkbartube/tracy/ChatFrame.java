@@ -333,7 +333,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	if (!cleanedString.equals("")) {
 	    long time = (long) obj.get("time");
 	    Date date = new Date(time);
-	    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss z");
+	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
 
@@ -402,7 +402,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	if (!cleanedString.equals("")) {
 	    long time = (long) obj.get("time");
 	    Date date = new Date(time);
-	    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss z");
+	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
 
