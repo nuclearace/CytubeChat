@@ -124,7 +124,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	pack();
     }
 
-    private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {                                           
+    private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
 	this.handleGUICommand(NewMessageTextField.getText());
 	NewMessageTextField.setText(null);
     }    
@@ -157,12 +157,13 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private JTextArea userListTextArea;
 
     private Clip clip;
+    private boolean limitChatBuffer = false;
+    private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private boolean userMuteBoop = true;
     private String userName;
     private boolean windowFocus = false;
     // End variables
-
 
 
     public void disableNewMessages() {
@@ -219,6 +220,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		    return;
 	    } else if (command.equals("/sound")) {
 		this.setUserMuteBoop(!this.isUserMuteBoop());
+	    } else if (command.equals("/chatbuffer")) {
+		this.setLimitChatBuffer(!this.isLimitChatBuffer());
 	    } else 
 		chat.sendMessage(data);
 	} else
@@ -329,14 +332,22 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
+	    if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
+		messageBuffer.remove();
+		MessagesTextArea.setText(MessagesTextArea.getText()
+			.substring(MessagesTextArea.getText().indexOf('\n')+1));
+	    }
 	    long time = (long) obj.get("time");
 	    Date date = new Date(time);
 	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
 
-	    MessagesTextArea.append("[" + formattedTime + "] " +
+	    String message = ("[" + formattedTime + "] " +
 		    obj.getString("username") + ": " + cleanedString + "\n");
+
+	    messageBuffer.add(message);
+	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
@@ -409,19 +420,34 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	}
     }
 
+    public boolean isLimitChatBuffer() {
+        return limitChatBuffer;
+    }
+
+    public void setLimitChatBuffer(boolean limitChatBuffer) {
+        this.limitChatBuffer = limitChatBuffer;
+    }
+
     public void onPrivateMessage(JSONObject obj) throws JSONException {
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
+	    if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
+		messageBuffer.remove();
+		MessagesTextArea.setText(MessagesTextArea.getText()
+			.substring(MessagesTextArea.getText().indexOf('\n')+1));
+	    }
 	    long time = (long) obj.get("time");
 	    Date date = new Date(time);
 	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
 
-	    MessagesTextArea.append("[" + formattedTime + "] " + 
-		    obj.getString("username") + " [Private Message]: " 
-		    + cleanedString + "\n");
+	    String message = ("[" + formattedTime + "] " +
+		    obj.getString("username") + ": " + cleanedString + "\n");
+
+	    messageBuffer.add(message);
+	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
@@ -520,7 +546,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	// Number of users. Note: I'm ignoring anons at this time
 	String str = "Users: " + userList.size() + "\n-----------------\n";
 
-	//Sort userlist
+	// Sort userlist
 	Collections.sort(userList, new Comparator<CytubeUser>() {
 	    @Override
 	    public int compare(CytubeUser user1, CytubeUser user2) {
