@@ -418,12 +418,12 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	}
     }
 
-    private void playSound() {
+    public void playSound() {
 	this.clip.start();
 	this.clip.setFramePosition(0);
     }
 
-    private void privateMessage(String to, String message) throws JSONException {
+    public void privateMessage(String to, String message) throws JSONException {
 	JSONObject json = new JSONObject();
 	json.putOpt("to", to);
 	json.putOpt("msg", message);
@@ -442,7 +442,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     @SuppressWarnings("unchecked")
-    private String smallestComplete(ArrayList<String> users) {
+    public String smallestComplete(ArrayList<String> users) {
 	int[] smallestCompleteIntArray = new int[users.size()];
 	String[] trimmedArray = new String[users.size()];
 
@@ -494,7 +494,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	this.windowFocus = windowFocus;
     }
 
-    private void setAfk(String name, boolean afk) {
+    public void setAfk(String name, boolean afk) {
 	for (CytubeUser user : userList) {
 	    if (user.getName().equals(name)) {
 		user.setAfk(afk);
