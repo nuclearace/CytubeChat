@@ -157,7 +157,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private JTextArea userListTextArea;
 
     private Clip clip;
-    LinkedList<String> MessageBuffer = new LinkedList<String>();
+    LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private boolean userMuteBoop = true;
     private String userName;
@@ -329,8 +329,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
-	    if (MessageBuffer.size() > 100) {
-		MessageBuffer.remove();
+	    if (messageBuffer.size() > 100) {
+		messageBuffer.remove();
 		MessagesTextArea.setText(MessagesTextArea.getText()
 			.substring(MessagesTextArea.getText().indexOf('\n')+1));
 	    }
@@ -343,8 +343,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    String message = ("[" + formattedTime + "] " +
 		    obj.getString("username") + ": " + cleanedString + "\n");
 
-	    MessageBuffer.add(message);
-	    MessagesTextArea.append(MessageBuffer.peekLast());
+	    messageBuffer.add(message);
+	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
@@ -421,8 +421,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
-	    if (MessageBuffer.size() > 100) {
-		MessageBuffer.remove();
+	    if (messageBuffer.size() > 100) {
+		messageBuffer.remove();
 		MessagesTextArea.setText(MessagesTextArea.getText()
 			.substring(MessagesTextArea.getText().indexOf('\n')+1));
 	    }
@@ -435,8 +435,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    String message = ("[" + formattedTime + "] " +
 		    obj.getString("username") + ": " + cleanedString + "\n");
 
-	    MessageBuffer.add(message);
-	    MessagesTextArea.append(MessageBuffer.peekLast());
+	    messageBuffer.add(message);
+	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
