@@ -395,6 +395,10 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     public void handleLogin() {
+	if (this.userName != null) {
+	    JOptionPane.showMessageDialog(null, "Already logged in");
+	    return;
+	}
 	String username = JOptionPane.showInputDialog(null, "Nickname", null, WIDTH);
 	String password = this.getPassword();
 
