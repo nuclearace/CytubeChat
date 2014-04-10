@@ -157,12 +157,12 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private JTextArea userListTextArea;
 
     private Clip clip;
+    LinkedList<String> MessageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private boolean userMuteBoop = true;
     private String userName;
     private boolean windowFocus = false;
     // End variables
-
 
 
     public void disableNewMessages() {
@@ -329,14 +329,22 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
+	    if (MessageBuffer.size() > 100) {
+		MessageBuffer.remove();
+		MessagesTextArea.setText(MessagesTextArea.getText()
+			.substring(MessagesTextArea.getText().indexOf('\n')+1));
+	    }
 	    long time = (long) obj.get("time");
 	    Date date = new Date(time);
 	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
 
-	    MessagesTextArea.append("[" + formattedTime + "] " +
+	    String message = ("[" + formattedTime + "] " +
 		    obj.getString("username") + ": " + cleanedString + "\n");
+
+	    MessageBuffer.add(message);
+	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
@@ -413,15 +421,22 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 	if (!cleanedString.equals("")) {
+	    if (MessageBuffer.size() > 100) {
+		MessageBuffer.remove();
+		MessagesTextArea.setText(MessagesTextArea.getText()
+			.substring(MessagesTextArea.getText().indexOf('\n')+1));
+	    }
 	    long time = (long) obj.get("time");
 	    Date date = new Date(time);
 	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
 
-	    MessagesTextArea.append("[" + formattedTime + "] " + 
-		    obj.getString("username") + " [Private Message]: " 
-		    + cleanedString + "\n");
+	    String message = ("[" + formattedTime + "] " +
+		    obj.getString("username") + ": " + cleanedString + "\n");
+
+	    MessageBuffer.add(message);
+	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
@@ -520,7 +535,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	// Number of users. Note: I'm ignoring anons at this time
 	String str = "Users: " + userList.size() + "\n-----------------\n";
 
-	//Sort userlist
+	// Sort userlist
 	Collections.sort(userList, new Comparator<CytubeUser>() {
 	    @Override
 	    public int compare(CytubeUser user1, CytubeUser user2) {
