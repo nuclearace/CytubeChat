@@ -443,7 +443,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    formatter.setTimeZone(TimeZone.getDefault());
 	    String formattedTime = formatter.format(date);
 
-	    String message = ("[" + formattedTime + "] " +
+	    String message = ("[" + formattedTime + "] " + "[Private Message] " +
 		    obj.getString("username") + ": " + cleanedString + "\n");
 
 	    messageBuffer.add(message);
