@@ -332,38 +332,36 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		this.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"), false);
 
-	if (!message.equals("")) {
-	    if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
-		messageBuffer.remove();
-		MessagesTextArea.setText(MessagesTextArea.getText()
-			.substring(MessagesTextArea.getText().indexOf('\n')+1));
-	    }
+	if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
+	    messageBuffer.remove();
+	    MessagesTextArea.setText(MessagesTextArea.getText()
+		    .substring(MessagesTextArea.getText().indexOf('\n')+1));
+	}
 
-	    messageBuffer.add(message);
-	    MessagesTextArea.append(message);
-	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	messageBuffer.add(message);
+	MessagesTextArea.append(message);
+	MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
-	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
-		    || message.toLowerCase().contains(this.getUserName())) {
-		this.playSound();
-	    }
+	if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
+		|| message.toLowerCase().contains(this.getUserName())) {
+	    this.playSound();
 	}
     }
 
     public String formatMessage(String username, String message, long time, boolean privateMessage) {
 	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
-	
+
 	// Add the timestamp
 	Date date = new Date(time);
 	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 	message = "[" + formattedTime + "] ";
-	
+
 	if (privateMessage) 
 	    message += "[Private Message] ";
-	
+
 	return message += username + ": " + cleanedString + "\n";
     }
 
@@ -443,20 +441,19 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		this.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"), true );
 
-	if (!message.equals("")) {
-	    if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
-		messageBuffer.remove();
-		MessagesTextArea.setText(MessagesTextArea.getText()
-			.substring(MessagesTextArea.getText().indexOf('\n')+1));
-	    }
-	    messageBuffer.add(message);
-	    MessagesTextArea.append(message);
-	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
+	    messageBuffer.remove();
+	    MessagesTextArea.setText(MessagesTextArea.getText()
+		    .substring(MessagesTextArea.getText().indexOf('\n')+1));
+	}
+	messageBuffer.add(message);
+	MessagesTextArea.append(message);
+	MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
-	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
-		    || message.toLowerCase().contains(this.getUserName())) {
-		this.playSound();
-	    }
+	if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
+		|| message.toLowerCase().contains(this.getUserName())) {
+	    this.playSound();
+
 	}
     }
 
