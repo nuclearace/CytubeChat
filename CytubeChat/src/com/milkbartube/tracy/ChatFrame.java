@@ -21,7 +21,23 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     private static final long serialVersionUID = -3120953406569989166L;
 
+    // Begin variables
+    private JScrollPane MessagesScrollPane;
+    private JTextArea MessagesTextArea;
+    private JScrollPane NewMessageScrollPane;
+    private JTextField NewMessageTextField;
+    private JScrollPane userListScrollPane;
+    private JTextArea userListTextArea;
+
     private Chat chat;
+    private Clip clip;
+    private boolean limitChatBuffer = false;
+    private LinkedList<String> messageBuffer = new LinkedList<String>();
+    private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
+    private boolean userMuteBoop = true;
+    private String userName;
+    private boolean windowFocus = false;
+    // End variables
 
     public ChatFrame() {
 	initComponents();
@@ -148,23 +164,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	chat = new Chat(this);
 	chat.start();
     }
-    // Begin variables
-    private JScrollPane MessagesScrollPane;
-    private JTextArea MessagesTextArea;
-    private JScrollPane NewMessageScrollPane;
-    private JTextField NewMessageTextField;
-    private JScrollPane userListScrollPane;
-    private JTextArea userListTextArea;
-
-    private Clip clip;
-    private boolean limitChatBuffer = false;
-    private LinkedList<String> messageBuffer = new LinkedList<String>();
-    private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
-    private boolean userMuteBoop = true;
-    private String userName;
-    private boolean windowFocus = false;
-    // End variables
-
 
     public void disableNewMessages() {
 	NewMessageTextField.setEnabled(false);
