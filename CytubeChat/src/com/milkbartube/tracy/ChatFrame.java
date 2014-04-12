@@ -366,8 +366,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    message += "[Private Message] ";
 	
 	return message += username + ": " + cleanedString + "\n";
-
-
     }
 
     public String getPassword() {
