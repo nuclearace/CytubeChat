@@ -329,32 +329,45 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     public void chatMsg(JSONObject obj) throws JSONException {
-	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
-	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
-	if (!cleanedString.equals("")) {
+	String message = 
+		this.formatMessage(obj.getString("username"), 
+			obj.getString("msg"), (long) obj.get("time"), false);
+
+	if (!message.equals("")) {
 	    if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
 		messageBuffer.remove();
 		MessagesTextArea.setText(MessagesTextArea.getText()
 			.substring(MessagesTextArea.getText().indexOf('\n')+1));
 	    }
-	    long time = (long) obj.get("time");
-	    Date date = new Date(time);
-	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
-	    formatter.setTimeZone(TimeZone.getDefault());
-	    String formattedTime = formatter.format(date);
-
-	    String message = ("[" + formattedTime + "] " +
-		    obj.getString("username") + ": " + cleanedString + "\n");
 
 	    messageBuffer.add(message);
 	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
-		    || cleanedString.toLowerCase().contains(this.getUserName())) {
+		    || message.toLowerCase().contains(this.getUserName())) {
 		this.playSound();
 	    }
 	}
+    }
+
+    public String formatMessage(String username, String message, long time, boolean privateMessage) {
+	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
+	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
+	
+	// Add the timestamp
+	Date date = new Date(time);
+	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
+	formatter.setTimeZone(TimeZone.getDefault());
+	String formattedTime = formatter.format(date);
+	message = "[" + formattedTime + "] ";
+	
+	if (privateMessage) 
+	    message += "[Private Message] ";
+	
+	return message += username + ": " + cleanedString + "\n";
+
+
     }
 
     public String getPassword() {
@@ -421,37 +434,30 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     public boolean isLimitChatBuffer() {
-        return limitChatBuffer;
+	return limitChatBuffer;
     }
 
     public void setLimitChatBuffer(boolean limitChatBuffer) {
-        this.limitChatBuffer = limitChatBuffer;
+	this.limitChatBuffer = limitChatBuffer;
     }
 
     public void onPrivateMessage(JSONObject obj) throws JSONException {
-	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
-	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
-	if (!cleanedString.equals("")) {
+	String message = 
+		this.formatMessage(obj.getString("username"), 
+			obj.getString("msg"), (long) obj.get("time"), true );
+
+	if (!message.equals("")) {
 	    if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
 		messageBuffer.remove();
 		MessagesTextArea.setText(MessagesTextArea.getText()
 			.substring(MessagesTextArea.getText().indexOf('\n')+1));
 	    }
-	    long time = (long) obj.get("time");
-	    Date date = new Date(time);
-	    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
-	    formatter.setTimeZone(TimeZone.getDefault());
-	    String formattedTime = formatter.format(date);
-
-	    String message = ("[" + formattedTime + "] " + "[Private Message] " +
-		    obj.getString("username") + ": " + cleanedString + "\n");
-
 	    messageBuffer.add(message);
 	    MessagesTextArea.append(message);
 	    MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
 
 	    if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
-		    || cleanedString.toLowerCase().contains(this.getUserName())) {
+		    || message.toLowerCase().contains(this.getUserName())) {
 		this.playSound();
 	    }
 	}
