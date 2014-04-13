@@ -22,10 +22,10 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private static final long serialVersionUID = -3120953406569989166L;
 
     // Begin variables
-    private JScrollPane MessagesScrollPane;
-    private JTextArea MessagesTextArea;
-    private JScrollPane NewMessageScrollPane;
-    private JTextField NewMessageTextField;
+    private JScrollPane messagesScrollPane;
+    private JTextArea messagesTextArea;
+    private JScrollPane newMessageScrollPane;
+    private JTextField newMessageTextField;
     private JScrollPane userListScrollPane;
     private JTextArea userListTextArea;
 
@@ -60,20 +60,20 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     private void initComponents() {
 
-	MessagesScrollPane = new JScrollPane();
-	MessagesTextArea = new JTextArea();
+	messagesScrollPane = new JScrollPane();
+	messagesTextArea = new JTextArea();
 	userListScrollPane = new JScrollPane();
 	userListTextArea = new JTextArea();
-	NewMessageScrollPane = new JScrollPane();
-	NewMessageTextField = new JTextField();
+	newMessageScrollPane = new JScrollPane();
+	newMessageTextField = new JTextField();
 
 	setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-	MessagesTextArea.setEditable(false);
-	MessagesTextArea.setColumns(20);
-	MessagesTextArea.setLineWrap(true);
-	MessagesTextArea.setRows(5);
-	MessagesScrollPane.setViewportView(MessagesTextArea);
+	messagesTextArea.setEditable(false);
+	messagesTextArea.setColumns(20);
+	messagesTextArea.setLineWrap(true);
+	messagesTextArea.setRows(5);
+	messagesScrollPane.setViewportView(messagesTextArea);
 
 	userListScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 	userListScrollPane.setFocusTraversalKeysEnabled(false);
@@ -87,14 +87,14 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	userListTextArea.setFocusable(false);
 	userListScrollPane.setViewportView(userListTextArea);
 
-	NewMessageTextField.setBorder(null);
-	NewMessageTextField.setFocusTraversalKeysEnabled(false);
-	NewMessageTextField.addActionListener(new java.awt.event.ActionListener() {
+	newMessageTextField.setBorder(null);
+	newMessageTextField.setFocusTraversalKeysEnabled(false);
+	newMessageTextField.addActionListener(new java.awt.event.ActionListener() {
 	    public void actionPerformed(java.awt.event.ActionEvent evt) {
 		NewMessageActionPerformed(evt);
 	    }
 	});
-	NewMessageTextField.addKeyListener(new KeyListener() {
+	newMessageTextField.addKeyListener(new KeyListener() {
 	    @Override
 	    public void keyTyped(KeyEvent e) {
 		if (e.getKeyChar() == '\t') {
@@ -109,7 +109,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    public void keyReleased(KeyEvent e) {}
 	});
 	addWindowFocusListener(this);
-	NewMessageScrollPane.setViewportView(NewMessageTextField);
+	newMessageScrollPane.setViewportView(newMessageTextField);
 
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 	getContentPane().setLayout(layout);
@@ -118,11 +118,11 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		.addGroup(layout.createSequentialGroup()
 			.addContainerGap()
 			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(NewMessageScrollPane)
+				.addComponent(newMessageScrollPane)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(userListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-					.addComponent(MessagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)))
+					.addComponent(messagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)))
 					.addContainerGap())
 		);
 	layout.setVerticalGroup(
@@ -130,10 +130,10 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		.addGroup(layout.createSequentialGroup()
 			.addContainerGap()
 			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(MessagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+				.addComponent(messagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
 				.addComponent(userListScrollPane))
 				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(NewMessageScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+				.addComponent(newMessageScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
 				.addContainerGap())
 		);
 
@@ -141,8 +141,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
-	this.handleGUICommand(NewMessageTextField.getText());
-	NewMessageTextField.setText(null);
+	this.handleGUICommand(newMessageTextField.getText());
+	newMessageTextField.setText(null);
     }    
 
     /**
@@ -160,17 +160,17 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
 
     public void startChat() {
-	MessagesTextArea.append("Connecting...");
+	messagesTextArea.append("Connecting...");
 	chat = new Chat(this);
 	chat.start();
     }
 
     public void disableNewMessages() {
-	NewMessageTextField.setEnabled(false);
+	newMessageTextField.setEnabled(false);
     }
 
     public void enableNewMessages() {
-	NewMessageTextField.setEnabled(true);
+	newMessageTextField.setEnabled(true);
     }
 
     public void handleGUICommand(String data) {
@@ -186,7 +186,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		chat.disconnectChat();
 		this.setUserName("");
 		userListTextArea.setText("");
-		MessagesTextArea.setText("Connecting...");
+		messagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
 	    } else if (command.equals("/login")) {
 		this.handleLogin();
@@ -199,7 +199,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		this.changeColors(255, 255, 255, 0, 0, 0);
 		// End color prefs
 	    } else if (command.equals("/clearchat")) {
-		MessagesTextArea.setText("");
+		messagesTextArea.setText("");
 	    } else if (command.equals("/pm")) {
 		// This could be done better, but I don't want to take the time
 		if (parts.length > 2) {
@@ -265,7 +265,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     @Override
     public void onConnect() {
-	MessagesTextArea.append("done!\n*Type /login to login*\n");
+	messagesTextArea.append("done!\n*Type /login to login*\n");
 	enableNewMessages();
 
 	String room = JOptionPane.showInputDialog(null, "Room", null, WIDTH);
@@ -281,12 +281,12 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     @Override
     public void onDisconnect() {
-	MessagesTextArea.setText("Disconnected!\n");
+	messagesTextArea.setText("Disconnected!\n");
     }
 
     @Override
     public void onConnectFailure() {
-	MessagesTextArea.append("error!\n");
+	messagesTextArea.append("error!\n");
     }
 
     @Override
@@ -313,14 +313,14 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     public void changeColors(int r1, int g1, int b1, int r2, int g2, int b2) {
-	MessagesTextArea.setBackground(new java.awt.Color(r1, g1, b1));
-	MessagesTextArea.setForeground(new java.awt.Color(r2, g2, b2));
+	messagesTextArea.setBackground(new java.awt.Color(r1, g1, b1));
+	messagesTextArea.setForeground(new java.awt.Color(r2, g2, b2));
 
 	userListTextArea.setBackground(new java.awt.Color(r1, g1, b1));
 	userListTextArea.setForeground(new java.awt.Color(r2, g2, b2));
 
-	NewMessageTextField.setBackground(new java.awt.Color(r1, g1, b1));
-	NewMessageTextField.setForeground(new java.awt.Color(r2, g2, b2));
+	newMessageTextField.setBackground(new java.awt.Color(r1, g1, b1));
+	newMessageTextField.setForeground(new java.awt.Color(r2, g2, b2));
     }
 
     public void changeMedia(String media) {
@@ -334,13 +334,13 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
 	if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
 	    messageBuffer.remove();
-	    MessagesTextArea.setText(MessagesTextArea.getText()
-		    .substring(MessagesTextArea.getText().indexOf('\n')+1));
+	    messagesTextArea.setText(messagesTextArea.getText()
+		    .substring(messagesTextArea.getText().indexOf('\n')+1));
 	}
 
 	messageBuffer.add(message);
-	MessagesTextArea.append(message);
-	MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	messagesTextArea.append(message);
+	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
 
 	if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
 		|| message.toLowerCase().contains(this.getUserName())) {
@@ -383,7 +383,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     public void handleTabComplete() {
-	String[] sentence = NewMessageTextField.getText().toString().split(" ");
+	String[] sentence = newMessageTextField.getText().toString().split(" ");
 	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
 	ArrayList<String> users = new ArrayList<String>();
 	String replacedSentence = "";
@@ -401,7 +401,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    for (String word : sentence) {
 		replacedSentence += word + " ";
 	    }
-	    NewMessageTextField.setText(replacedSentence);
+	    newMessageTextField.setText(replacedSentence);
 	} else {
 	    sentence[sentence.length - 1] = this.smallestComplete(users);
 	    for (String word : sentence) {
@@ -409,7 +409,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    }
 	    replacedSentence = 
 		    replacedSentence.substring(0, replacedSentence.length() - 1);
-	    NewMessageTextField.setText(replacedSentence);
+	    newMessageTextField.setText(replacedSentence);
 	}
     }
 
@@ -423,7 +423,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
 	if (!username.isEmpty()) {
 	    chat.login(username, password);
-	    MessagesTextArea.append("You joined as " + username + "\n");
+	    messagesTextArea.append("You joined as " + username + "\n");
 	    this.setUserName(username.toLowerCase());
 	}
     }
@@ -443,12 +443,12 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
 	if (messageBuffer.size() > 100 && isLimitChatBuffer()) {
 	    messageBuffer.remove();
-	    MessagesTextArea.setText(MessagesTextArea.getText()
-		    .substring(MessagesTextArea.getText().indexOf('\n')+1));
+	    messagesTextArea.setText(messagesTextArea.getText()
+		    .substring(messagesTextArea.getText().indexOf('\n')+1));
 	}
 	messageBuffer.add(message);
-	MessagesTextArea.append(message);
-	MessagesTextArea.setCaretPosition(MessagesTextArea.getDocument().getLength());
+	messagesTextArea.append(message);
+	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
 
 	if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
 		|| message.toLowerCase().contains(this.getUserName())) {
