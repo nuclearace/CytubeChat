@@ -200,6 +200,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		// End color prefs
 	    } else if (command.equals("/clearchat")) {
 		messagesTextArea.setText("");
+		messageBuffer.clear();
 	    } else if (command.equals("/pm")) {
 		// This could be done better, but I don't want to take the time
 		if (parts.length > 2) {
