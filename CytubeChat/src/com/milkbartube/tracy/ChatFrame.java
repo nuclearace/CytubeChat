@@ -1,7 +1,10 @@
 package com.milkbartube.tracy;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.net.URL;
@@ -12,6 +15,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -24,12 +29,16 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private static final long serialVersionUID = -3120953406569989166L;
 
     // Begin variables
+    private JButton btnLogin;
+    private JMenuBar menuBar;
+    private JMenu mnMenu;
     private JScrollPane messagesScrollPane;
     private JTextArea messagesTextArea;
     private JScrollPane newMessageScrollPane;
     private JTextField newMessageTextField;
     private JScrollPane userListScrollPane;
     private JTextArea userListTextArea;
+
 
     private Chat chat;
     private Clip clip;
@@ -78,6 +87,57 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	messagesTextArea.setRows(5);
 	messagesScrollPane.setViewportView(messagesTextArea);
 
+	menuBar = new JMenuBar();
+	menuBar.setBackground(Color.DARK_GRAY);
+	setJMenuBar(menuBar);
+
+	mnMenu = new JMenu("Menu");
+	mnMenu.setBackground(Color.DARK_GRAY);
+	menuBar.add(mnMenu);
+
+	btnLogin = new JButton("Login");
+	btnLogin.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		handleLogin();
+	    }
+	});
+	btnLogin.setBackground(Color.WHITE);
+	mnMenu.add(btnLogin);
+
+	JButton btnDisconnect = new JButton("Disconnect");
+	btnDisconnect.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		chat.disconnectChat();
+		userListTextArea.setText("");
+		setTitle("Disconnected!");
+	    }
+	});
+	mnMenu.add(btnDisconnect);
+
+	JButton btnReconnect = new JButton("Reconnect");
+	btnReconnect.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		chat.disconnectChat();
+		setUserName("");
+		userListTextArea.setText("");
+		messagesTextArea.setText("Connecting...");
+		chat.reconnectChat();
+	    }
+	});
+	mnMenu.add(btnReconnect);
+
+	JButton btnQuit = new JButton("Quit");
+	btnQuit.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		System.exit(0);
+	    }
+	});
+	mnMenu.add(btnQuit);
+
 	userListScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 	userListScrollPane.setFocusTraversalKeysEnabled(false);
 	userListScrollPane.setFocusable(false);
@@ -115,30 +175,30 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	newMessageScrollPane.setViewportView(newMessageTextField);
 
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-	getContentPane().setLayout(layout);
 	layout.setHorizontalGroup(
-		layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		layout.createParallelGroup(Alignment.LEADING)
 		.addGroup(layout.createSequentialGroup()
 			.addContainerGap()
-			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(newMessageScrollPane)
+			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+				.addComponent(newMessageScrollPane, GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
 				.addGroup(layout.createSequentialGroup()
-					.addComponent(userListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-					.addComponent(messagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)))
+					.addComponent(userListScrollPane, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(messagesScrollPane, GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)))
 					.addContainerGap())
 		);
 	layout.setVerticalGroup(
-		layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		layout.createParallelGroup(Alignment.LEADING)
 		.addGroup(layout.createSequentialGroup()
 			.addContainerGap()
-			.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(messagesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
-				.addComponent(userListScrollPane))
-				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(newMessageScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+				.addComponent(userListScrollPane, GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+				.addComponent(messagesScrollPane, GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(newMessageScrollPane, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
 				.addContainerGap())
 		);
+	getContentPane().setLayout(layout);
 
 	pack();
     }
