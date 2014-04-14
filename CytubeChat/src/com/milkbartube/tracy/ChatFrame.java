@@ -344,7 +344,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
 
 	if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
-		|| message.toLowerCase().contains(this.getUserName())) {
+		|| obj.getString("msg").toLowerCase().contains(this.getUserName())) {
 	    this.playSound();
 	}
     }
