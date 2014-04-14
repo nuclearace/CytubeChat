@@ -34,6 +34,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private boolean limitChatBuffer = false;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
+    private CytubeUser user = new CytubeUser(false, "", 0);
     private boolean userMuteBoop = true;
     private String userName;
     private boolean windowFocus = false;
@@ -241,7 +242,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		String username = obj.getString("name") ;
 		int rank = (int) obj.get("rank");
 		CytubeUser user = new CytubeUser(afk, username, rank);
-		this.addUser(user);
+		this.addUser(user, true);
 		this.updateUserList();
 	    } else if (event.equals("userLeave")) {
 		this.removeUser(obj.getString("name"));
@@ -301,13 +302,22 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		String username = (String) users.getJSONObject(i).get("name");
 		int rank = (int) users.getJSONObject(i).get("rank");
 		CytubeUser user = new CytubeUser(afk, username, rank);
-		this.addUser(user);
+		this.addUser(user, false);
 	    }
 	    this.updateUserList();
 	}
     }
 
-    public void addUser(CytubeUser user) {
+    public void addUser(CytubeUser user, boolean fromAddUser) {
+	if (user.getName().toLowerCase().equals(
+		this.user.getName().toLowerCase())) {
+	    this.user = user;
+	}
+	if (this.user.getRank() <= 1  && fromAddUser) {
+	    messagesTextArea.append(formatMessage("[Client]", 
+		    user.getName() + " joined the room", 
+		    System.currentTimeMillis(), false));
+	}
 	if (!userList.contains(user)) {
 	    userList.add(user);
 	}
@@ -426,6 +436,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    chat.login(username, password);
 	    messagesTextArea.append("You joined as " + username + "\n");
 	    this.setUserName(username.toLowerCase());
+	   this.user = new CytubeUser(false, username, 0);
 	}
     }
 
@@ -452,7 +463,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
 
 	if (this.clip != null && this.isWindowFocus() && !this.userMuteBoop
-		|| message.toLowerCase().contains(this.getUserName())) {
+		|| obj.getString("msg").toLowerCase().contains(this.getUserName())) {
 	    this.playSound();
 
 	}
@@ -473,6 +484,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     public void removeUser(String username) {
+	messagesTextArea.append(formatMessage("[Client]", username + " left the room", 
+		System.currentTimeMillis(), false));
 	for (CytubeUser user : userList) {
 	    if (user.getName().equals(username)) {
 		userList.remove(user);
