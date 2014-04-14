@@ -8,7 +8,9 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -436,7 +438,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    chat.login(username, password);
 	    messagesTextArea.append("You joined as " + username + "\n");
 	    this.setUserName(username.toLowerCase());
-	   this.user = new CytubeUser(false, username, 0);
+	    this.user = new CytubeUser(false, username, 0);
 	}
     }
 
