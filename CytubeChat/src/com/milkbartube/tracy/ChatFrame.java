@@ -39,7 +39,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private JScrollPane userListScrollPane;
     private JTextArea userListTextArea;
 
-
     private Chat chat;
     private Clip clip;
     private boolean limitChatBuffer = false;
@@ -102,7 +101,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		handleLogin();
 	    }
 	});
-	btnLogin.setBackground(Color.WHITE);
 	mnMenu.add(btnLogin);
 
 	JButton btnDisconnect = new JButton("Disconnect");
