@@ -110,6 +110,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		chat.disconnectChat();
 		userListTextArea.setText("");
 		setTitle("Disconnected!");
+		setUserName(null);
 	    }
 	});
 	mnMenu.add(btnDisconnect);
@@ -123,6 +124,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		userListTextArea.setText("");
 		messagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
+		setUserName(null);
 	    }
 	});
 	mnMenu.add(btnReconnect);
@@ -243,9 +245,10 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		chat.disconnectChat();
 		userListTextArea.setText("");
 		setTitle("Disconnected!");
+		setUserName(null);
 	    } else if (command.equals("/reconnect")) {
 		chat.disconnectChat();
-		this.setUserName("");
+		setUserName(null);
 		userListTextArea.setText("");
 		messagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
