@@ -363,6 +363,8 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     public String formatMessage(String username, String message, long time, boolean privateMessage) {
 	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
+	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 
 	// Add the timestamp
