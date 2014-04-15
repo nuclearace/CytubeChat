@@ -63,12 +63,6 @@ public class RoomDialog extends JDialog {
 			}
 		});
 		okButton.setRequestFocusEnabled(false);
-//		okButton.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//			    setVisible(false);
-//			}
-//		});
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
@@ -77,6 +71,11 @@ public class RoomDialog extends JDialog {
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			    setVisible(false);
+			}
+		});
 	    }
 	}
 	passwordPanel = new JPanel();
