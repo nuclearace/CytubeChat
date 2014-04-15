@@ -30,13 +30,20 @@ public class ChatCallback implements IOCallback, IOAcknowledge {
     public void on(String event, IOAcknowledge ack, Object... data) {
 	try {
 	    callback.on(event, (JSONObject) data[0]);
+	    return;
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    try {
-		callback.onArray(event, new JSONArray(Arrays.asList(data)));
-	    } catch (Exception e1) {
-		e1.printStackTrace();
-	    }
+	}
+	try {
+	    callback.onBoolean(event, (boolean) data[0]);
+	} catch (Exception e2) {
+	    e2.printStackTrace();
+	}
+	try {
+	    callback.onArray(event, new JSONArray(Arrays.asList(data)));
+	    return;
+	} catch (Exception e1) {
+	    e1.printStackTrace();
 	}
     }
 

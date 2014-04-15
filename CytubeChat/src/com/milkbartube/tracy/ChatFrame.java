@@ -36,6 +36,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private JTextArea messagesTextArea;
     private JScrollPane newMessageScrollPane;
     private JTextField newMessageTextField;
+    private String roomPassword;
     private JScrollPane userListScrollPane;
     private JTextArea userListTextArea;
 
@@ -332,15 +333,15 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     public void onConnect() {
 	messagesTextArea.append("done!\n*Type /login to login*\n");
 	enableNewMessages();
+	
+	RoomDialog roomInput = new RoomDialog();
+	roomInput.setModal(true);
+	roomInput.setVisible(true);
 
-	String room = JOptionPane.showInputDialog(null, "Room", null, WIDTH);
+	String room = roomInput.getRoom();
 
-	if (!room.isEmpty()) {
+	if (!room.isEmpty() && roomInput.getPassword().equals("")) {
 	    chat.join(room);
-	} else {
-	    JOptionPane.showMessageDialog(null, 
-		    "Error: room needed");
-	    this.onConnect();
 	}
     }
 
@@ -369,6 +370,15 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    }
 	    this.updateUserList();
 	}
+    }
+    
+    @Override
+    public void onBoolean(String event, boolean bool) {
+	// TODO Auto-generated method stub
+	if (event.equals("needPassword")) {
+	    System.out.println("Need Password");
+	}
+	
     }
 
     public void addUser(CytubeUser user, boolean fromAddUser) {
