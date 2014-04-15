@@ -339,8 +339,9 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	roomInput.setVisible(true);
 
 	String room = roomInput.getRoom();
+	roomPassword = roomInput.getPassword();
 
-	if (!room.isEmpty() && roomInput.getPassword().equals("")) {
+	if (!room.isEmpty()) {
 	    chat.join(room);
 	}
     }
@@ -376,7 +377,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     public void onBoolean(String event, boolean bool) {
 	// TODO Auto-generated method stub
 	if (event.equals("needPassword")) {
-	    System.out.println("Need Password");
+	    chat.sendRoomPassword(roomPassword);
 	}
 	
     }

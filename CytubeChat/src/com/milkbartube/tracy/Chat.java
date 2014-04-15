@@ -74,5 +74,9 @@ public class Chat extends Thread {
     public void privateMessage(JSONObject json) {
 	socket.emit("pm", json);
     }
+    
+    public void sendRoomPassword(String password) {
+	socket.emit("roomPassword", password);
+    }
 
 }
