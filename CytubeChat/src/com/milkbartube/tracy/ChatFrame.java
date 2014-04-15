@@ -333,7 +333,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     public void onConnect() {
 	messagesTextArea.append("done!\n*Type /login to login*\n");
 	enableNewMessages();
-	
+
 	RoomDialog roomInput = new RoomDialog();
 	roomInput.setModal(true);
 	roomInput.setVisible(true);
@@ -372,14 +372,19 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    this.updateUserList();
 	}
     }
-    
+
     @Override
     public void onBoolean(String event, boolean bool) {
 	// TODO Auto-generated method stub
 	if (event.equals("needPassword")) {
-	    chat.sendRoomPassword(roomPassword);
+	    if (!roomPassword.equals("")) {
+		chat.sendRoomPassword(roomPassword);
+	    } else {
+		String password = JOptionPane.showInputDialog("Room password");
+		chat.sendRoomPassword(password);
+	    }
 	}
-	
+
     }
 
     public void addUser(CytubeUser user, boolean fromAddUser) {

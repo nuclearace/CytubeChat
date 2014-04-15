@@ -76,7 +76,7 @@ public class Chat extends Thread {
     }
     
     public void sendRoomPassword(String password) {
-	socket.emit("roomPassword", password);
+	socket.emit("channelPassword", password);
     }
 
 }
