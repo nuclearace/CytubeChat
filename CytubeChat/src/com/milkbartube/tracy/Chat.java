@@ -62,6 +62,7 @@ public class Chat extends Thread {
 
     public void join(String room) {
 	try {
+	    System.out.println("Chat got room " + room);
 	    JSONObject json = new JSONObject();
 	    json.putOpt("name", room);
 	    socket.emit("initChannelCallbacks");
@@ -74,9 +75,17 @@ public class Chat extends Thread {
     public void privateMessage(JSONObject json) {
 	socket.emit("pm", json);
     }
-    
+
     public void sendRoomPassword(String password) {
 	socket.emit("channelPassword", password);
+    }
+
+    public SocketIO getSocket() {
+        return socket;
+    }
+
+    public void setSocket(SocketIO socket) {
+        this.socket = socket;
     }
 
 }

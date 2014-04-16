@@ -7,7 +7,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
-
 import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -59,7 +58,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
 	setChat(new Chat(this));
 	getChat().start();
-	getChat().join(room);
+	System.out.println("Joining " + room);
     }
 
     /**
@@ -149,15 +148,20 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		this.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"), false);
 
-	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
+	if (parent.getTabbedPane().getSelectedComponent().equals(this) &&
+		messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
 	    messagesTextArea.setText(getMessagesTextArea().getText()
 		    .substring(getMessagesTextArea().getText().indexOf('\n')+1));
 	}
 
 	messageBuffer.add(message);
-	messagesTextArea.append(message);
-	getMessagesTextArea().setCaretPosition(getMessagesTextArea().getDocument().getLength());
+	//if (parent.getTabbedPane().getSelectedComponent().equals(this)) {
+	    messagesTextArea.append(message);
+	    getMessagesTextArea()
+	    .setCaretPosition(getMessagesTextArea().getDocument().getLength());
+	//}
+
 
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
 		|| obj.getString("msg").toLowerCase().contains(getUsername())) {
@@ -257,7 +261,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
 	if (!username.isEmpty()) {
 	    getChat().login(username, password);
-	    getMessagesTextArea().append("You joined as " + username + "\n");
+	    if (parent.getTabbedPane().getSelectedComponent().equals(this)) 
+		getMessagesTextArea().append("You joined as " + username + "\n");
 	    this.setUsername(username.toLowerCase());
 	    this.setUser(new CytubeUser(false, username, 0));
 	}
@@ -296,8 +301,10 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
 
     private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
-	this.handleGUICommand(getNewMessageTextField().getText());
-	getNewMessageTextField().setText(null);
+	//if (parent.getTabbedPane().getSelectedComponent().equals(this)) {
+	    this.handleGUICommand(getNewMessageTextField().getText());
+	    getNewMessageTextField().setText(null);
+	//}
     }
 
     private void removeUser(String username) {
@@ -398,7 +405,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		break;
 	    }
 	}
-	userlistTextArea.setText(str);
+	//if (parent.getTabbedPane().getSelectedComponent().equals(this)) 
+	    userlistTextArea.setText(str);
     }
 
     private void privateMessage(String to, String message) throws JSONException {
@@ -447,7 +455,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     @Override
     public void onArray(String event, JSONArray data) throws JSONException {
-	// TODO Auto-generated method stub
 	if (event.equals("userlist")) {
 	    userList.clear();
 	    JSONArray users = data.getJSONArray(0);
@@ -461,7 +468,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	    }
 	    this.updateUserList();
 	}
-
     }
 
     @Override
@@ -499,8 +505,10 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		    .substring(messagesTextArea.getText().indexOf('\n')+1));
 	}
 	messageBuffer.add(message);
-	messagesTextArea.append(message);
-	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
+//	if (parent.getTabbedPane().getSelectedComponent().equals(this)) {
+	    messagesTextArea.append(message);
+	    messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
+	//}
 
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
 		|| obj.getString("msg").toLowerCase().contains(getName())) {
@@ -512,7 +520,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     @Override
     public void onConnect() {
-
+	getChat().join(room);
     }
 
     @Override
@@ -582,5 +590,44 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     public void setUsername(String username) {
 	this.username = username;
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((room == null) ? 0 : room.hashCode());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	ChatPanel other = (ChatPanel) obj;
+	if (room == null) {
+	    if (other.room != null)
+		return false;
+	} else if (!room.equals(other.room))
+	    return false;
+	return true;
+    }
+
+    @Override
+    public String toString() {
+	return "ChatPanel [messagesScrollPane=" + messagesScrollPane
+		+ ", messagesTextArea=" + messagesTextArea
+		+ ", newMessageScrollPane=" + newMessageScrollPane
+		+ ", newMessageTextField=" + newMessageTextField
+		+ ", userListScrollPane=" + userListScrollPane
+		+ ", userlistTextArea=" + userlistTextArea + ", chat=" + chat
+		+ ", currentMedia=" + currentMedia + ", parent=" + parent.toString()
+		+ ", room=" + room + ", roomPassword=" + roomPassword
+		+ ", username=" + username.toString() + ", messageBuffer=" + messageBuffer
+		+ ", userList=" + userList + ", user=" + user + "]";
     }
 }

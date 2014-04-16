@@ -48,10 +48,10 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private String username;
     private String roomPassword;
     private boolean windowFocus = false;
+    private JMenuItem mntmJoinRoom;
     // End variables
 
     public ChatFrame() {
-    	setPreferredSize(new Dimension(500, 400));
 
 	initComponents();
 	setVisible(true);
@@ -113,6 +113,18 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 		setUserName(null);
 	    }
 	});
+
+	mntmJoinRoom = new JMenuItem("Join Room");
+	mntmJoinRoom.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_J, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmJoinRoom.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		joinRoom();
+	    }
+	});
+	mnMenu.add(mntmJoinRoom);
 	mnMenu.add(mntmDisconnect);
 
 	mntmReconnect = new JMenuItem("Reconnect");
@@ -155,12 +167,12 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 	layout.setHorizontalGroup(
 		layout.createParallelGroup(Alignment.LEADING)
-			.addComponent(tabbedPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
-	);
+		.addComponent(tabbedPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+		);
 	layout.setVerticalGroup(
 		layout.createParallelGroup(Alignment.LEADING)
-			.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
-	);
+		.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+		);
 	getContentPane().setLayout(layout);
 
 	pack();
@@ -311,6 +323,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	for(int i = 0; i < totalTabs; i++)
 	{
 	    ChatPanel c = (ChatPanel) tabbedPane.getTabComponentAt(i);
+	    System.out.println("Got pane " + c.toString());
 
 	    c.getMessagesTextArea().setBackground(new java.awt.Color(r1, g1, b1));
 	    c.getMessagesTextArea().setForeground(new java.awt.Color(r2, g2, b2));
@@ -618,5 +631,13 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     public void setClip(Clip clip) {
 	this.clip = clip;
+    }
+
+    public JTabbedPane getTabbedPane() {
+	return tabbedPane;
+    }
+
+    public void setTabbedPane(JTabbedPane tabbedPane) {
+	this.tabbedPane = tabbedPane;
     }
 }
