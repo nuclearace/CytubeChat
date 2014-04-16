@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 
 public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocusListener {
 
@@ -39,8 +40,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private JMenuItem mntmReconnect;
     private JMenuItem mntmQuit;
     private JTabbedPane tabbedPane;
-    private JScrollPane newMessageScrollPane;
-    private JTextField newMessageTextField;
 
     private Chat chat;
     private Clip clip;
@@ -52,11 +51,11 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     // End variables
 
     public ChatFrame() {
+    	setPreferredSize(new Dimension(500, 400));
 
 	initComponents();
 	setVisible(true);
 	setLocationRelativeTo(null);
-	disableNewMessages();
 	try {
 	    URL soundFile = new URL("http://cytu.be/boop.wav");
 	    AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
@@ -72,8 +71,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     }
 
     private void initComponents() {
-	newMessageScrollPane = new JScrollPane();
-	newMessageTextField = new JTextField();
 
 	setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -150,16 +147,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	});
 	mnMenu.add(mntmQuit);
 
-	newMessageTextField.setBorder(null);
-	newMessageTextField.setFocusTraversalKeysEnabled(false);
-	newMessageTextField.addActionListener(new java.awt.event.ActionListener() {
-	    public void actionPerformed(java.awt.event.ActionEvent evt) {
-		NewMessageActionPerformed(evt);
-	    }
-	});
-
 	addWindowFocusListener(this);
-	newMessageScrollPane.setViewportView(newMessageTextField);
 
 	tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 	tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -167,41 +155,20 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 	layout.setHorizontalGroup(
 		layout.createParallelGroup(Alignment.LEADING)
-		.addGroup(layout.createSequentialGroup()
-			.addContainerGap()
-			.addComponent(newMessageScrollPane, GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
-			.addContainerGap())
-			.addComponent(tabbedPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
-		);
+			.addComponent(tabbedPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+	);
 	layout.setVerticalGroup(
 		layout.createParallelGroup(Alignment.LEADING)
-		.addGroup(layout.createSequentialGroup()
-			.addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-			.addPreferredGap(ComponentPlacement.RELATED, 414, Short.MAX_VALUE)
-			.addComponent(newMessageScrollPane, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
-			.addContainerGap())
-		);
+			.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+	);
 	getContentPane().setLayout(layout);
 
 	pack();
     }
 
-    private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
-	this.handleGUICommand(newMessageTextField.getText());
-	newMessageTextField.setText(null);
-    }    
-
     public void startChat() {
 	chat = new Chat(this);
 	chat.start();
-    }
-
-    public void disableNewMessages() {
-	newMessageTextField.setEnabled(false);
-    }
-
-    public void enableNewMessages() {
-	newMessageTextField.setEnabled(true);
     }
 
     public void handleGUICommand(String data) {
@@ -289,7 +256,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
     @Override
     public void onConnect() {
-	enableNewMessages();
 	joinRoom();
     }
 
@@ -433,7 +399,9 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     //    }
 
     public void handleLogin() {
-	if (this.username != null) {
+	ChatPanel panel = 
+		(ChatPanel) tabbedPane.getSelectedComponent();
+	if (panel.getUsername() != null) {
 	    JOptionPane.showMessageDialog(null, "Already logged in");
 	    return;
 	}
@@ -446,9 +414,9 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	String password = login.getPassword();
 
 	if (!username.isEmpty()) {
-	    chat.login(username, password);
-	    this.setUserName(username.toLowerCase());
-	    //this.user = new CytubeUser(false, username, 0);
+	    panel.getChat().login(username, password);
+	    panel.setUsername(username.toLowerCase());
+	    panel.setUser(new CytubeUser(false, username, 0));
 	}
     }
 
@@ -469,7 +437,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	roomPassword = roomInput.getPassword();
 
 	if (!room.isEmpty()) {
-	    chat.join(room);
 	    tabbedPane.addTab(room, 
 		    new ChatPanel(username, room, roomPassword, this));
 	}

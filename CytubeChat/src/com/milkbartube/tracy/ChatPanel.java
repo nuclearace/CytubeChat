@@ -57,8 +57,9 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	this.username = username;
 	this.parent = frame;
 
-	chat = new Chat(this);
-	chat.start();
+	setChat(new Chat(this));
+	getChat().start();
+	getChat().join(room);
     }
 
     /**
@@ -129,10 +130,10 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     private void addUser(CytubeUser user, boolean fromAddUser) {
 	if (user.getName().toLowerCase().equals(
-		this.user.getName().toLowerCase())) {
-	    this.user = user;
+		this.getUser().getName().toLowerCase())) {
+	    this.setUser(user);
 	}
-	if (this.user.getRank() <= 1  && fromAddUser) {
+	if (this.getUser().getRank() <= 1  && fromAddUser) {
 	    getMessagesTextArea().append(formatMessage("[Client]", 
 		    user.getName() + " joined the room", 
 		    System.currentTimeMillis(), false));
@@ -190,14 +191,14 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	    String[] parts = data.split(" ");
 	    String command = parts[0];
 	    if (command.equals("/disconnect")) {
-		chat.disconnectChat();
+		getChat().disconnectChat();
 		userlistTextArea.setText("");
 		messagesTextArea.setText("Disconnected");
 	    } else if (command.equals("/reconnect")) {
-		chat.disconnectChat();
+		getChat().disconnectChat();
 		userlistTextArea.setText("");
 		messagesTextArea.setText("Disconnected");
-		chat.reconnectChat();
+		getChat().reconnectChat();
 	    } else if (command.equals("/login")) {
 		handleLogin();
 	    } else if (command.equals("/clearchat")) {
@@ -219,10 +220,23 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		    }
-		} else
-		    return;
+		}
+	    } else if (command.equals("/grey")) {
+		// Begin color prefs
+		parent.changeColors(71, 77, 70, 255, 255, 255);
+	    } else if (command.equals("/black")) {
+		parent.changeColors(0, 0, 0, 255, 255, 255);
+	    } else if (command.equals("/white")) {
+		parent.changeColors(255, 255, 255, 0, 0, 0);
+		// End color prefs
+	    } else if (command.equals("/sound")) {
+		parent.setUserMuteBoop(!parent.isUserMuteBoop());
+	    } else if (command.equals("/chatbuffer")) {
+		parent.setLimitChatBuffer(!parent.isLimitChatBuffer());
+	    } else if (command.equals("/joinroom")) {
+		parent.joinRoom();
 	    } else 
-		chat.sendMessage(data);
+		getChat().sendMessage(data);
 	} else
 	    return;
     }
@@ -242,10 +256,10 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	String password = login.getPassword();
 
 	if (!username.isEmpty()) {
-	    chat.login(username, password);
+	    getChat().login(username, password);
 	    getMessagesTextArea().append("You joined as " + username + "\n");
 	    this.setUsername(username.toLowerCase());
-	    this.user = new CytubeUser(false, username, 0);
+	    this.setUser(new CytubeUser(false, username, 0));
 	}
     }
 
@@ -393,7 +407,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	json.putOpt("msg", message);
 	json.putOpt("meta", "");
 
-	chat.privateMessage(json);
+	getChat().privateMessage(json);
 
     }
 
@@ -454,10 +468,10 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
     public void onBoolean(String event, boolean bool) {
 	if (event.equals("needPassword")) {
 	    if (!roomPassword.equals("")) {
-		chat.sendRoomPassword(roomPassword);
+		getChat().sendRoomPassword(roomPassword);
 	    } else {
 		String password = JOptionPane.showInputDialog("Room password");
-		chat.sendRoomPassword(password);
+		getChat().sendRoomPassword(password);
 	    }
 	}
     }
@@ -513,6 +527,14 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     }
 
+    public Chat getChat() {
+	return chat;
+    }
+
+    public void setChat(Chat chat) {
+	this.chat = chat;
+    }
+
     public String getCurrentMedia() {
 	return currentMedia;
     }
@@ -527,6 +549,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     public void setMessagesTextArea(JTextArea messagesTextArea) {
 	this.messagesTextArea = messagesTextArea;
+	messagesTextArea.setLineWrap(true);
     }
 
     public JTextField getNewMessageTextField() {
@@ -535,6 +558,14 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     public void setNewMessageTextField(JTextField newMessageTextField) {
 	this.newMessageTextField = newMessageTextField;
+    }
+
+    public CytubeUser getUser() {
+	return user;
+    }
+
+    public void setUser(CytubeUser user) {
+	this.user = user;
     }
 
     public JTextArea getUserlistTextArea() {
