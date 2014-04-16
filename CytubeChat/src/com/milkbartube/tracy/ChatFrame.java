@@ -457,23 +457,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	return message += username + ": " + cleanedString + "\n";
     }
 
-    public String getPassword() {
-	JPanel panel = new JPanel();
-	JLabel label = new JLabel("Enter a password:");
-	JPasswordField passwordField = new JPasswordField(20);
-	panel.add(label);
-	panel.add(passwordField);
-	String[] options = new String[]{"OK", "Guest Login"};
-	int x = JOptionPane.showOptionDialog(null, panel, "Enter Password",
-		JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-		null, options, options[0]);
-	if (x == 0) {
-	    char[] passwordCharArray = passwordField.getPassword();
-	    return new String(passwordCharArray);
-	}
-	return null;
-    }
-
     public void handleTabComplete() {
 	String[] sentence = newMessageTextField.getText().toString().split(" ");
 	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
@@ -510,8 +493,13 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    JOptionPane.showMessageDialog(null, "Already logged in");
 	    return;
 	}
-	String username = JOptionPane.showInputDialog(null, "Nickname", null, WIDTH);
-	String password = this.getPassword();
+	
+	LoginDialog login = new LoginDialog();
+	login.setModal(true);
+	login.setVisible(true);
+	
+	String username = login.getUsername();
+	String password = login.getPassword();
 
 	if (!username.isEmpty()) {
 	    chat.login(username, password);
