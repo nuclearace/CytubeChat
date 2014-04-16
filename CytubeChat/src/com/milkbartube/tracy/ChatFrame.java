@@ -212,7 +212,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
 	int totalTabs = tabbedPane.getTabCount();
 	for(int i = 0; i < totalTabs; i++) {
-	    ChatPanel c = (ChatPanel) tabbedPane.getComponent(i);
+	    ChatPanel c = (ChatPanel) tabbedPane.getComponentAt(i);
 	    if (c.getRoom().toLowerCase().equals(room.toLowerCase()))
 		alreadyInRoom = true;
 	}

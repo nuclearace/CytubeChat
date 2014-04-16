@@ -553,11 +553,11 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
     }
 
     public String getRoom() {
-        return room;
+	return room;
     }
 
     public void setRoom(String room) {
-        this.room = room;
+	this.room = room;
     }
 
     public CytubeUser getUser() {
