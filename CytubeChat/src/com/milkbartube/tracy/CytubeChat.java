@@ -23,7 +23,7 @@ public class CytubeChat {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
-	} else if (os.equals("Windows"))
+	} else if (os.equals("Windows 7") || os.equals("Windows 8"))
 	try {
 	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (ClassNotFoundException | InstantiationException
