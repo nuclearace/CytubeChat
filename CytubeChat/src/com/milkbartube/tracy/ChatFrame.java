@@ -98,11 +98,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	setJMenuBar(menuBar);
 
 	mnMenu = new JMenu("Menu");
-	mnMenu.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
-	    }
-	});
 	mnMenu.setBackground(Color.WHITE);
 	menuBar.add(mnMenu);
 
