@@ -13,10 +13,6 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
@@ -32,7 +28,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private JMenuItem mntmQuit;
     private JTabbedPane tabbedPane;
 
-    private Chat chat;
     private Clip clip;
     private boolean limitChatBuffer = false;
     private boolean userMuteBoop = true;
