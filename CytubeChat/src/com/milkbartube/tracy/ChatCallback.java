@@ -36,6 +36,7 @@ public class ChatCallback implements IOCallback, IOAcknowledge {
 	}
 	try {
 	    callback.onBoolean(event, (boolean) data[0]);
+	    return;
 	} catch (Exception e2) {
 	    e2.printStackTrace();
 	}
