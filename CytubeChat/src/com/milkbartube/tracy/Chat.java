@@ -62,7 +62,6 @@ public class Chat extends Thread {
 
     public void join(String room) {
 	try {
-	    System.out.println("Chat got room " + room);
 	    JSONObject json = new JSONObject();
 	    json.putOpt("name", room);
 	    socket.emit("initChannelCallbacks");

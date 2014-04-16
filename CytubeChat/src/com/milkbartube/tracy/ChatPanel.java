@@ -58,7 +58,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
 	setChat(new Chat(this));
 	getChat().start();
-	System.out.println("Joining " + room);
     }
 
     /**
@@ -148,20 +147,16 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		this.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"), false);
 
-	if (parent.getTabbedPane().getSelectedComponent().equals(this) &&
-		messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
+	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
 	    messagesTextArea.setText(getMessagesTextArea().getText()
 		    .substring(getMessagesTextArea().getText().indexOf('\n')+1));
 	}
 
 	messageBuffer.add(message);
-	//if (parent.getTabbedPane().getSelectedComponent().equals(this)) {
-	    messagesTextArea.append(message);
-	    getMessagesTextArea()
-	    .setCaretPosition(getMessagesTextArea().getDocument().getLength());
-	//}
-
+	messagesTextArea.append(message);
+	getMessagesTextArea()
+	.setCaretPosition(getMessagesTextArea().getDocument().getLength());
 
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
 		|| obj.getString("msg").toLowerCase().contains(getUsername())) {
@@ -301,10 +296,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
 
     private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
-	//if (parent.getTabbedPane().getSelectedComponent().equals(this)) {
-	    this.handleGUICommand(getNewMessageTextField().getText());
-	    getNewMessageTextField().setText(null);
-	//}
+	this.handleGUICommand(getNewMessageTextField().getText());
+	getNewMessageTextField().setText(null);
     }
 
     private void removeUser(String username) {
@@ -405,8 +398,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		break;
 	    }
 	}
-	//if (parent.getTabbedPane().getSelectedComponent().equals(this)) 
-	    userlistTextArea.setText(str);
+	userlistTextArea.setText(str);
     }
 
     private void privateMessage(String to, String message) throws JSONException {
@@ -505,10 +497,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		    .substring(messagesTextArea.getText().indexOf('\n')+1));
 	}
 	messageBuffer.add(message);
-//	if (parent.getTabbedPane().getSelectedComponent().equals(this)) {
-	    messagesTextArea.append(message);
-	    messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
-	//}
+	messagesTextArea.append(message);
+	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
 
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
 		|| obj.getString("msg").toLowerCase().contains(getName())) {
@@ -566,6 +556,15 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     public void setNewMessageTextField(JTextField newMessageTextField) {
 	this.newMessageTextField = newMessageTextField;
+	newMessageTextField.setFocusTraversalKeysEnabled(false);
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
     }
 
     public CytubeUser getUser() {
@@ -627,7 +626,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		+ ", userlistTextArea=" + userlistTextArea + ", chat=" + chat
 		+ ", currentMedia=" + currentMedia + ", parent=" + parent.toString()
 		+ ", room=" + room + ", roomPassword=" + roomPassword
-		+ ", username=" + username.toString() + ", messageBuffer=" + messageBuffer
+		+ ", username=" + username + ", messageBuffer=" + messageBuffer
 		+ ", userList=" + userList + ", user=" + user + "]";
     }
 }

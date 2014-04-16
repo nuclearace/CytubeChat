@@ -11,8 +11,11 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import javax.swing.JPasswordField;
 
 public class RoomDialog extends JDialog {
 
@@ -20,9 +23,9 @@ public class RoomDialog extends JDialog {
     private final JPanel contentPanel = new JPanel();
     private JTextField roomTextField;
     private JPanel buttonPane;
-    private JTextField passwordTextField;
     private JPanel passwordPanel;
     private JLabel lblRoomPassword;
+    private JPasswordField passwordField;
 
     /**
      * Launch the application.
@@ -79,26 +82,25 @@ public class RoomDialog extends JDialog {
 	passwordPanel.setRequestFocusEnabled(false);
 
 	lblRoomPassword = new JLabel("Room Password");
-
-	passwordTextField = new JTextField();
-	passwordTextField.setColumns(10);
+	
+	passwordField = new JPasswordField();
 	GroupLayout gl_passwordPanel = new GroupLayout(passwordPanel);
 	gl_passwordPanel.setHorizontalGroup(
 		gl_passwordPanel.createParallelGroup(Alignment.LEADING)
-		.addGroup(gl_passwordPanel.createSequentialGroup()
-			.addGroup(gl_passwordPanel.createParallelGroup(Alignment.LEADING)
-				.addComponent(passwordTextField, GroupLayout.PREFERRED_SIZE, 201, GroupLayout.PREFERRED_SIZE)
-				.addComponent(lblRoomPassword))
-				.addContainerGap(100, Short.MAX_VALUE))
-		);
+			.addGroup(gl_passwordPanel.createSequentialGroup()
+				.addGroup(gl_passwordPanel.createParallelGroup(Alignment.LEADING)
+					.addComponent(lblRoomPassword)
+					.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, 210, GroupLayout.PREFERRED_SIZE))
+				.addContainerGap(91, Short.MAX_VALUE))
+	);
 	gl_passwordPanel.setVerticalGroup(
 		gl_passwordPanel.createParallelGroup(Alignment.LEADING)
-		.addGroup(gl_passwordPanel.createSequentialGroup()
-			.addComponent(lblRoomPassword)
-			.addPreferredGap(ComponentPlacement.RELATED)
-			.addComponent(passwordTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-			.addContainerGap(12, Short.MAX_VALUE))
-		);
+			.addGroup(gl_passwordPanel.createSequentialGroup()
+				.addComponent(lblRoomPassword)
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addContainerGap(12, Short.MAX_VALUE))
+	);
 	passwordPanel.setLayout(gl_passwordPanel);
 	GroupLayout groupLayout = new GroupLayout(getContentPane());
 	groupLayout.setHorizontalGroup(
@@ -129,6 +131,7 @@ public class RoomDialog extends JDialog {
     }
 
     public String getPassword() {
-	return passwordTextField.getText();
+	char[] passwordCharArray = passwordField.getPassword();
+	return new String(passwordCharArray);
     }
 }
