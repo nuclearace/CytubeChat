@@ -1,26 +1,18 @@
 package com.milkbartube.tracy;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,12 +21,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
 
-public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocusListener {
+public class ChatFrame extends JFrame implements WindowFocusListener {
 
     private static final long serialVersionUID = -3120953406569989166L;
     private JMenuBar menuBar;
     private JMenu mnMenu;
-    private JPanel chatPane;
     private JMenuItem mntmLogin;
     private JMenuItem mntmDisconnect;
     private JMenuItem mntmReconnect;
@@ -69,7 +60,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    e.printStackTrace();
 	}
 
-	startChat();
+	joinRoom();
     }
 
     private void initComponents() {
@@ -179,40 +170,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 
 	pack();
     }
-
-    public void startChat() {
-	chat = new Chat(this);
-	chat.start();
-    }
-
-    @Override
-    public void callback(JSONArray data) throws JSONException {}
-
-    @Override
-    public void on(String event, JSONObject obj) {}
-
-    @Override
-    public void onMessage(String message) {}
-
-    @Override
-    public void onMessage(JSONObject json) {}
-
-    @Override
-    public void onConnect() {
-	joinRoom();
-    }
-
-    @Override
-    public void onDisconnect() {}
-
-    @Override
-    public void onConnectFailure() {}
-
-    @Override
-    public void onArray(String event, JSONArray data) throws JSONException {}
-
-    @Override
-    public void onBoolean(String event, boolean bool) {}
 
     public void changeColors(int r1, int g1, int b1, int r2, int g2, int b2) {
 	int totalTabs = tabbedPane.getTabCount();
