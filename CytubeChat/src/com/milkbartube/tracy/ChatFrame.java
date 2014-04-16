@@ -74,7 +74,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	}
 
 	startChat();
-
     }
 
     private void initComponents() {
@@ -95,7 +94,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	messagesScrollPane.setViewportView(messagesTextArea);
 
 	menuBar = new JMenuBar();
-	menuBar.setBackground(Color.DARK_GRAY);
+	menuBar.setBackground(Color.WHITE);
 	setJMenuBar(menuBar);
 
 	mnMenu = new JMenu("Menu");
@@ -104,7 +103,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    public void mouseClicked(MouseEvent e) {
 	    }
 	});
-	mnMenu.setBackground(Color.DARK_GRAY);
+	mnMenu.setBackground(Color.WHITE);
 	menuBar.add(mnMenu);
 
 	mntmLogin = new JMenuItem("Login");
