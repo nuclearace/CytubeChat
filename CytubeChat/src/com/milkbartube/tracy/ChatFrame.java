@@ -24,7 +24,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private JMenu mnMenu;
     private JMenuItem mntmLogin;
     private JMenuItem mntmDisconnect;
-    private JMenuItem mntmReconnect;
     private JMenuItem mntmQuit;
     private JTabbedPane tabbedPane;
 
@@ -120,21 +119,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 			.getMenuShortcutKeyMask())));
 	mnMenu.add(mntmCloseTab);
 	mnMenu.add(mntmDisconnect);
-
-	mntmReconnect = new JMenuItem("Reconnect");
-	mntmReconnect.setAccelerator(
-		KeyStroke.getKeyStroke(KeyEvent.VK_R, (Toolkit.getDefaultToolkit()
-			.getMenuShortcutKeyMask())));
-	mntmReconnect.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
-		c.getChat().disconnectChat();
-		c.getMessagesTextArea().append("Reconnecting..\n");
-		c.setUsername(null);
-	    }
-	});
-	mnMenu.add(mntmReconnect);
 
 	mntmQuit = new JMenuItem("Quit");
 	mntmQuit.setAccelerator(

@@ -193,11 +193,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		getChat().disconnectChat();
 		userlistTextArea.setText("");
 		messagesTextArea.setText("Disconnected");
-	    } else if (command.equals("/reconnect")) {
-		getChat().disconnectChat();
-		userlistTextArea.setText("");
-		messagesTextArea.setText("Disconnected");
-		getChat().reconnectChat();
 	    } else if (command.equals("/login")) {
 		handleLogin();
 	    } else if (command.equals("/clearchat")) {
@@ -256,8 +251,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
 	if (!username.isEmpty()) {
 	    getChat().login(username, password);
-	    if (parent.getTabbedPane().getSelectedComponent().equals(this)) 
-		getMessagesTextArea().append("You joined as " + username + "\n");
 	    this.setUsername(username.toLowerCase());
 	    this.setUser(new CytubeUser(false, username, 0));
 	}
