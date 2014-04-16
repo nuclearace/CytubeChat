@@ -1,12 +1,14 @@
 package com.milkbartube.tracy;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,12 +26,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+
 public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocusListener {
 
     private static final long serialVersionUID = -3120953406569989166L;
-
-    // Begin variables
-    private JButton btnLogin;
     private JMenuBar menuBar;
     private JMenu mnMenu;
     private JScrollPane messagesScrollPane;
@@ -49,9 +52,14 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
     private boolean userMuteBoop = true;
     private String userName;
     private boolean windowFocus = false;
+    private JMenuItem mntmLogin;
+    private JMenuItem mntmDisconnect;
+    private JMenuItem mntmReconnect;
+    private JMenuItem mntmQuit;
     // End variables
 
     public ChatFrame() {
+
 	initComponents();
 	setVisible(true);
 	setLocationRelativeTo(null);
@@ -68,6 +76,7 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	}
 
 	startChat();
+
     }
 
     private void initComponents() {
@@ -92,52 +101,67 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	setJMenuBar(menuBar);
 
 	mnMenu = new JMenu("Menu");
+	mnMenu.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+	    }
+	});
 	mnMenu.setBackground(Color.DARK_GRAY);
 	menuBar.add(mnMenu);
 
-	btnLogin = new JButton("Login");
-	btnLogin.addMouseListener(new MouseAdapter() {
+	mntmLogin = new JMenuItem("Login");
+	mntmLogin.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_L, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmLogin.addActionListener(new ActionListener() {
 	    @Override
-	    public void mouseClicked(MouseEvent e) {
+	    public void actionPerformed(ActionEvent e) {
 		handleLogin();
 	    }
 	});
-	mnMenu.add(btnLogin);
+	mnMenu.add(mntmLogin);
 
-	JButton btnDisconnect = new JButton("Disconnect");
-	btnDisconnect.addMouseListener(new MouseAdapter() {
+	mntmDisconnect = new JMenuItem("Disconnect");
+	mntmDisconnect.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_D, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmDisconnect.addActionListener(new ActionListener() {
 	    @Override
-	    public void mouseClicked(MouseEvent e) {
+	    public void actionPerformed(ActionEvent e) {
 		chat.disconnectChat();
 		userListTextArea.setText("");
 		setTitle("Disconnected!");
 		setUserName(null);
 	    }
 	});
-	mnMenu.add(btnDisconnect);
+	mnMenu.add(mntmDisconnect);
 
-	JButton btnReconnect = new JButton("Reconnect");
-	btnReconnect.addMouseListener(new MouseAdapter() {
+	mntmReconnect = new JMenuItem("Reconnect");
+	mntmReconnect.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_R, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmReconnect.addActionListener(new ActionListener() {
 	    @Override
-	    public void mouseClicked(MouseEvent e) {
+	    public void actionPerformed(ActionEvent e) {
 		chat.disconnectChat();
-		setUserName("");
+		setUserName(null);
 		userListTextArea.setText("");
 		messagesTextArea.setText("Connecting...");
 		chat.reconnectChat();
-		setUserName(null);
 	    }
 	});
-	mnMenu.add(btnReconnect);
+	mnMenu.add(mntmReconnect);
 
-	JButton btnQuit = new JButton("Quit");
-	btnQuit.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
+	mntmQuit = new JMenuItem("Quit");
+	mntmQuit.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_Q, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmQuit.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
 		System.exit(0);
 	    }
 	});
-	mnMenu.add(btnQuit);
+	mnMenu.add(mntmQuit);
 
 	userListScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 	userListScrollPane.setFocusTraversalKeysEnabled(false);
@@ -208,20 +232,6 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	this.handleGUICommand(newMessageTextField.getText());
 	newMessageTextField.setText(null);
     }    
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-	java.awt.EventQueue.invokeLater(new Runnable() {
-
-	    @Override
-	    public void run() {
-		new ChatFrame();
-	    }
-	});
-    }
-
 
     public void startChat() {
 	messagesTextArea.append("Connecting...");
@@ -493,11 +503,11 @@ public class ChatFrame extends JFrame implements ChatCallbackAdapter, WindowFocu
 	    JOptionPane.showMessageDialog(null, "Already logged in");
 	    return;
 	}
-	
+
 	LoginDialog login = new LoginDialog();
 	login.setModal(true);
 	login.setVisible(true);
-	
+
 	String username = login.getUsername();
 	String password = login.getPassword();
 
