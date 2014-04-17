@@ -170,8 +170,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
-	System.out.println(messageBuffer.size());
-
 
 	// Add the timestamp
 	Date date = new Date(time);
@@ -180,7 +178,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	String formattedTime = formatter.format(date);
 
 	if (!(messageBuffer.size() == 0)) {
-	    message = "\n[" + formattedTime + "]";
+	    message = "\n[" + formattedTime + "] ";
 	} else {
 	    message = "[" + formattedTime + "] ";
 	}
