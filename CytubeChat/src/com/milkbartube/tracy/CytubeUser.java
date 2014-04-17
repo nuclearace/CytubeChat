@@ -7,7 +7,6 @@ public class CytubeUser {
     private int rank;
    
     public CytubeUser(boolean afk, String name, int rank) {
-	super();
 	this.afk = afk;
 	this.name = name;
 	this.rank = rank;

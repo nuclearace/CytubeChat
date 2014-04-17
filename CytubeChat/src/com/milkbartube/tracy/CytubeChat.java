@@ -5,9 +5,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class CytubeChat {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
 
 	String os = System.getProperty("os.name");

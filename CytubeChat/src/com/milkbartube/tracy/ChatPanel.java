@@ -129,7 +129,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
     private void addUser(CytubeUser user, boolean fromAddUser) {
 	if (user.getName().toLowerCase().equals(
 		this.getUser().getName().toLowerCase())) {
-	    this.setUser(user);
+	    setUser(user);
 	}
 	if (this.getUser().getRank() <= 1  && fromAddUser) {
 	    getMessagesTextArea().append(formatMessage("[Client]", 
@@ -398,7 +398,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	json.putOpt("meta", "");
 
 	getChat().privateMessage(json);
-
     }
 
     @Override
@@ -443,7 +442,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
 	}
-
     }
 
     @Override
@@ -504,9 +502,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
 		|| obj.getString("msg").toLowerCase().contains(getName())) {
 	    parent.playSound();
-
 	}
-
     }
 
     @Override
