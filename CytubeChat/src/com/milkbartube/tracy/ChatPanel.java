@@ -506,7 +506,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
 
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		|| obj.getString("msg").toLowerCase().contains(getName())) {
+		|| obj.getString("msg").toLowerCase().contains(getName()
+			.toLowerCase())) {
 	    parent.playSound();
 	}
     }
