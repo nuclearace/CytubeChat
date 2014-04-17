@@ -170,18 +170,25 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
+	System.out.println(messageBuffer.size());
+
 
 	// Add the timestamp
 	Date date = new Date(time);
 	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
-	message = "[" + formattedTime + "] ";
+
+	if (!(messageBuffer.size() == 0)) {
+	    message = "\n[" + formattedTime + "]";
+	} else {
+	    message = "[" + formattedTime + "] ";
+	}
 
 	if (privateMessage) 
 	    message += "[Private Message] ";
 
-	return message += username + ": " + cleanedString + "\n";
+	return message += username + ": " + cleanedString;
     }
 
     public void handleGUICommand(String data) {
