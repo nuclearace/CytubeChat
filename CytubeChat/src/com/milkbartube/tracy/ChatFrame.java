@@ -12,6 +12,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -135,6 +137,15 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
 	tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 	tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	tabbedPane.addChangeListener(new ChangeListener() {
+
+	    @Override
+	    public void stateChanged(ChangeEvent e) {
+		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
+		setTitle(c.getCurrentMedia());
+	    }
+	    
+	});
 
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 	layout.setHorizontalGroup(
@@ -218,8 +229,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	}
 
 	if (!room.isEmpty() && !alreadyInRoom) {
-	    tabbedPane.addTab(room, 
-		    new ChatPanel(username, room, roomPassword, this));
+	    ChatPanel panel = new ChatPanel(username, room, roomPassword, this); 
+	    tabbedPane.addTab(room, panel);
 	}
     }
 

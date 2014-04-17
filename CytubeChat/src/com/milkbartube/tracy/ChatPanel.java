@@ -427,6 +427,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		this.updateUserList();
 	    } else if (event.equals("changeMedia")) {
 		setCurrentMedia(obj.getString("title"));
+		if (parent.getTabbedPane().getSelectedComponent().equals(this))
+		    parent.setTitle(getCurrentMedia());
 	    } else if (event.equals("pm")) {
 		this.onPrivateMessage(obj);
 	    } else if (event.equals("setAfk")) {
