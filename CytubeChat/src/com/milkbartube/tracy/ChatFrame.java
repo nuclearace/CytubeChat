@@ -165,7 +165,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	int totalTabs = tabbedPane.getTabCount();
 	for(int i = 0; i < totalTabs; i++)
 	{
-	    ChatPanel c = (ChatPanel) tabbedPane.getComponent(i);
+	    ChatPanel c = (ChatPanel) tabbedPane.getComponentAt(i);
 
 	    c.getMessagesTextArea().setBackground(new java.awt.Color(r1, g1, b1));
 	    c.getMessagesTextArea().setForeground(new java.awt.Color(r2, g2, b2));
