@@ -199,8 +199,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
 	if (!username.isEmpty()) {
 	    panel.getChat().login(username, password);
-	    panel.setUsername(username.toLowerCase());
-	    panel.setUser(new CytubeUser(false, username, 0));
 	}
     }
 

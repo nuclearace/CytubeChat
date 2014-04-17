@@ -250,8 +250,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
 	if (!username.isEmpty()) {
 	    getChat().login(username, password);
-	    this.setUsername(username.toLowerCase());
-	    this.setUser(new CytubeUser(false, username, 0));
 	}
     }
 
@@ -432,6 +430,15 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		this.onPrivateMessage(obj);
 	    } else if (event.equals("setAfk")) {
 		this.setAfk(obj.getString("name"), (boolean) obj.get("afk"));
+	    } else if (event.equals("login")) {
+		if ((boolean) obj.get("success")) {
+		    System.out.println("Logged in");
+		    setUsername(obj.getString("name"));
+		    user.setName(obj.getString("name"));
+		} else {
+		    JOptionPane.showMessageDialog(null, obj.get("error"));
+		    setUsername(null);
+		}
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
