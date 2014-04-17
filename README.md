@@ -14,6 +14,7 @@ Features
 
 - Tab-completion of usernames
 - Private Messesaging via `/pm username` (very simple in-line messaging)
+- Multiple rooms
 
 Commands
 --------
