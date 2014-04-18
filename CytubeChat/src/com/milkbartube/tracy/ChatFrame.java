@@ -32,8 +32,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private Clip clip;
     private boolean limitChatBuffer = false;
     private boolean userMuteBoop = true;
-    private String username;
-    private String roomPassword;
     private boolean windowFocus = false;
     private JMenuItem mntmJoinRoom;
     private JMenuItem mntmCloseTab;
@@ -83,19 +81,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	});
 	mnMenu.add(mntmLogin);
 
-	mntmDisconnect = new JMenuItem("Disconnect");
-	mntmDisconnect.setAccelerator(
-		KeyStroke.getKeyStroke(KeyEvent.VK_D, (Toolkit.getDefaultToolkit()
-			.getMenuShortcutKeyMask())));
-	mntmDisconnect.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
-		c.getChat().disconnectChat();
-		c.getMessagesTextArea().append("Disconnected!\n");
-	    }
-	});
-
 	mntmJoinRoom = new JMenuItem("Join Room");
 	mntmJoinRoom.setAccelerator(
 		KeyStroke.getKeyStroke(KeyEvent.VK_J, (Toolkit.getDefaultToolkit()
@@ -112,10 +97,12 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	mntmCloseTab.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
-		c.getChat().disconnectChat();
 		try {
-		    c.getChat().stopThread();
+		    System.out.println("Stopping chat on " + c.getRoom());
+		    c.getChat().disconnectChat();
 		} catch (Exception e1) {
+		    e1.printStackTrace();
+		} finally {
 		    tabbedPane.remove(c);
 		}
 	    }
@@ -124,6 +111,19 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		KeyStroke.getKeyStroke(KeyEvent.VK_W, (Toolkit.getDefaultToolkit()
 			.getMenuShortcutKeyMask())));
 	mnMenu.add(mntmCloseTab);
+
+	mntmDisconnect = new JMenuItem("Disconnect");
+	mntmDisconnect.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_D, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmDisconnect.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
+		c.getChat().disconnectChat();
+		c.getMessagesTextArea().append("\nDisconnected!\n");
+	    }
+	});
 	mnMenu.add(mntmDisconnect);
 
 	mntmQuit = new JMenuItem("Quit");
@@ -217,26 +217,26 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     }
 
     public void joinRoom() {
-	boolean alreadyInRoom = false;
 	RoomDialog roomInput = new RoomDialog();
 	roomInput.setModal(true);
 	roomInput.setVisible(true);
 
-	String room = roomInput.getRoom();
+	String room = roomInput.getRoom().replace(" ", "");
 	if (room == null)
 	    return;
-	roomPassword = roomInput.getPassword();
+	String roomPassword = roomInput.getPassword();
 
 	int totalTabs = tabbedPane.getTabCount();
 	for(int i = 0; i < totalTabs; i++) {
 	    ChatPanel c = (ChatPanel) tabbedPane.getComponentAt(i);
 	    if (c.getRoom().toLowerCase().equals(room.toLowerCase()))
-		alreadyInRoom = true;
+		return;
 	}
 
-	if (!room.isEmpty() && !alreadyInRoom) {
-	    ChatPanel panel = new ChatPanel(username, room, roomPassword, this); 
+	if (!room.isEmpty()) {
+	    ChatPanel panel = new ChatPanel(room, roomPassword, this); 
 	    tabbedPane.addTab(room, panel);
+	    getTabbedPane().setSelectedComponent(panel);
 	}
     }
 
@@ -259,14 +259,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
     public void setUserMuteBoop(boolean userMuteBoop) {
 	this.userMuteBoop = userMuteBoop;
-    }
-
-    public String getUserName() {
-	return username;
-    }
-
-    public void setUserName(String userName) {
-	this.username = userName;
     }
 
     @Override

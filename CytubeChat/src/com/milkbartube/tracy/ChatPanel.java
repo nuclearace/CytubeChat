@@ -42,20 +42,19 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
     private JTextArea userlistTextArea;
 
     private Chat chat;
-    private String currentMedia = "";
+    private String currentMedia;
     private ChatFrame parent;
-    private String room = "";
-    private String roomPassword = "";
-    private String username = "";
+    private String room;
+    private String roomPassword;
+    private String username;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0);
 
-    public ChatPanel(String username, String room, String password, ChatFrame frame) {
+    public ChatPanel(String room, String password, ChatFrame frame) {
 	buildChatPanel();
 	this.room = room;
 	this.roomPassword = password;
-	this.username = username;
 	this.parent = frame;
 
 	setChat(new Chat(this));
@@ -298,7 +297,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	this.handleGUICommand(getNewMessageTextField().getText());
 	getNewMessageTextField().setText(null);
     }
-
+    
     private void removeUser(String username) {
 	getMessagesTextArea().append(formatMessage("[Client]", username + " left the room", 
 		System.currentTimeMillis(), false));
@@ -486,7 +485,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		int option = JOptionPane.showOptionDialog(null, panel, "Room Password",
 			JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 			null, options, options[0]);
-		if(option == 0) {
+		if (option == 0) {
 		    char[] password = pass.getPassword();
 		    getChat().sendRoomPassword(new String(password));
 		} else {

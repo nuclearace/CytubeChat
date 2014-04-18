@@ -19,6 +19,7 @@ public class Chat extends Thread {
     public void run() {
 	try {
 	    socket = new SocketIO("http://sea.cytu.be:8880/", callback);
+	    setName("ChatThread");
 	} catch (MalformedURLException e) {
 	    e.printStackTrace();
 	}
@@ -86,13 +87,4 @@ public class Chat extends Thread {
     public void setSocket(SocketIO socket) {
 	this.socket = socket;
     }
-
-    public void stopThread() {
-	// This is probably a terrible thing to do
-	if (!socket.isConnected()) {
-	    @SuppressWarnings("unused")
-	    int i = 1 / 0;
-	}
-    }
-
 }
