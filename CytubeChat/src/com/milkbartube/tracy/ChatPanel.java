@@ -478,19 +478,18 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		setRoomPassword("");
 	    } else {
 		JPanel panel = new JPanel();
-		JLabel label = new JLabel("Enter a password:");
+		JLabel label = new JLabel("Enter Room Password:");
 		JPasswordField pass = new JPasswordField(10);
 		panel.add(label);
 		panel.add(pass);
 		String[] options = new String[]{"OK", "Cancel"};
-		int option = JOptionPane.showOptionDialog(null, panel, "The title",
+		int option = JOptionPane.showOptionDialog(null, panel, "Room Password",
 			JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 			null, options, options[0]);
 		if(option == 0) {
 		    char[] password = pass.getPassword();
 		    getChat().sendRoomPassword(new String(password));
-		}
-		else {
+		} else {
 		    parent.getTabbedPane().remove(this);
 		    return;
 		}
