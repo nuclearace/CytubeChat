@@ -78,7 +78,7 @@ public class RoomDialog extends JDialog {
 		buttonPane.add(cancelButton);
 		cancelButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-			setRoom("");
+			setRoom(null);
 			setVisible(false);
 		    }
 		});
@@ -133,7 +133,7 @@ public class RoomDialog extends JDialog {
 	getContentPane().setLayout(groupLayout);
     }
     
-    private void setRoom(String room) {
+    public void setRoom(String room) {
 	this.room = room;
     }
 
