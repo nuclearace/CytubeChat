@@ -471,8 +471,9 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
     @Override
     public void onBoolean(String event, boolean bool) {
 	if (event.equals("needPassword")) {
-	    if (!roomPassword.equals("")) {
+	    if (!getRoomPassword().equals("")) {
 		getChat().sendRoomPassword(roomPassword);
+		setRoomPassword("");
 	    } else {
 		String password = JOptionPane.showInputDialog("Room password");
 		getChat().sendRoomPassword(password);
@@ -570,6 +571,14 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 
     public void setRoom(String room) {
 	this.room = room;
+    }
+
+    public String getRoomPassword() {
+        return roomPassword;
+    }
+
+    public void setRoomPassword(String roomPassword) {
+        this.roomPassword = roomPassword;
     }
 
     public CytubeUser getUser() {
