@@ -19,7 +19,6 @@ public class Chat extends Thread {
     public void run() {
 	try {
 	    socket = new SocketIO("http://sea.cytu.be:8880/", callback);
-	    setName("ChatThread");
 	} catch (MalformedURLException e) {
 	    e.printStackTrace();
 	}
