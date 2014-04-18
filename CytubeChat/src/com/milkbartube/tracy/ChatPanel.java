@@ -252,6 +252,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	login.setVisible(true);
 
 	String username = login.getUsername();
+	if (username == null)
+	    return;
 	String password = login.getPassword();
 
 	if (!username.isEmpty()) {
@@ -289,7 +291,6 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	    newMessageTextField.setText(replacedSentence);
 	}
     }
-
 
     private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
 	this.handleGUICommand(getNewMessageTextField().getText());

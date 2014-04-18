@@ -26,6 +26,8 @@ public class RoomDialog extends JDialog {
     private JPanel passwordPanel;
     private JLabel lblRoomPassword;
     private JPasswordField passwordField;
+    private String room;
+    private String password;
 
     /**
      * Launch the application.
@@ -58,6 +60,10 @@ public class RoomDialog extends JDialog {
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
+			setRoom(roomTextField.getText());
+			
+			char[] passwordCharArray = passwordField.getPassword();
+			setPassword(new String(passwordCharArray));
 			setVisible(false);
 		    }
 		});
@@ -72,6 +78,7 @@ public class RoomDialog extends JDialog {
 		buttonPane.add(cancelButton);
 		cancelButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
+			setRoom("");
 			setVisible(false);
 		    }
 		});
@@ -125,13 +132,20 @@ public class RoomDialog extends JDialog {
 		);
 	getContentPane().setLayout(groupLayout);
     }
+    
+    private void setRoom(String room) {
+	this.room = room;
+    }
 
     public String getRoom() {
-	return roomTextField.getText();
+	return room;
+    }
+    
+    public void setPassword(String password) {
+	this.password = password;
     }
 
     public String getPassword() {
-	char[] passwordCharArray = passwordField.getPassword();
-	return new String(passwordCharArray);
+	return password;
     }
 }

@@ -113,7 +113,11 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    public void actionPerformed(ActionEvent e) {
 		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
 		c.getChat().disconnectChat();
-		tabbedPane.remove(c);
+		try {
+		    c.getChat().stopThread();
+		} catch (Exception e1) {
+		    tabbedPane.remove(c);
+		}
 	    }
 	});
 	mntmCloseTab.setAccelerator(
@@ -142,9 +146,11 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
 		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
+		if (c == null)
+		    return;
 		setTitle(c.getCurrentMedia());
 	    }
-	    
+
 	});
 
 	javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -217,6 +223,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	roomInput.setVisible(true);
 
 	String room = roomInput.getRoom();
+	if (room == null)
+	    return;
 	roomPassword = roomInput.getPassword();
 
 	int totalTabs = tabbedPane.getTabCount();

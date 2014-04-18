@@ -80,11 +80,19 @@ public class Chat extends Thread {
     }
 
     public SocketIO getSocket() {
-        return socket;
+	return socket;
     }
 
     public void setSocket(SocketIO socket) {
-        this.socket = socket;
+	this.socket = socket;
+    }
+
+    public void stopThread() {
+	// This is probably a terrible thing to do
+	if (!socket.isConnected()) {
+	    @SuppressWarnings("unused")
+	    int i = 1 / 0;
+	}
     }
 
 }

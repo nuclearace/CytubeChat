@@ -25,6 +25,8 @@ public class LoginDialog extends JDialog {
     private final JPanel contentPanel = new JPanel();
     private JTextField usernameTextField;
     private JPasswordField passwordField;
+    private String username;
+    private String password;
 
     public LoginDialog() {
 	buildLoginDialog();
@@ -83,6 +85,10 @@ public class LoginDialog extends JDialog {
 		JButton okButton = new JButton("OK");
 		okButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
+			setUsername(usernameTextField.getText());
+
+			char[] passwordCharArray = passwordField.getPassword();
+			setPassword(new String(passwordCharArray));
 			setVisible(false);
 		    }
 		});
@@ -95,6 +101,7 @@ public class LoginDialog extends JDialog {
 		guestLoginButton.addMouseListener(new MouseAdapter() {
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
+			setUsername(usernameTextField.getText());
 			setVisible(false);
 		    }
 		});
@@ -104,12 +111,19 @@ public class LoginDialog extends JDialog {
 	}
     }
 
+    public void setUsername(String username) {
+	this.username = username;
+    }
+
     public String getUsername() {
-	return usernameTextField.getText();
+	return username;
+    }
+
+    public void setPassword(String password) {
+	this.password = password;
     }
 
     public String getPassword() {
-	char[] passwordCharArray = passwordField.getPassword();
-	return new String(passwordCharArray);
+	return password;
     }
 }
