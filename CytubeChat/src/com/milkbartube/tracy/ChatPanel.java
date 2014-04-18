@@ -1,9 +1,11 @@
 package com.milkbartube.tracy;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
@@ -475,8 +477,23 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		getChat().sendRoomPassword(roomPassword);
 		setRoomPassword("");
 	    } else {
-		String password = JOptionPane.showInputDialog("Room password");
-		getChat().sendRoomPassword(password);
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel("Enter a password:");
+		JPasswordField pass = new JPasswordField(10);
+		panel.add(label);
+		panel.add(pass);
+		String[] options = new String[]{"OK", "Cancel"};
+		int option = JOptionPane.showOptionDialog(null, panel, "The title",
+			JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+			null, options, options[0]);
+		if(option == 0) {
+		    char[] password = pass.getPassword();
+		    getChat().sendRoomPassword(new String(password));
+		}
+		else {
+		    parent.getTabbedPane().remove(this);
+		    return;
+		}
 	    }
 	}
     }
@@ -574,11 +591,11 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
     }
 
     public String getRoomPassword() {
-        return roomPassword;
+	return roomPassword;
     }
 
     public void setRoomPassword(String roomPassword) {
-        this.roomPassword = roomPassword;
+	this.roomPassword = roomPassword;
     }
 
     public CytubeUser getUser() {
