@@ -262,7 +262,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    protected void handleTabComplete() {
+    private void handleTabComplete() {
 	String[] sentence = newMessageTextField.getText().toString().split(" ");
 	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
 	ArrayList<String> users = new ArrayList<String>();
@@ -309,7 +309,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    public void setAfk(String name, boolean afk) {
+    private void setAfk(String name, boolean afk) {
 	for (CytubeUser user : userList) {
 	    if (user.getName().equals(name)) {
 		user.setAfk(afk);
