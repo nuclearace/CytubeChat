@@ -8,8 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Chat extends Thread {
-    private SocketIO socket;
     private ChatCallback callback;
+    private SocketIO socket;
 
     public Chat(ChatCallbackAdapter callback) {
 	this.callback = new ChatCallback(callback);
@@ -19,8 +19,8 @@ public class Chat extends Thread {
     public void run() {
 	try {
 	    socket = new SocketIO("http://sea.cytu.be:8880/", callback);
-	    setName("ChatThread");
 	} catch (MalformedURLException e) {
+	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }

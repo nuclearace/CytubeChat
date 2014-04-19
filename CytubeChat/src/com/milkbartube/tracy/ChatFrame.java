@@ -53,7 +53,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    this.setClip(null);
 	    e.printStackTrace();
 	}
-
+	
 	joinRoom();
     }
 
