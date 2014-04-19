@@ -58,7 +58,7 @@ public class CytubeUser {
 	return rank;
     }
 
-    public void setRank(byte rank) {
+    public void setRank(int rank) {
 	this.rank = rank;
     }
 

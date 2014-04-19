@@ -98,8 +98,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    public void actionPerformed(ActionEvent e) {
 		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
 		try {
-		    System.out.println("Stopping chat on " + c.getRoom());
+		    System.out.println("Closing room " + c.getRoom());
 		    c.getChat().disconnectChat();
+		    c.closePMFrames();
 		} catch (Exception e1) {
 		    e1.printStackTrace();
 		} finally {

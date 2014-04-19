@@ -165,7 +165,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		.contains(getUsername().toLowerCase())) {
 	    parent.playSound();
 	}
+    }
 
+    protected void closePMFrames() {
+	for (CytubeUser user : userList) {
+	    if (user.isInPrivateMessage()) {
+		user.getPmFrame().setVisible(false);
+	    }
+	}
     }
 
     public String formatMessage(String username, String message, long time, boolean privateMessage) {
@@ -261,7 +268,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     public String handleTabComplete(String[] sentence) {
-	
+
 	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
 	ArrayList<String> users = new ArrayList<String>();
 	String replacedSentence = "";
@@ -305,6 +312,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		System.currentTimeMillis(), false));
 	for (CytubeUser user : userList) {
 	    if (user.getName().equals(username)) {
+		if (user.isInPrivateMessage())
+		    user.getPmFrame().handleUserLeftRoom();
 		userList.remove(user);
 		break;
 	    }
@@ -590,6 +599,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     public void setNewMessageTextField(JTextField newMessageTextField) {
 	this.newMessageTextField = newMessageTextField;
 	newMessageTextField.setFocusTraversalKeysEnabled(false);
+    }
+
+    public ChatFrame getParent() {
+	return parent;
+    }
+
+    public void setParent(ChatFrame parent) {
+	this.parent = parent;
     }
 
     public String getRoom() {

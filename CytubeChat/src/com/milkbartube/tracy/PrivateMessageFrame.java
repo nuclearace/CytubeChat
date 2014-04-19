@@ -31,12 +31,12 @@ public class PrivateMessageFrame extends JFrame {
     private CytubeUser user;
 
     public PrivateMessageFrame(CytubeRoom room, final CytubeUser user) {
-    	addWindowListener(new WindowAdapter() {
-    		@Override
-    		public void windowClosed(WindowEvent e) {
-    		    user.setInPrivateMessage(false);
-    		}
-    	});
+	addWindowListener(new WindowAdapter() {
+	    @Override
+	    public void windowClosed(WindowEvent e) {
+		user.setInPrivateMessage(false);
+	    }
+	});
 	this.room = room;
 	this.user = user;
 	buildPrivateMessageFrame();
@@ -120,6 +120,9 @@ public class PrivateMessageFrame extends JFrame {
 	else
 	    privateMessageTextArea.append(message);
 
+	if (!this.isFocused())
+	    room.getParent().playSound();
+
 	privateMessageTextArea.setCaretPosition(
 		privateMessageTextArea.getDocument().getLength());
     }
@@ -129,12 +132,17 @@ public class PrivateMessageFrame extends JFrame {
 	newPrivateMessageTextField.setText(room.handleTabComplete(sentence));
     }
 
+    protected void handleUserLeftRoom() {
+	privateMessageTextArea.append("\n" + user.getName() + " left the room");
+	newPrivateMessageTextField.setEditable(false);
+    }
+
     public JTextField getNewMessageTextField() {
-        return newPrivateMessageTextField;
+	return newPrivateMessageTextField;
     }
 
     public void setNewMessageTextField(JTextField newMessageTextField) {
-        this.newPrivateMessageTextField = newMessageTextField;
+	this.newPrivateMessageTextField = newMessageTextField;
     }
 
     public CytubeRoom getRoom() {
