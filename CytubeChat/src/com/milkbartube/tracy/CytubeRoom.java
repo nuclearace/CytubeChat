@@ -30,8 +30,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
@@ -48,7 +46,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private ChatFrame parent;
     private String room;
     private String roomPassword;
-    private boolean stopMessageAreaScrolling;
     private String username;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
@@ -160,9 +157,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	messageBuffer.add(message);
 	messagesTextArea.append(message);
-	if (!isStopMessageAreaScrolling())
-	    getMessagesTextArea()
-	    .setCaretPosition(getMessagesTextArea().getDocument().getLength());
+	getMessagesTextArea()
+	.setCaretPosition(getMessagesTextArea().getDocument().getLength());
 
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
 		|| obj.getString("msg").toLowerCase()
@@ -593,16 +589,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setMessagesTextArea(JTextArea messagesTextArea) {
 	this.messagesTextArea = messagesTextArea;
-	messagesTextArea.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseEntered(MouseEvent e) {
-		setStopMessageAreaScrolling(true);
-	    }
-	    @Override
-	    public void mouseExited(MouseEvent e) {
-		setStopMessageAreaScrolling(false);
-	    }
-	});
 	messagesTextArea.setLineWrap(true);
     }
 
@@ -637,14 +623,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setRoomPassword(String roomPassword) {
 	this.roomPassword = roomPassword;
-    }
-
-    public boolean isStopMessageAreaScrolling() {
-	return stopMessageAreaScrolling;
-    }
-
-    public void setStopMessageAreaScrolling(boolean stopMessageAreaScrolling) {
-	this.stopMessageAreaScrolling = stopMessageAreaScrolling;
     }
 
     public CytubeUser getUser() {
