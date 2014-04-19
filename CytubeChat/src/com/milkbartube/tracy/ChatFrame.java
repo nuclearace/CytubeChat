@@ -15,9 +15,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
@@ -33,7 +30,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private JTabbedPane tabbedPane;
 
     private Clip clip;
-    private AlternativeChat socket;
     private boolean limitChatBuffer = false;
     private boolean userMuteBoop = true;
     private boolean windowFocus = false;
@@ -48,18 +44,17 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	setVisible(true);
 	setLocationRelativeTo(null);
 	try {
-	    //URL soundFile = new URL("http://cytu.be/boop.wav");
-	    //AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+	    URL soundFile = new URL("http://cytu.be/boop.wav");
+	    AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
 
 	    this.setClip(AudioSystem.getClip());
-	    //getClip().open(audioIn);
+	    getClip().open(audioIn);
 	} catch (Exception e) {
 	    this.setClip(null);
 	    e.printStackTrace();
 	}
-
-	socket = new AlternativeChat();
-	//joinRoom();
+	
+	joinRoom();
     }
 
     private void initComponents() {
