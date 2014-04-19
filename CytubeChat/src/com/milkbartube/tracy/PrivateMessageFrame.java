@@ -40,7 +40,7 @@ public class PrivateMessageFrame extends JFrame {
 	this.room = room;
 	this.user = user;
 	buildPrivateMessageFrame();
-	setTitle(user.getName());
+	setTitle(user.getName() + " (" + room.getRoom() + ")");
     }
 
     /**
