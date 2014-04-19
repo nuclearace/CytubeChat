@@ -96,7 +96,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	mntmCloseTab = new JMenuItem("Close Tab");
 	mntmCloseTab.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
+		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
 		try {
 		    System.out.println("Stopping chat on " + c.getRoom());
 		    c.getChat().disconnectChat();
@@ -119,7 +119,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	mntmDisconnect.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
+		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
 		c.getChat().disconnectChat();
 		c.getMessagesTextArea().append("\nDisconnected!\n");
 	    }
@@ -145,7 +145,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		ChatPanel c = (ChatPanel) tabbedPane.getSelectedComponent();
+		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
 		if (c == null)
 		    return;
 		setTitle(c.getCurrentMedia());
@@ -171,7 +171,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	int totalTabs = tabbedPane.getTabCount();
 	for(int i = 0; i < totalTabs; i++)
 	{
-	    ChatPanel c = (ChatPanel) tabbedPane.getComponentAt(i);
+	    CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
 
 	    c.getMessagesTextArea().setBackground(new java.awt.Color(r1, g1, b1));
 	    c.getMessagesTextArea().setForeground(new java.awt.Color(r2, g2, b2));
@@ -189,8 +189,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     }
 
     public void handleLogin() {
-	ChatPanel panel = 
-		(ChatPanel) tabbedPane.getSelectedComponent();
+	CytubeRoom panel = 
+		(CytubeRoom) tabbedPane.getSelectedComponent();
 	if (panel.getUsername() != null) {
 	    JOptionPane.showMessageDialog(null, "Already logged in");
 	    return;
@@ -228,13 +228,13 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
 	int totalTabs = tabbedPane.getTabCount();
 	for(int i = 0; i < totalTabs; i++) {
-	    ChatPanel c = (ChatPanel) tabbedPane.getComponentAt(i);
+	    CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
 	    if (c.getRoom().toLowerCase().equals(room.toLowerCase()))
 		return;
 	}
 
 	if (!room.isEmpty()) {
-	    ChatPanel panel = new ChatPanel(room, roomPassword, this); 
+	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this); 
 	    tabbedPane.addTab(room, panel);
 	    getTabbedPane().setSelectedComponent(panel);
 	}

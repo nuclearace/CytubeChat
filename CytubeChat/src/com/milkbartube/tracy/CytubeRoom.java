@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
-public class ChatPanel extends JPanel implements ChatCallbackAdapter {
+public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private static final long serialVersionUID = 1L;
     private JScrollPane messagesScrollPane;
@@ -49,9 +49,9 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
     private String username;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
-    private CytubeUser user = new CytubeUser(false, "", 0);
+    private CytubeUser user = new CytubeUser(false, "", 0, null);
 
-    public ChatPanel(String room, String password, ChatFrame frame) {
+    public CytubeRoom(String room, String password, ChatFrame frame) {
 	buildChatPanel();
 	this.room = room;
 	this.roomPassword = password;
@@ -105,7 +105,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	    @Override
 	    public void keyTyped(KeyEvent e) {
 		if (e.getKeyChar() == '\t') {
-		    handleTabComplete();
+		    String[] sentence = newMessageTextField.getText().toString().split(" ");
+		    newMessageTextField.setText(handleTabComplete(sentence));
 		}
 	    }
 
@@ -179,14 +180,11 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	if (!(messageBuffer.size() == 0)) {
+	if (!(messageBuffer.size() == 0) && !privateMessage) {
 	    message = "\n[" + formattedTime + "] ";
 	} else {
 	    message = "[" + formattedTime + "] ";
 	}
-
-	if (privateMessage) 
-	    message += "[Private Message] ";
 
 	return message += username + ": " + cleanedString;
     }
@@ -262,8 +260,8 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    private void handleTabComplete() {
-	String[] sentence = newMessageTextField.getText().toString().split(" ");
+    public String handleTabComplete(String[] sentence) {
+	
 	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
 	ArrayList<String> users = new ArrayList<String>();
 	String replacedSentence = "";
@@ -273,15 +271,19 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		users.add(user.getName());
 	    }
 	}
-	if (users.size() == 0)
-	    return;
+	if (users.size() == 0) {
+	    for (String word : sentence) {
+		replacedSentence += word + " ";
+	    }
+	    return replacedSentence; 
+	}
 
 	if (users.size() == 1) {
 	    sentence[sentence.length - 1] = users.get(0);
 	    for (String word : sentence) {
 		replacedSentence += word + " ";
 	    }
-	    newMessageTextField.setText(replacedSentence);
+	    return replacedSentence;
 	} else {
 	    sentence[sentence.length - 1] = this.smallestComplete(users);
 	    for (String word : sentence) {
@@ -289,7 +291,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	    }
 	    replacedSentence = 
 		    replacedSentence.substring(0, replacedSentence.length() - 1);
-	    newMessageTextField.setText(replacedSentence);
+	    return replacedSentence;
 	}
     }
 
@@ -297,7 +299,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	this.handleGUICommand(getNewMessageTextField().getText());
 	getNewMessageTextField().setText(null);
     }
-    
+
     private void removeUser(String username) {
 	getMessagesTextArea().append(formatMessage("[Client]", username + " left the room", 
 		System.currentTimeMillis(), false));
@@ -399,7 +401,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	userlistTextArea.setText(str);
     }
 
-    private void privateMessage(String to, String message) throws JSONException {
+    public void privateMessage(String to, String message) throws JSONException {
 	JSONObject json = new JSONObject();
 	json.putOpt("to", to);
 	json.putOpt("msg", message);
@@ -423,7 +425,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
 		String username = obj.getString("name") ;
 		int rank = (int) obj.get("rank");
-		CytubeUser user = new CytubeUser(afk, username, rank);
+		CytubeUser user = new CytubeUser(afk, username, rank, this);
 		this.addUser(user, true);
 		this.updateUserList();
 	    } else if (event.equals("userLeave")) {
@@ -462,7 +464,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 			.get("afk");
 		String username = (String) users.getJSONObject(i).get("name");
 		int rank = (int) users.getJSONObject(i).get("rank");
-		CytubeUser user = new CytubeUser(afk, username, rank);
+		CytubeUser user = new CytubeUser(afk, username, rank, this);
 		addUser(user, false);
 	    }
 	    this.updateUserList();
@@ -513,14 +515,24 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 		this.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"), true );
 
-	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
-	    messageBuffer.remove();
-	    messagesTextArea.setText(messagesTextArea.getText()
-		    .substring(messagesTextArea.getText().indexOf('\n')+1));
+	for (CytubeUser user : userList) {
+	    if (user.getName().equals(obj.getString("username")) &&
+		    !username.equals(obj.getString("username"))) {
+		if (!user.isInPrivateMessage()) {
+		    user.startPM(message);
+		} else {
+		    user.getPmFrame().addMessage(message);
+		}
+		break;
+	    } else if (user.getName().equals(obj.getString("to"))) {
+		if (!user.isInPrivateMessage()) {
+		    user.startPM(message);
+		} else {
+		    user.getPmFrame().addMessage(message);
+		}
+		break;
+	    }
 	}
-	messageBuffer.add(message);
-	messagesTextArea.append(message);
-	messagesTextArea.setCaretPosition(messagesTextArea.getDocument().getLength());
 
 	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
 		|| obj.getString("msg").toLowerCase().contains(getName()
@@ -636,7 +648,7 @@ public class ChatPanel extends JPanel implements ChatCallbackAdapter {
 	    return false;
 	if (getClass() != obj.getClass())
 	    return false;
-	ChatPanel other = (ChatPanel) obj;
+	CytubeRoom other = (CytubeRoom) obj;
 	if (room == null) {
 	    if (other.room != null)
 		return false;
