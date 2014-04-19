@@ -3,50 +3,71 @@ package com.milkbartube.tracy;
 public class CytubeUser {
     
     private boolean afk;
+    private boolean inPrivateMessage;
     private String name;
     private int rank;
+    private CytubeRoom room;
+    private PrivateMessageFrame pmFrame;
    
-    public CytubeUser(boolean afk, String name, int rank) {
+    public CytubeUser(boolean afk, String name, int rank, CytubeRoom room) {
 	this.afk = afk;
 	this.name = name;
 	this.rank = rank;
+	this.room = room;
     }
     
-    /**
-     * @return the afk
-     */
+    public void startPM(String message) {
+	setPmFrame(new PrivateMessageFrame(getRoom(), this));
+	getPmFrame().addMessage(message);
+	setInPrivateMessage(true);
+	getPmFrame().setVisible(true);
+    }
+    
     public boolean getAfk() {
         return afk;
     }
-    /**
-     * @param afk the afk to set
-     */
+
     public void setAfk(boolean afk) {
         this.afk = afk;
     }
-    /**
-     * @return the name
-     */
+
     public String getName() {
 	return name;
     }
-    /**
-     * @param name the name to set
-     */
+
     public void setName(String name) {
 	this.name = name;
     }
-    /**
-     * @return the rank
-     */
+    public boolean isInPrivateMessage() {
+	return inPrivateMessage;
+    }
+
+    public void setInPrivateMessage(boolean inPrivateMessage) {
+	this.inPrivateMessage = inPrivateMessage;
+    }
+
+    public PrivateMessageFrame getPmFrame() {
+	return pmFrame;
+    }
+
+    public void setPmFrame(PrivateMessageFrame pmFrame) {
+	this.pmFrame = pmFrame;
+    }
+
     public int getRank() {
 	return rank;
     }
-    /**
-     * @param rank the rank to set
-     */
-    public void setRank(byte rank) {
+
+    public void setRank(int rank) {
 	this.rank = rank;
+    }
+
+    public CytubeRoom getRoom() {
+	return room;
+    }
+
+    public void setRoom(CytubeRoom room) {
+	this.room = room;
     }
 
     @Override
