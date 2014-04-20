@@ -33,15 +33,20 @@ import java.util.TimeZone;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
+
 public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private static final long serialVersionUID = 1L;
     private JScrollPane messagesScrollPane;
-    private JTextArea messagesTextArea;
     private JScrollPane newMessageScrollPane;
     private JTextField newMessageTextField;
     private JScrollPane userListScrollPane;
     private JTextArea userlistTextArea;
+    private JTextPane messagesTextPane;
+    private StyledDocument styledMessagesDocument;
 
     private Chat chat;
     private String currentMedia;
@@ -95,6 +100,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 				.addContainerGap())
 		);
 
+	messagesTextPane = new JTextPane();
+	messagesTextPane.setEditable(false);
+	styledMessagesDocument = messagesTextPane.getStyledDocument();
+	messagesScrollPane.setViewportView(messagesTextPane);
+
 	setNewMessageTextField(new JTextField());
 	getNewMessageTextField().addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -120,9 +130,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    public void keyReleased(KeyEvent e) {}
 	});
 
-	setMessagesTextArea(new JTextArea());
-	messagesScrollPane.setViewportView(getMessagesTextArea());
-
 	setUserlistTextArea(new JTextArea());
 	getUserlistTextArea().setEditable(false);
 	userListScrollPane.setViewportView(getUserlistTextArea());
@@ -136,9 +143,16 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    setUser(user);
 	}
 	if (this.getUser().getRank() <= 1  && fromAddUser) {
-	    getMessagesTextArea().append(formatMessage("[Client]", 
-		    user.getName() + " joined the room", 
-		    System.currentTimeMillis(), false));
+	    try {
+		getStyledMessagesDocument().insertString(
+			getStyledMessagesDocument().getLength(), 
+			formatMessage("[Client]", 
+				user.getName() + " joined the room", 
+				System.currentTimeMillis(), false), null);
+	    } catch (BadLocationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	}
 	if (!userList.contains(user)) {
 	    userList.add(user);
@@ -153,15 +167,20 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
-	    messagesTextArea.setText(getMessagesTextArea().getText()
-		    .substring(getMessagesTextArea().getText().indexOf('\n')+1));
+	    messagesTextPane.setText(messagesTextPane.getText()
+		    .substring(messagesTextPane.getText().indexOf('\n')+1));
 	}
 
 	messageBuffer.add(message);
-	messagesTextArea.append(messageBuffer.peekLast());
+	try {
+	    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+		    getLength(), messageBuffer.peekLast(), null);
+	} catch (BadLocationException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	}
 	if (!isStopMessagesAreaScrolling())
-	    getMessagesTextArea()
-	    .setCaretPosition(getMessagesTextArea().getDocument().getLength());
+	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
 
 	try {
 	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
@@ -209,11 +228,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    if (command.equals("/disconnect")) {
 		getChat().disconnectChat();
 		userlistTextArea.setText("");
-		messagesTextArea.setText("Disconnected");
+		messagesTextPane.setText("Disconnected");
 	    } else if (command.equals("/login")) {
 		handleLogin();
 	    } else if (command.equals("/clearchat")) {
-		getMessagesTextArea().setText("");
+		messagesTextPane.setText("");
 		messageBuffer.clear();
 	    } else if (command.equals("/pm")) {
 		// This could be done better, but I don't want to take the time
@@ -319,8 +338,15 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void removeUser(String username) {
-	getMessagesTextArea().append(formatMessage("[Client]", username + " left the room", 
-		System.currentTimeMillis(), false));
+	try {
+	    getStyledMessagesDocument().insertString(
+		    getStyledMessagesDocument().getLength(), 
+		    formatMessage("[Client]", username + " left the room", 
+			    System.currentTimeMillis(), false), null);
+	} catch (BadLocationException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
 	for (CytubeUser user : userList) {
 	    if (user.getName().equals(username)) {
 		if (user.isInPrivateMessage())
@@ -579,26 +605,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.currentMedia = currentMedia;
     }
 
-    public JTextArea getMessagesTextArea() {
-	return messagesTextArea;
+    public JTextPane getMessagesTextPane() {
+        return messagesTextPane;
     }
 
-    public void setMessagesTextArea(JTextArea messagesTextArea) {
-	this.messagesTextArea = messagesTextArea;
-	messagesTextArea.setWrapStyleWord(true);
-	this.messagesTextArea.setLineWrap(true);
-	this.messagesTextArea.setEditable(false);
-	messagesTextArea.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseEntered(MouseEvent e) {
-		setStopMessagesAreaScrolling(true);
-	    }
-
-	    @Override
-	    public void mouseExited(MouseEvent e) {
-		setStopMessagesAreaScrolling(false);
-	    }    
-	});
+    public void setMessagesTextPane(JTextPane messagesTextPane) {
+        this.messagesTextPane = messagesTextPane;
     }
 
     public JTextField getNewMessageTextField() {
@@ -638,8 +650,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	return stopMessagesAreaScrolling;
     }
 
-    public void setStopMessagesAreaScrolling(boolean stopMessagesAreaScrolling) {
-	this.stopMessagesAreaScrolling = stopMessagesAreaScrolling;
+    public StyledDocument getStyledMessagesDocument() {
+	return styledMessagesDocument;
+    }
+
+    public void setStyledMessagesDocument(StyledDocument styledMessagesDocument) {
+	this.styledMessagesDocument = styledMessagesDocument;
     }
 
     public CytubeUser getUser() {
@@ -694,7 +710,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     @Override
     public String toString() {
 	return "ChatPanel [messagesScrollPane=" + messagesScrollPane
-		+ ", messagesTextArea=" + messagesTextArea
+		+ ", messagesTextArea=" + messagesTextPane
 		+ ", newMessageScrollPane=" + newMessageScrollPane
 		+ ", newMessageTextField=" + newMessageTextField
 		+ ", userListScrollPane=" + userListScrollPane
