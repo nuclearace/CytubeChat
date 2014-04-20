@@ -250,7 +250,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	if (!room.isEmpty()) {
 	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this); 
 	    tabbedPane.addTab(room, panel);
-	    //getTabbedPane().setSelectedComponent(panel);
+	    getTabbedPane().setSelectedComponent(panel);
 	}
     }
 
@@ -268,7 +268,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     }
 
     public boolean isUserMuteBoop() {
-	return userMuteBoop;
+	return userMuteBoop; 
     }
 
     public void setUserMuteBoop(boolean userMuteBoop) {

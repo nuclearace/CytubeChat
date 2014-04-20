@@ -7,11 +7,9 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
-import javax.swing.JViewport;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -19,8 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -36,10 +32,6 @@ import java.util.List;
 import java.util.TimeZone;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.event.CaretListener;
-import javax.swing.event.CaretEvent;
-import javax.swing.text.BadLocationException;
 
 public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
@@ -66,7 +58,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.room = room;
 	this.roomPassword = password;
 	this.parent = frame;
-	
+
 	buildChatPanel();
 	setChat(new Chat(this));
 	getChat().start();
@@ -166,16 +158,18 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 
 	messageBuffer.add(message);
-	messagesTextArea.append(message);
+	messagesTextArea.append(messageBuffer.peekLast());
 	if (!isStopMessagesAreaScrolling())
 	    getMessagesTextArea()
 	    .setCaretPosition(getMessagesTextArea().getDocument().getLength());
 
-	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		|| obj.getString("msg").toLowerCase()
-		.contains(getUsername().toLowerCase())) {
-	    parent.playSound();
-	}
+	try {
+	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+		    || obj.getString("msg").toLowerCase()
+		    .contains(getUsername().toLowerCase())) {
+		parent.playSound();
+	    }
+	} catch (Exception e) {}
     }
 
     protected void closePMFrames() {
@@ -234,7 +228,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    try {
 			this.privateMessage(to, message);
 		    } catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		    }
 		}
@@ -438,10 +431,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     @Override
-    public void callback(JSONArray data) throws JSONException {
-	// TODO Auto-generated method stub
-
-    }
+    public void callback(JSONArray data) throws JSONException {}
 
     @Override
     public void on(String event, JSONObject obj) {
@@ -526,16 +516,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     @Override
-    public void onMessage(String message) {
-	// TODO Auto-generated method stub
-
-    }
+    public void onMessage(String message) {}
 
     @Override
-    public void onMessage(JSONObject json) {
-	// TODO Auto-generated method stub
-
-    }
+    public void onMessage(JSONObject json) {}
 
     private void onPrivateMessage(JSONObject obj) throws JSONException {
 	String message = 
@@ -574,16 +558,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     @Override
-    public void onDisconnect() {
-	// TODO Auto-generated method stub
-
-    }
+    public void onDisconnect() {}
 
     @Override
-    public void onConnectFailure() {
-	// TODO Auto-generated method stub
-
-    }
+    public void onConnectFailure() {}
 
     public Chat getChat() {
 	return chat;
@@ -607,54 +585,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setMessagesTextArea(JTextArea messagesTextArea) {
 	this.messagesTextArea = messagesTextArea;
-	final JViewport viewport = messagesScrollPane.getViewport();
-	messagesTextArea.addCaretListener(new CaretListener() {
-	    public void caretUpdate(CaretEvent e) {
-		System.out.println(viewport.getViewRect());
-		
-		SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        System.out.println("First : " + viewport.getViewPosition() );
-
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                System.out.println("Second: " + viewport.getViewPosition() );
-                            }
-                        });
-                    }
-                });
-		
-		System.out.println(e.getDot());
-		//Get the location in the text
-		int dot = e.getDot();
-		int mark = e.getMark();
-		if (dot == mark) {  // no selection
-		    try {
-			Rectangle caretCoords = getMessagesTextArea().modelToView(dot);
-			Point point = new Point(caretCoords.x, (caretCoords.y - 16));
-			//Convert it to view coordinates
-			System.out.println("caret: text position: " + dot +
-				", view location = [" +
-				caretCoords.x + ", " + (caretCoords.y) + "]" +
-				"\n");
-		    } catch (BadLocationException ble) {
-			System.out.println("caret: text position: " + dot + "\n");
-		    }
-		} else if (dot < mark) {
-		    System.out.println("selection from: " + dot + " to " + mark + "\n");
-		} else {
-		    System.out.println("selection from: " + mark + " to " + dot + "\n");
-		}
-
-		//getMessagesTextArea().setCaretPosition(getMessagesTextArea().viewToModel(point));
-	    }
-	});
+	messagesTextArea.setWrapStyleWord(true);
 	this.messagesTextArea.setLineWrap(true);
-	this.messagesTextArea.setEditable(true);
+	this.messagesTextArea.setEditable(false);
 	messagesTextArea.addMouseListener(new MouseAdapter() {
 	    @Override
 	    public void mouseEntered(MouseEvent e) {
