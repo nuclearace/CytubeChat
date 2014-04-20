@@ -592,6 +592,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setMessagesTextArea(JTextArea messagesTextArea) {
 	this.messagesTextArea = messagesTextArea;
+	this.messagesTextArea.setLineWrap(true);
+	this.messagesTextArea.setEditable(false);
 	messagesTextArea.addMouseListener(new MouseAdapter() {
 	    @Override
 	    public void mouseEntered(MouseEvent e) {
@@ -600,13 +602,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    @Override
 	    public void mouseExited(MouseEvent e) {
 		setStopMessagesAreaScrolling(false);
-	    }
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		    System.out.println(e.getPoint());
-		}
+	    }    
 	});
-	messagesTextArea.setLineWrap(true);
     }
 
     public JTextField getNewMessageTextField() {
