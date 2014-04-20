@@ -252,6 +252,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		parent.setLimitChatBuffer(!parent.isLimitChatBuffer());
 	    } else if (command.equals("/joinroom")) {
 		parent.joinRoom();
+	    } else if (command.equals("/userlist")) {
+		hideUserlist();
 	    } else 
 		getChat().sendMessage(data);
 	} else
@@ -311,6 +313,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    replacedSentence.substring(0, replacedSentence.length() - 1);
 	    return replacedSentence;
 	}
+    }
+
+    protected void hideUserlist() {
+	userListScrollPane.setVisible(!userListScrollPane.isVisible());
+	parent.repaint();
     }
 
     private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {

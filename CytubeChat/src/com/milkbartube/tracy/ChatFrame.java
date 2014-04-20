@@ -35,6 +35,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private boolean windowFocus = false;
     private JMenuItem mntmJoinRoom;
     private JMenuItem mntmCloseTab;
+    private JMenuItem mntmHideUserlist;
     // End variables
 
     public ChatFrame() {
@@ -53,7 +54,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    this.setClip(null);
 	    e.printStackTrace();
 	}
-	
+
 	joinRoom();
     }
 
@@ -80,6 +81,18 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    }
 	});
 	mnMenu.add(mntmLogin);
+
+	mntmHideUserlist = new JMenuItem("Hide Userlist");
+	mntmHideUserlist.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_U, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmHideUserlist.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
+		c.hideUserlist();
+	    }
+	});
+	mnMenu.add(mntmHideUserlist);
 
 	mntmJoinRoom = new JMenuItem("Join Room");
 	mntmJoinRoom.setAccelerator(
