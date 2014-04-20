@@ -249,7 +249,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    return;
     }
 
-
     public void handleLogin() {
 	if (this.username != null) {
 	    JOptionPane.showMessageDialog(null, "Already logged in");
