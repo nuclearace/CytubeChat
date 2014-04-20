@@ -677,11 +677,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	newMessageTextField.setFocusTraversalKeysEnabled(false);
     }
 
-    public ChatFrame getParent() {
+    public ChatFrame getFrameParent() {
 	return parent;
     }
 
-    public void setParent(ChatFrame parent) {
+    public void setFrameParent(ChatFrame parent) {
 	this.parent = parent;
     }
 

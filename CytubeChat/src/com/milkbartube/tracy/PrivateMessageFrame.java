@@ -121,7 +121,7 @@ public class PrivateMessageFrame extends JFrame {
 	    privateMessageTextArea.append(message);
 
 	if (!this.isFocused())
-	    room.getParent().playSound();
+	    room.getFrameParent().playSound();
 
 	privateMessageTextArea.setCaretPosition(
 		privateMessageTextArea.getDocument().getLength());
