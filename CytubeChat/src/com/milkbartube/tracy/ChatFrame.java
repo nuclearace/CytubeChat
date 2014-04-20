@@ -268,7 +268,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     }
 
     public boolean isUserMuteBoop() {
-	return userMuteBoop;
+	return userMuteBoop; 
     }
 
     public void setUserMuteBoop(boolean userMuteBoop) {

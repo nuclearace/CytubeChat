@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
@@ -46,17 +48,18 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private ChatFrame parent;
     private String room;
     private String roomPassword;
+    private boolean stopMessagesAreaScrolling;
     private String username;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null);
 
     public CytubeRoom(String room, String password, ChatFrame frame) {
-	buildChatPanel();
 	this.room = room;
 	this.roomPassword = password;
 	this.parent = frame;
 
+	buildChatPanel();
 	setChat(new Chat(this));
 	getChat().start();
     }
@@ -118,7 +121,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	});
 
 	setMessagesTextArea(new JTextArea());
-	getMessagesTextArea().setEditable(false);
 	messagesScrollPane.setViewportView(getMessagesTextArea());
 
 	setUserlistTextArea(new JTextArea());
@@ -156,15 +158,18 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 
 	messageBuffer.add(message);
-	messagesTextArea.append(message);
-	getMessagesTextArea()
-	.setCaretPosition(getMessagesTextArea().getDocument().getLength());
+	messagesTextArea.append(messageBuffer.peekLast());
+	if (!isStopMessagesAreaScrolling())
+	    getMessagesTextArea()
+	    .setCaretPosition(getMessagesTextArea().getDocument().getLength());
 
-	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		|| obj.getString("msg").toLowerCase()
-		.contains(getUsername().toLowerCase())) {
-	    parent.playSound();
-	}
+	try {
+	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+		    || obj.getString("msg").toLowerCase()
+		    .contains(getUsername().toLowerCase())) {
+		parent.playSound();
+	    }
+	} catch (Exception e) {}
     }
 
     protected void closePMFrames() {
@@ -223,7 +228,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    try {
 			this.privateMessage(to, message);
 		    } catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		    }
 		}
@@ -427,10 +431,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     @Override
-    public void callback(JSONArray data) throws JSONException {
-	// TODO Auto-generated method stub
-
-    }
+    public void callback(JSONArray data) throws JSONException {}
 
     @Override
     public void on(String event, JSONObject obj) {
@@ -515,16 +516,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     @Override
-    public void onMessage(String message) {
-	// TODO Auto-generated method stub
-
-    }
+    public void onMessage(String message) {}
 
     @Override
-    public void onMessage(JSONObject json) {
-	// TODO Auto-generated method stub
-
-    }
+    public void onMessage(JSONObject json) {}
 
     private void onPrivateMessage(JSONObject obj) throws JSONException {
 	String message = 
@@ -563,16 +558,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     @Override
-    public void onDisconnect() {
-	// TODO Auto-generated method stub
-
-    }
+    public void onDisconnect() {}
 
     @Override
-    public void onConnectFailure() {
-	// TODO Auto-generated method stub
-
-    }
+    public void onConnectFailure() {}
 
     public Chat getChat() {
 	return chat;
@@ -596,7 +585,20 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setMessagesTextArea(JTextArea messagesTextArea) {
 	this.messagesTextArea = messagesTextArea;
-	messagesTextArea.setLineWrap(true);
+	messagesTextArea.setWrapStyleWord(true);
+	this.messagesTextArea.setLineWrap(true);
+	this.messagesTextArea.setEditable(false);
+	messagesTextArea.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseEntered(MouseEvent e) {
+		setStopMessagesAreaScrolling(true);
+	    }
+
+	    @Override
+	    public void mouseExited(MouseEvent e) {
+		setStopMessagesAreaScrolling(false);
+	    }    
+	});
     }
 
     public JTextField getNewMessageTextField() {
@@ -630,6 +632,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setRoomPassword(String roomPassword) {
 	this.roomPassword = roomPassword;
+    }
+
+    public boolean isStopMessagesAreaScrolling() {
+	return stopMessagesAreaScrolling;
+    }
+
+    public void setStopMessagesAreaScrolling(boolean stopMessagesAreaScrolling) {
+	this.stopMessagesAreaScrolling = stopMessagesAreaScrolling;
     }
 
     public CytubeUser getUser() {
