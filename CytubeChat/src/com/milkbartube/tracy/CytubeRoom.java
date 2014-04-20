@@ -121,7 +121,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	});
 
 	setMessagesTextArea(new JTextArea());
-	getMessagesTextArea().setEditable(false);
 	messagesScrollPane.setViewportView(getMessagesTextArea());
 
 	setUserlistTextArea(new JTextArea());
@@ -602,6 +601,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    public void mouseExited(MouseEvent e) {
 		setStopMessagesAreaScrolling(false);
 	    }
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		    System.out.println(e.getPoint());
+		}
 	});
 	messagesTextArea.setLineWrap(true);
     }
