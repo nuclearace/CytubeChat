@@ -548,30 +548,35 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	try{
 	    for (CytubeUser user : userList) {
 		switch (user.getRank()) {
-		case 2:
+		case 0:
 		    AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			    StyleConstants.Foreground, new Color(0x13BF0D));
+			    StyleConstants.Foreground, new Color(0x969696));
 		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes);
 		    break;
+		case 2:
+		    AttributeSet attributes2 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0x13BF0D));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes2);
+		    break;
 		case 3:
-		    AttributeSet attributes1 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+		    AttributeSet attributes3 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0xF0B22E));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes1);
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes3);
 		    break;
 		case 4:
-		    AttributeSet attributes11 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+		    AttributeSet attributes4 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0x5C00FA));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes11);
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes4);
 		    break;
 		case 5:
-		    AttributeSet attributes111 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+		    AttributeSet attributes5 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0xFA00BB));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes111);
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes5);
 		    break;
 		case 255:
-		    AttributeSet attributes1111 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+		    AttributeSet attributes6 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0xFA0000));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes1111);
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes6);
 		    break;
 		default:
 		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", null);
