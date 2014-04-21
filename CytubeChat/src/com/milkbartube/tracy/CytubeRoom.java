@@ -260,7 +260,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
 
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
-	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
+	cleanedString = cleanedString.replaceAll(imgRegex, "$1 ");
 	cleanedString = cleanedString.replaceAll(htmlTagRegex, "");
 	//cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
 
