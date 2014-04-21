@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -135,7 +136,14 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    public void actionPerformed(ActionEvent e) {
 		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
 		c.getChat().disconnectChat();
-		c.getMessagesTextArea().append("\nDisconnected!\n");
+		try {
+		    c.getStyledMessagesDocument().insertString(c.getStyledMessagesDocument()
+		    	.getLength(),
+		    	"\nDisconnected!\n", null);
+		} catch (BadLocationException e1) {
+		    // TODO Auto-generated catch block
+		    e1.printStackTrace();
+		}
 	    }
 	});
 	mnMenu.add(mntmDisconnect);
@@ -187,8 +195,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	{
 	    CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
 
-	    c.getMessagesTextArea().setBackground(new java.awt.Color(r1, g1, b1));
-	    c.getMessagesTextArea().setForeground(new java.awt.Color(r2, g2, b2));
+	    c.getMessagesTextPane().setBackground(new java.awt.Color(r1, g1, b1));
+	    c.getMessagesTextPane().setForeground(new java.awt.Color(r2, g2, b2));
 
 	    c.getUserlistTextArea().setBackground(new java.awt.Color(r1, g1, b1));
 	    c.getUserlistTextArea().setForeground(new java.awt.Color(r2, g2, b2));
