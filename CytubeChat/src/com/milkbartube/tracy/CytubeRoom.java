@@ -9,7 +9,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
-import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -63,9 +62,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private JScrollPane newMessageScrollPane;
     private JTextField newMessageTextField;
     private JScrollPane userListScrollPane;
-    private JTextArea userlistTextArea;
     private JTextPane messagesTextPane;
     private StyledDocument styledMessagesDocument;
+    private JTextPane userlistTextPane;
+    private StyledDocument styledUserlist;
 
     private Chat chat;
     private String currentMedia;
@@ -118,6 +118,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 				.addComponent(newMessageScrollPane, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 				.addContainerGap())
 		);
+
+	userlistTextPane = new JTextPane();
+	userlistTextPane.setEditable(false);
+	userlistTextPane.setEditorKit(new WrapEditorKit());
+	userListScrollPane.setViewportView(userlistTextPane);
+	styledUserlist = userlistTextPane.getStyledDocument();
 
 	messagesTextPane = new JTextPane();
 	messagesTextPane.setEditorKit(new WrapEditorKit());
@@ -176,10 +182,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    @Override
 	    public void keyReleased(KeyEvent e) {}
 	});
-
-	setUserlistTextArea(new JTextArea());
-	getUserlistTextArea().setEditable(false);
-	userListScrollPane.setViewportView(getUserlistTextArea());
 	setLayout(groupLayout);
 
     }
@@ -335,7 +337,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    String command = parts[0];
 	    if (command.equals("/disconnect")) {
 		getChat().disconnectChat();
-		userlistTextArea.setText("");
+		userlistTextPane.setText("");
 		messagesTextPane.setText("Disconnected");
 	    } else if (command.equals("/login")) {
 		handleLogin();
@@ -532,7 +534,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void updateUserList() {
 	// Number of users. Note: I'm ignoring anons at this time
-	String str = "Users: " + userList.size() + "\n-----------------\n";
+	userlistTextPane.setText("Users: " + userList.size() + "\n--------------\n");
 
 	// Sort userlist
 	Collections.sort(userList, new Comparator<CytubeUser>() {
@@ -541,29 +543,42 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		return user1.getName().compareToIgnoreCase(user2.getName());
 	    }
 	});
-	for (CytubeUser user : userList) {
-	    switch (user.getRank()) {
-	    case 2:
-		str += "~" + user.getName() + "\n";
-		break;
-	    case 3:
-		str += "@" + user.getName() + "\n";
-		break;
-	    case 4:
-		str += "@" + user.getName() + "\n";
-		break;
-	    case 5:
-		str += "$" + user.getName() + "\n";
-		break;
-	    case 255:
-		str += "%" + user.getName() + "\n";
-		break;
-	    default:
-		str += user.getName() + "\n";
-		break;
+	StyleContext sc = StyleContext.getDefaultStyleContext();
+
+	try{
+	    for (CytubeUser user : userList) {
+		switch (user.getRank()) {
+		case 2:
+		    AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0x13BF0D));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes);
+		    break;
+		case 3:
+		    AttributeSet attributes1 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0xF0B22E));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes1);
+		    break;
+		case 4:
+		    AttributeSet attributes11 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0x5C00FA));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes11);
+		    break;
+		case 5:
+		    AttributeSet attributes111 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0xFA00BB));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes111);
+		    break;
+		case 255:
+		    AttributeSet attributes1111 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0xFA0000));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes1111);
+		    break;
+		default:
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", null);
+		    break;
+		}
 	    }
-	}
-	userlistTextArea.setText(str);
+	} catch (Exception e) {}
     }
 
     public void privateMessage(String to, String message) throws JSONException {
@@ -789,12 +804,20 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.user = user;
     }
 
-    public JTextArea getUserlistTextArea() {
-	return userlistTextArea;
+    public JTextPane getUserlistTextPane() {
+	return userlistTextPane;
     }
 
-    public void setUserlistTextArea(JTextArea userlistTextArea) {
-	this.userlistTextArea = userlistTextArea;
+    public void setUserlistTextPane(JTextPane userlistTextPane) {
+	this.userlistTextPane = userlistTextPane;
+    }
+
+    public StyledDocument getStyledUserlist() {
+	return styledUserlist;
+    }
+
+    public void setStyledUserlist(StyledDocument styledUserlist) {
+	this.styledUserlist = styledUserlist;
     }
 
     public String getUsername() {
@@ -837,14 +860,13 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		+ ", newMessageScrollPane=" + newMessageScrollPane
 		+ ", newMessageTextField=" + newMessageTextField
 		+ ", userListScrollPane=" + userListScrollPane
-		+ ", userlistTextArea=" + userlistTextArea + ", chat=" + chat
+		+ ", userlistTextPane=" + userlistTextPane + ", chat=" + chat
 		+ ", currentMedia=" + currentMedia + ", parent=" + parent.toString()
 		+ ", room=" + room + ", roomPassword=" + roomPassword
 		+ ", username=" + username + ", messageBuffer=" + messageBuffer
 		+ ", userList=" + userList + ", user=" + user + "]";
     }
 }
-
 
 @SuppressWarnings("serial")
 class WrapEditorKit extends StyledEditorKit {
