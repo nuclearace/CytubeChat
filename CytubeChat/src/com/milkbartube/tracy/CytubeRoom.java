@@ -226,6 +226,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		}
 	    }
 	} catch (Exception e) {}
+	
+	messageBuffer.add("");
 
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
