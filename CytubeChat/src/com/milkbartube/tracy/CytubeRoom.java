@@ -177,7 +177,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
-    private String addMessageWithLinks(ArrayList<String> list, String username, long time) {
+    private void addMessageWithLinks(ArrayList<String> list, String username, long time) {
 	Date date = new Date(time);
 	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
 	formatter.setTimeZone(TimeZone.getDefault());
@@ -210,8 +210,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		}
 	    }
 	} catch (Exception e) {}
-	return "";
-
     }
 
     private void addUser(CytubeUser user, boolean fromAddUser) {
