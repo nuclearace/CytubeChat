@@ -200,7 +200,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    for (String word : list) {
 		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
 		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			    getLength(), word.replaceAll("\\<.*?\\>", "") + " ", null);
+			    getLength(), word + " ", null);
 		} else {
 		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
 			    getLength(), word + " ", attributes);
@@ -243,13 +243,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private void chatMsg(JSONObject obj) throws JSONException {
 	ArrayList<String> list = new ArrayList<String>();
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-	String hyperlinkRegex = "<a[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-	String linkRegex = ".*(http(s?):/)(/[^/]+)+";
+	String hyperlinkRegex = "<a[^>]+href\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+	String linkRegex = ".*(http(s?):/)(/[^/]+).*";
 	
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
-	cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
+	cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
+	//cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 
 	for (String string: cleanedString.split(" ")) {
 	    list.add(string);
