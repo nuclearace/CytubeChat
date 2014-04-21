@@ -42,7 +42,6 @@ import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
-import javax.swing.text.ElementIterator;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -245,8 +244,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String hyperlinkRegex = "<a[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String linkRegex = ".*(http(s?):/)(/[^/]+)+";
+	
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
-
 	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
 	cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
 	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
@@ -254,11 +253,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	for (String string: cleanedString.split(" ")) {
 	    list.add(string);
 	}
-
-	System.out.println(list.toString());
-
+	
 	if (cleanedString.matches(linkRegex)) {
-	    System.out.println("We hit an image sir");
 	    addMessageWithLinks(list, 
 		    obj.getString("username"), (long) obj.get("time"));
 	    return;
