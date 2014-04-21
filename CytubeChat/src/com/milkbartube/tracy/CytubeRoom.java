@@ -210,6 +210,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		}
 	    }
 	} catch (Exception e) {}
+	
+	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
+	    messageBuffer.remove();
+	    messagesTextPane.setText(messagesTextPane.getText()
+		    .substring(messagesTextPane.getText().indexOf('\n')+1));
+	}
     }
 
     private void addUser(CytubeUser user, boolean fromAddUser) {
