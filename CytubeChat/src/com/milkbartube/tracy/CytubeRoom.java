@@ -264,7 +264,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    return;
 	}
 
-	String clanedString = 
+	cleanedString = 
 		this.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
 
@@ -274,7 +274,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    .substring(messagesTextPane.getText().indexOf('\n')+1));
 	}
 
-	messageBuffer.add(clanedString);
+	messageBuffer.add(cleanedString);
 	try {
 	    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
 		    getLength(), messageBuffer.peekLast(), null);
