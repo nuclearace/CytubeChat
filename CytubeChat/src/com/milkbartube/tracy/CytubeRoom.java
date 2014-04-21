@@ -534,7 +534,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void updateUserList() {
 	// Number of users. Note: I'm ignoring anons at this time
-	userlistTextPane.setText("Users: " + userList.size() + "\n--------------\n");
+	userlistTextPane.setText("");
+	try {
+	    styledUserlist.insertString(styledUserlist.getLength(), 
+	    	"Users: " + userList.size() + "\n--------------\n", null);
+	} catch (BadLocationException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	}
 
 	// Sort userlist
 	Collections.sort(userList, new Comparator<CytubeUser>() {
@@ -543,8 +550,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		return user1.getName().compareToIgnoreCase(user2.getName());
 	    }
 	});
+	
 	StyleContext sc = StyleContext.getDefaultStyleContext();
-
 	try{
 	    for (CytubeUser user : userList) {
 		switch (user.getRank()) {
