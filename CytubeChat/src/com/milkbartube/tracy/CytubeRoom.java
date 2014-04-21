@@ -63,9 +63,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private JScrollPane newMessageScrollPane;
     private JTextField newMessageTextField;
     private JScrollPane userListScrollPane;
-    private JTextArea userlistTextArea;
     private JTextPane messagesTextPane;
     private StyledDocument styledMessagesDocument;
+    private JTextPane userlistTextPane;
+    private StyledDocument styledUserlist;
 
     private Chat chat;
     private String currentMedia;
@@ -77,6 +78,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null);
+    
 
     public CytubeRoom(String room, String password, ChatFrame frame) {
 	this.room = room;
@@ -118,6 +120,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 				.addComponent(newMessageScrollPane, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 				.addContainerGap())
 		);
+	
+	userlistTextPane = new JTextPane();
+	userListScrollPane.setViewportView(userlistTextPane);
+	styledUserlist = userlistTextPane.getStyledDocument();
 
 	messagesTextPane = new JTextPane();
 	messagesTextPane.setEditorKit(new WrapEditorKit());
@@ -176,10 +182,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    @Override
 	    public void keyReleased(KeyEvent e) {}
 	});
-
-	setUserlistTextArea(new JTextArea());
-	getUserlistTextArea().setEditable(false);
-	userListScrollPane.setViewportView(getUserlistTextArea());
 	setLayout(groupLayout);
 
     }
@@ -335,7 +337,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    String command = parts[0];
 	    if (command.equals("/disconnect")) {
 		getChat().disconnectChat();
-		userlistTextArea.setText("");
+		userlistTextPane.setText("");
 		messagesTextPane.setText("Disconnected");
 	    } else if (command.equals("/login")) {
 		handleLogin();
@@ -563,7 +565,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		break;
 	    }
 	}
-	userlistTextArea.setText(str);
+	try {
+	    styledUserlist.insertString(styledUserlist.getLength(), str, null);
+	} catch (BadLocationException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     public void privateMessage(String to, String message) throws JSONException {
@@ -789,12 +796,20 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.user = user;
     }
 
-    public JTextArea getUserlistTextArea() {
-	return userlistTextArea;
+    public JTextPane getUserlistTextPane() {
+        return userlistTextPane;
     }
 
-    public void setUserlistTextArea(JTextArea userlistTextArea) {
-	this.userlistTextArea = userlistTextArea;
+    public void setUserlistTextPane(JTextPane userlistTextPane) {
+        this.userlistTextPane = userlistTextPane;
+    }
+
+    public StyledDocument getStyledUserlist() {
+	return styledUserlist;
+    }
+
+    public void setStyledUserlist(StyledDocument styledUserlist) {
+	this.styledUserlist = styledUserlist;
     }
 
     public String getUsername() {
@@ -837,14 +852,13 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		+ ", newMessageScrollPane=" + newMessageScrollPane
 		+ ", newMessageTextField=" + newMessageTextField
 		+ ", userListScrollPane=" + userListScrollPane
-		+ ", userlistTextArea=" + userlistTextArea + ", chat=" + chat
+		+ ", userlistTextPane=" + userlistTextPane + ", chat=" + chat
 		+ ", currentMedia=" + currentMedia + ", parent=" + parent.toString()
 		+ ", room=" + room + ", roomPassword=" + roomPassword
 		+ ", username=" + username + ", messageBuffer=" + messageBuffer
 		+ ", userList=" + userList + ", user=" + user + "]";
     }
 }
-
 
 @SuppressWarnings("serial")
 class WrapEditorKit extends StyledEditorKit {

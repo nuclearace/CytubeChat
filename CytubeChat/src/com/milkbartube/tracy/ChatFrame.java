@@ -198,8 +198,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    c.getMessagesTextPane().setBackground(new java.awt.Color(r1, g1, b1));
 	    c.getMessagesTextPane().setForeground(new java.awt.Color(r2, g2, b2));
 
-	    c.getUserlistTextArea().setBackground(new java.awt.Color(r1, g1, b1));
-	    c.getUserlistTextArea().setForeground(new java.awt.Color(r2, g2, b2));
+	    c.getUserlistTextPane().setBackground(new java.awt.Color(r1, g1, b1));
+	    c.getUserlistTextPane().setForeground(new java.awt.Color(r2, g2, b2));
 
 	    c.getNewMessageTextField().setBackground(new java.awt.Color(r1, g1, b1));
 	    c.getNewMessageTextField().setForeground(new java.awt.Color(r2, g2, b2));
