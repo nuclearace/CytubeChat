@@ -202,7 +202,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    for (String word : list) {
 		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
 		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			    getLength(), word + " ", null);
+			    getLength(), word.replaceAll("\\<.*?\\>", "") + " ", null);
 		} else {
 		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
 			    getLength(), word + " ", attributes);
