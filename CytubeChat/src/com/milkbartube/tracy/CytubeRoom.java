@@ -46,7 +46,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
-import javax.swing.ScrollPaneConstants;
 
 public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
@@ -88,7 +87,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	userListScrollPane = new JScrollPane();
 
 	messagesScrollPane = new JScrollPane();
-	messagesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 	newMessageScrollPane = new JScrollPane();
 
