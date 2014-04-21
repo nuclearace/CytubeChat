@@ -122,7 +122,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
 		    try {
 			handleLink(messagesTextPane.getText(element.getStartOffset(), 
-			    ((element.getEndOffset() - element.getStartOffset()) - 1)));
+				((element.getEndOffset() - element.getStartOffset()) - 1)));
 		    } catch (BadLocationException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -195,7 +195,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			getLength(), "[" + formattedTime + "] " + username + ": ", null);
 	    }
 	} catch (Exception e ) {}
-	
+
 	try {
 	    for (String word : list) {
 		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
@@ -207,7 +207,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		}
 	    }
 	} catch (Exception e) {}
-	
+
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
 	    messagesTextPane.setText(messagesTextPane.getText()
@@ -243,20 +243,19 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private void chatMsg(JSONObject obj) throws JSONException {
 	ArrayList<String> list = new ArrayList<String>();
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-	String hyperlinkRegex = "<a[^>]+href\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+	//String hyperlinkRegex = "<a[^>]+href\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String linkRegex = ".*(http(s?):/)(/[^/]+).*";
-	
+	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
+
 	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
 	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
-	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
-	cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
-	//cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
+	cleanedString = cleanedString.replaceAll(htmlTagRegex, "");
+	//cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
 
-	for (String string: cleanedString.split(" ")) {
-	    list.add(string);
-	}
-	
 	if (cleanedString.matches(linkRegex)) {
+	    for (String string: cleanedString.split(" ")) {
+		list.add(string);
+	    }
 	    addMessageWithLinks(list, 
 		    obj.getString("username"), (long) obj.get("time"));
 	    return;
@@ -264,7 +263,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	cleanedString = 
 		this.formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"));
+			cleanedString, (long) obj.get("time"));
 
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
@@ -370,14 +369,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	} else
 	    return;
     }
-    
+
     protected void handleLink(String uri) {
-            try {
-		Desktop.getDesktop().browse(new URI(uri));
-	    } catch (IOException | URISyntaxException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
+	try {
+	    Desktop.getDesktop().browse(new URI(uri));
+	} catch (IOException | URISyntaxException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     public void handleLogin() {
