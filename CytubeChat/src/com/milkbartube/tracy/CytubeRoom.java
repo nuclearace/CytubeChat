@@ -9,7 +9,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
-import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -78,7 +77,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null);
-    
 
     public CytubeRoom(String room, String password, ChatFrame frame) {
 	this.room = room;
@@ -120,8 +118,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 				.addComponent(newMessageScrollPane, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 				.addContainerGap())
 		);
-	
+
 	userlistTextPane = new JTextPane();
+	userlistTextPane.setEditable(false);
+	userlistTextPane.setEditorKit(new WrapEditorKit());
 	userListScrollPane.setViewportView(userlistTextPane);
 	styledUserlist = userlistTextPane.getStyledDocument();
 
@@ -534,7 +534,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void updateUserList() {
 	// Number of users. Note: I'm ignoring anons at this time
-	String str = "Users: " + userList.size() + "\n-----------------\n";
+	userlistTextPane.setText("Users: " + userList.size() + "\n--------------\n");
 
 	// Sort userlist
 	Collections.sort(userList, new Comparator<CytubeUser>() {
@@ -543,34 +543,42 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		return user1.getName().compareToIgnoreCase(user2.getName());
 	    }
 	});
-	for (CytubeUser user : userList) {
-	    switch (user.getRank()) {
-	    case 2:
-		str += "~" + user.getName() + "\n";
-		break;
-	    case 3:
-		str += "@" + user.getName() + "\n";
-		break;
-	    case 4:
-		str += "@" + user.getName() + "\n";
-		break;
-	    case 5:
-		str += "$" + user.getName() + "\n";
-		break;
-	    case 255:
-		str += "%" + user.getName() + "\n";
-		break;
-	    default:
-		str += user.getName() + "\n";
-		break;
+	StyleContext sc = StyleContext.getDefaultStyleContext();
+
+	try{
+	    for (CytubeUser user : userList) {
+		switch (user.getRank()) {
+		case 2:
+		    AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0x13BF0D));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes);
+		    break;
+		case 3:
+		    AttributeSet attributes1 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0xF0B22E));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes1);
+		    break;
+		case 4:
+		    AttributeSet attributes11 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0x5C00FA));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes11);
+		    break;
+		case 5:
+		    AttributeSet attributes111 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0xFA00BB));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes111);
+		    break;
+		case 255:
+		    AttributeSet attributes1111 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			    StyleConstants.Foreground, new Color(0xFA0000));
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes1111);
+		    break;
+		default:
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", null);
+		    break;
+		}
 	    }
-	}
-	try {
-	    styledUserlist.insertString(styledUserlist.getLength(), str, null);
-	} catch (BadLocationException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	} catch (Exception e) {}
     }
 
     public void privateMessage(String to, String message) throws JSONException {
@@ -797,11 +805,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     public JTextPane getUserlistTextPane() {
-        return userlistTextPane;
+	return userlistTextPane;
     }
 
     public void setUserlistTextPane(JTextPane userlistTextPane) {
-        this.userlistTextPane = userlistTextPane;
+	this.userlistTextPane = userlistTextPane;
     }
 
     public StyledDocument getStyledUserlist() {
