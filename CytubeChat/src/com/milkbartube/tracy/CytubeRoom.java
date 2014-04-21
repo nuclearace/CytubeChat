@@ -17,10 +17,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +39,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.ElementIterator;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
+import javax.swing.ScrollPaneConstants;
 
 public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
@@ -77,6 +89,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	userListScrollPane = new JScrollPane();
 
 	messagesScrollPane = new JScrollPane();
+	messagesScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 	newMessageScrollPane = new JScrollPane();
 
@@ -101,6 +114,34 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		);
 
 	messagesTextPane = new JTextPane();
+	messagesTextPane.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		int pos = messagesTextPane.viewToModel(e.getPoint());
+		//ElementIterator iterator = new ElementIterator(getStyledMessagesDocument());
+		Element element = getStyledMessagesDocument().getCharacterElement(pos);
+
+		System.out.println(element.getStartOffset());
+		AttributeSet as = element.getAttributes();
+		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
+		    try {
+			handleLink(messagesTextPane.getText(element.getStartOffset(), 
+			    ((element.getEndOffset() - element.getStartOffset()) - 1)));
+		    } catch (BadLocationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		    }
+		}
+	    }
+	    @Override
+	    public void mouseEntered(MouseEvent e) {
+		setStopMessagesAreaScrolling(true);
+	    }
+	    @Override
+	    public void mouseExited(MouseEvent e) {
+		setStopMessagesAreaScrolling(false);
+	    }
+	});
 	messagesTextPane.setEditable(false);
 	styledMessagesDocument = messagesTextPane.getStyledDocument();
 	messagesScrollPane.setViewportView(messagesTextPane);
@@ -137,6 +178,43 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
+    private String addMessageWithLinks(ArrayList<String> list, String username, long time) {
+	Date date = new Date(time);
+	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
+	formatter.setTimeZone(TimeZone.getDefault());
+	String formattedTime = formatter.format(date);
+
+	Color color = new Color(0x351FFF);
+	StyleContext sc = StyleContext.getDefaultStyleContext();
+	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+		StyleConstants.Foreground, color);
+
+
+	try {
+	    if (!(messageBuffer.size() == 0)) {
+
+		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			getLength(), "\n[" + formattedTime + "] " + username + ": ", null);
+	    } else {
+		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			getLength(), "[" + formattedTime + "] " + username + ": ", null);
+	    }
+	} catch (Exception e ) {}
+	try {
+	    for (String word : list) {
+		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
+		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			    getLength(), word + " ", null);
+		} else {
+		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			    getLength(), word + " ", attributes);
+		}
+	    }
+	} catch (Exception e) {}
+	return "";
+
+    }
+
     private void addUser(CytubeUser user, boolean fromAddUser) {
 	if (user.getName().toLowerCase().equals(
 		this.getUser().getName().toLowerCase())) {
@@ -144,11 +222,13 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 	if (this.getUser().getRank() <= 1  && fromAddUser) {
 	    try {
+		SimpleAttributeSet attributes = new SimpleAttributeSet();
+		attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 		getStyledMessagesDocument().insertString(
 			getStyledMessagesDocument().getLength(), 
 			formatMessage("[Client]", 
 				user.getName() + " joined the room", 
-				System.currentTimeMillis(), false), null);
+				System.currentTimeMillis()), attributes);
 	    } catch (BadLocationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -161,9 +241,32 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void chatMsg(JSONObject obj) throws JSONException {
-	String message = 
+	ArrayList<String> list = new ArrayList<String>();
+	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+	String hyperlinkRegex = "<a[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+	String linkRegex = ".*(http(s?):/)(/[^/]+)+";
+	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
+
+	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
+	cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
+	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
+
+	for (String string: cleanedString.split(" ")) {
+	    list.add(string);
+	}
+
+	System.out.println(list.toString());
+
+	if (cleanedString.matches(linkRegex)) {
+	    System.out.println("We hit an image sir");
+	    addMessageWithLinks(list, 
+		    obj.getString("username"), (long) obj.get("time"));
+	    return;
+	}
+
+	String clanedString = 
 		this.formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"), false);
+			obj.getString("msg"), (long) obj.get("time"));
 
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
@@ -171,7 +274,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    .substring(messagesTextPane.getText().indexOf('\n')+1));
 	}
 
-	messageBuffer.add(message);
+	messageBuffer.add(clanedString);
 	try {
 	    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
 		    getLength(), messageBuffer.peekLast(), null);
@@ -179,6 +282,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
 	}
+
 	if (!isStopMessagesAreaScrolling())
 	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
 
@@ -199,11 +303,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    public String formatMessage(String username, String message, long time, boolean privateMessage) {
+    public String formatMessage(String username, String message, long time) {
 	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
-	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
-	cleanedString = cleanedString.replaceAll("\\<.*?\\>", "");
 
 	// Add the timestamp
 	Date date = new Date(time);
@@ -211,7 +312,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	if (!(messageBuffer.size() == 0) && !privateMessage) {
+	if (!(messageBuffer.size() == 0)) {
 	    message = "\n[" + formattedTime + "] ";
 	} else {
 	    message = "[" + formattedTime + "] ";
@@ -270,6 +371,16 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		getChat().sendMessage(data);
 	} else
 	    return;
+    }
+    
+
+    protected void handleLink(String uri) {
+            try {
+		Desktop.getDesktop().browse(new URI(uri));
+	    } catch (IOException | URISyntaxException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
     }
 
     public void handleLogin() {
@@ -338,11 +449,13 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void removeUser(String username) {
+	SimpleAttributeSet attributes = new SimpleAttributeSet();
+	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	try {
 	    getStyledMessagesDocument().insertString(
 		    getStyledMessagesDocument().getLength(), 
 		    formatMessage("[Client]", username + " left the room", 
-			    System.currentTimeMillis(), false), null);
+			    System.currentTimeMillis()), attributes);
 	} catch (BadLocationException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -550,7 +663,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private void onPrivateMessage(JSONObject obj) throws JSONException {
 	String message = 
 		this.formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"), true );
+			obj.getString("msg"), (long) obj.get("time"));
 
 	for (CytubeUser user : userList) {
 	    if (user.getName().equals(obj.getString("username")) &&
@@ -606,11 +719,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     public JTextPane getMessagesTextPane() {
-        return messagesTextPane;
+	return messagesTextPane;
     }
 
     public void setMessagesTextPane(JTextPane messagesTextPane) {
-        this.messagesTextPane = messagesTextPane;
+	this.messagesTextPane = messagesTextPane;
     }
 
     public JTextField getNewMessageTextField() {
@@ -648,6 +761,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public boolean isStopMessagesAreaScrolling() {
 	return stopMessagesAreaScrolling;
+    }
+
+    public void setStopMessagesAreaScrolling(boolean stopMessagesAreaScrolling) {
+	this.stopMessagesAreaScrolling = stopMessagesAreaScrolling;
     }
 
     public StyledDocument getStyledMessagesDocument() {
