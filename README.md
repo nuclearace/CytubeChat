@@ -26,3 +26,4 @@ Commands
 - `/sound` Mutes the boop sound on incoming messages (Still boops if message contains your name)
 - `/login` Logs into a room
 - `/chatbuffer` limit the number of message displayed to 100
+- `/userlist` Hides the userlist
