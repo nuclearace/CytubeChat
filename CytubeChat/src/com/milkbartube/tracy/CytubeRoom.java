@@ -117,7 +117,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    @Override
 	    public void mouseClicked(MouseEvent e) {
 		int pos = messagesTextPane.viewToModel(e.getPoint());
-		//ElementIterator iterator = new ElementIterator(getStyledMessagesDocument());
 		Element element = getStyledMessagesDocument().getCharacterElement(pos);
 
 		System.out.println(element.getStartOffset());
@@ -188,7 +187,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 		StyleConstants.Foreground, color);
 
-
 	try {
 	    if (!(messageBuffer.size() == 0)) {
 
@@ -199,6 +197,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			getLength(), "[" + formattedTime + "] " + username + ": ", null);
 	    }
 	} catch (Exception e ) {}
+	
 	try {
 	    for (String word : list) {
 		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
@@ -373,7 +372,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    return;
     }
     
-
     protected void handleLink(String uri) {
             try {
 		Desktop.getDesktop().browse(new URI(uri));
