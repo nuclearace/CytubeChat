@@ -210,6 +210,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	try {
 	    for (String word : list) {
+		if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+			|| word.toLowerCase()
+			.contains(getUsername().toLowerCase())) {
+		    parent.playSound();
+		}
 		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
 		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
 			    getLength(), word + " ", null);
@@ -225,6 +230,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    messagesTextPane.setText(messagesTextPane.getText()
 		    .substring(messagesTextPane.getText().indexOf('\n')+1));
 	}
+
+	if (!isStopMessagesAreaScrolling())
+	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
     }
 
     private void addUser(CytubeUser user, boolean fromAddUser) {
@@ -537,7 +545,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	userlistTextPane.setText("");
 	try {
 	    styledUserlist.insertString(styledUserlist.getLength(), 
-	    	"Users: " + userList.size() + "\n--------------\n", null);
+		    "Users: " + userList.size() + "\n--------------\n", null);
 	} catch (BadLocationException e1) {
 	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
@@ -550,7 +558,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		return user1.getName().compareToIgnoreCase(user2.getName());
 	    }
 	});
-	
+
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	try{
 	    for (CytubeUser user : userList) {
