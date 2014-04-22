@@ -570,7 +570,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	});
 
 	StyleContext sc = StyleContext.getDefaultStyleContext();
-	try{
+	try {
 	    for (CytubeUser user : userList) {
 		switch (user.getRank()) {
 		case 0:
