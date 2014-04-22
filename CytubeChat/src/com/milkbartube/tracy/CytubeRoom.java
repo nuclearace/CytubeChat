@@ -259,6 +259,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			formatMessage("[Client]", 
 				user.getUsername() + " joined the room", 
 				System.currentTimeMillis()), attributes);
+		if (!isStopMessagesAreaScrolling())
+		    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
 	    } catch (BadLocationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
