@@ -9,6 +9,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -85,7 +86,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	buildChatPanel();
 	setChat(new Chat(this));
-	getChat().start();
+	SwingUtilities.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+		getChat().start();
+	    }
+	});
     }
 
     /**
@@ -226,7 +232,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		}
 	    }
 	} catch (Exception e) {}
-	
+
 	messageBuffer.add("");
 
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
@@ -240,8 +246,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void addUser(CytubeUser user, boolean fromAddUser) {
-	if (user.getName().toLowerCase().equals(
-		this.getUser().getName().toLowerCase())) {
+	if (user.getUsername().toLowerCase().equals(
+		this.getUser().getUsername().toLowerCase())) {
 	    setUser(user);
 	}
 	if (this.getUser().getRank() <= 1  && fromAddUser) {
@@ -251,7 +257,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		getStyledMessagesDocument().insertString(
 			getStyledMessagesDocument().getLength(), 
 			formatMessage("[Client]", 
-				user.getName() + " joined the room", 
+				user.getUsername() + " joined the room", 
 				System.currentTimeMillis()), attributes);
 	    } catch (BadLocationException e) {
 		// TODO Auto-generated catch block
@@ -430,8 +436,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	String replacedSentence = "";
 
 	for (CytubeUser user : userList) {
-	    if (user.getName().toLowerCase().matches(partialName)) {
-		users.add(user.getName());
+	    if (user.getUsername().toLowerCase().matches(partialName)) {
+		users.add(user.getUsername());
 	    }
 	}
 	if (users.size() == 0) {
@@ -481,7 +487,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    e.printStackTrace();
 	}
 	for (CytubeUser user : userList) {
-	    if (user.getName().equals(username)) {
+	    if (user.getUsername().equals(username)) {
 		if (user.isInPrivateMessage())
 		    user.getPmFrame().handleUserLeftRoom();
 		userList.remove(user);
@@ -492,7 +498,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void setAfk(String name, boolean afk) {
 	for (CytubeUser user : userList) {
-	    if (user.getName().equals(name)) {
+	    if (user.getUsername().toLowerCase().equals(name.toLowerCase())) {
 		user.setAfk(afk);
 		break;
 	    }
@@ -559,7 +565,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	Collections.sort(userList, new Comparator<CytubeUser>() {
 	    @Override
 	    public int compare(CytubeUser user1, CytubeUser user2) {
-		return user1.getName().compareToIgnoreCase(user2.getName());
+		return user1.getUsername().compareToIgnoreCase(user2.getUsername());
 	    }
 	});
 
@@ -570,35 +576,64 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		case 0:
 		    AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0x969696));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes);
+		    if (user.getAfk()) {
+			attributes = 
+				sc.addAttribute(attributes, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    }
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes);
 		    break;
 		case 2:
 		    AttributeSet attributes2 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0x13BF0D));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes2);
+		    if (user.getAfk()) {
+			attributes2 = 
+				sc.addAttribute(attributes2, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    }
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes2);
 		    break;
 		case 3:
 		    AttributeSet attributes3 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0xF0B22E));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes3);
+		    if (user.getAfk()) {
+			attributes3 = 
+				sc.addAttribute(attributes3, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    }
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes3);
 		    break;
 		case 4:
 		    AttributeSet attributes4 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0x5C00FA));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes4);
+		    if (user.getAfk()) {
+			attributes4 = 
+				sc.addAttribute(attributes4, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    }
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes4);
 		    break;
 		case 5:
 		    AttributeSet attributes5 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0xFA00BB));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes5);
+		    if (user.getAfk()) {
+			attributes5 = 
+				sc.addAttribute(attributes5, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    }
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes5);
 		    break;
 		case 255:
 		    AttributeSet attributes6 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 			    StyleConstants.Foreground, new Color(0xFA0000));
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", attributes6);
+		    if (user.getAfk()) {
+			attributes6 = 
+				sc.addAttribute(attributes6, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    }
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes6);
 		    break;
 		default:
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getName() + "\n", null);
+		    AttributeSet attributes7 = null;
+		    if (user.getAfk()) {
+			attributes7 = 
+				sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    }
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes7);
 		    break;
 		}
 	    }
@@ -638,13 +673,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    parent.setTitle(getCurrentMedia());
 	    } else if (event.equals("pm")) {
 		this.onPrivateMessage(obj);
-	    } else if (event.equals("setAfk")) {
-		this.setAfk(obj.getString("name"), (boolean) obj.get("afk"));
+	    } else if (event.equals("setAFK")) {
+		setAfk(obj.getString("name"), (boolean) obj.get("afk"));
+		updateUserList();
 	    } else if (event.equals("login")) {
 		if ((boolean) obj.get("success")) {
 		    System.out.println("Logged in");
 		    setUsername(obj.getString("name"));
-		    user.setName(obj.getString("name"));
+		    user.setUsername(obj.getString("name"));
 		} else {
 		    JOptionPane.showMessageDialog(null, obj.get("error"));
 		    setUsername(null);
@@ -711,7 +747,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			obj.getString("msg"), (long) obj.get("time"));
 
 	for (CytubeUser user : userList) {
-	    if (user.getName().equals(obj.getString("username")) &&
+	    if (user.getUsername().equals(obj.getString("username")) &&
 		    !username.equals(obj.getString("username"))) {
 		if (!user.isInPrivateMessage()) {
 		    user.startPM(message);
@@ -719,7 +755,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    user.getPmFrame().addMessage(message);
 		}
 		break;
-	    } else if (user.getName().equals(obj.getString("to"))) {
+	    } else if (user.getUsername().equals(obj.getString("to"))) {
 		if (!user.isInPrivateMessage()) {
 		    user.startPM(message);
 		} else {

@@ -40,7 +40,7 @@ public class PrivateMessageFrame extends JFrame {
 	this.room = room;
 	this.user = user;
 	buildPrivateMessageFrame();
-	setTitle(user.getName() + " (" + room.getRoom() + ")");
+	setTitle(user.getUsername() + " (" + room.getRoom() + ")");
     }
 
     /**
@@ -105,7 +105,7 @@ public class PrivateMessageFrame extends JFrame {
     protected void newMessageActionPerformed() {
 	try {
 	    String text = getNewMessageTextField().getText();
-	    room.privateMessage(user.getName(), 
+	    room.privateMessage(user.getUsername(), 
 		    text);
 	    getNewMessageTextField().setText("");
 	} catch (JSONException e) {
@@ -133,7 +133,7 @@ public class PrivateMessageFrame extends JFrame {
     }
 
     protected void handleUserLeftRoom() {
-	privateMessageTextArea.append("\n" + user.getName() + " left the room");
+	privateMessageTextArea.append("\n" + user.getUsername() + " left the room");
 	newPrivateMessageTextField.setEditable(false);
     }
 

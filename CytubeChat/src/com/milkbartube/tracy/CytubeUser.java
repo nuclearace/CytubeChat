@@ -4,14 +4,14 @@ public class CytubeUser {
     
     private boolean afk;
     private boolean inPrivateMessage;
-    private String name;
+    private String username;
     private int rank;
     private CytubeRoom room;
     private PrivateMessageFrame pmFrame;
    
     public CytubeUser(boolean afk, String name, int rank, CytubeRoom room) {
 	this.afk = afk;
-	this.name = name;
+	this.username = name;
 	this.rank = rank;
 	this.room = room;
     }
@@ -31,12 +31,12 @@ public class CytubeUser {
         this.afk = afk;
     }
 
-    public String getName() {
-	return name;
+    public String getUsername() {
+	return username;
     }
 
-    public void setName(String name) {
-	this.name = name;
+    public void setUsername(String name) {
+	this.username = name;
     }
     public boolean isInPrivateMessage() {
 	return inPrivateMessage;
@@ -74,7 +74,7 @@ public class CytubeUser {
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result + ((name == null) ? 0 : name.hashCode());
+	result = prime * result + ((username == null) ? 0 : username.hashCode());
 	result = prime * result + rank;
 	return result;
     }
@@ -88,10 +88,10 @@ public class CytubeUser {
 	if (getClass() != obj.getClass())
 	    return false;
 	CytubeUser other = (CytubeUser) obj;
-	if (name == null) {
-	    if (other.name != null)
+	if (username == null) {
+	    if (other.username != null)
 		return false;
-	} else if (!name.equals(other.name))
+	} else if (!username.equals(other.username))
 	    return false;
 	if (rank != other.rank)
 	    return false;
@@ -100,7 +100,7 @@ public class CytubeUser {
 
     @Override
     public String toString() {
-	return "CyTubeUser [afk=" + afk + ", name=" + name + ", rank=" + rank
+	return "CyTubeUser [afk=" + afk + ", name=" + username + ", rank=" + rank
 		+ "]";
     }
 }
