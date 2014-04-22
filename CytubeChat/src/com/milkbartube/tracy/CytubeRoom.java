@@ -742,10 +742,15 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     @Override
-    public void onDisconnect() {}
+    public void onDisconnect() {
+	setUsername(null);
+	JOptionPane.showMessageDialog(null, "Disconnected");
+    }
 
     @Override
-    public void onConnectFailure() {}
+    public void onConnectFailure() {
+	JOptionPane.showMessageDialog(null, "Could not connect");
+    }
 
     public Chat getChat() {
 	return chat;
