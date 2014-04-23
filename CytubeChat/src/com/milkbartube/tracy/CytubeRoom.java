@@ -35,6 +35,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -127,7 +129,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	userlistTextPane = new JTextPane();
 	userlistTextPane.setEditable(false);
-	userlistTextPane.setEditorKit(new WrapEditorKit());
 	userListScrollPane.setViewportView(userlistTextPane);
 	styledUserlist = userlistTextPane.getStyledDocument();
 
@@ -139,7 +140,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		int pos = messagesTextPane.viewToModel(e.getPoint());
 		Element element = getStyledMessagesDocument().getCharacterElement(pos);
 
-		System.out.println(element.getStartOffset());
 		AttributeSet as = element.getAttributes();
 		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
 		    try {
@@ -193,10 +193,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void addMessageWithLinks(ArrayList<String> list, String username, long time) {
-	Date date = new Date(time);
-	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
-	formatter.setTimeZone(TimeZone.getDefault());
-	String formattedTime = formatter.format(date);
 
 	Color color = new Color(0x351FFF);
 	StyleContext sc = StyleContext.getDefaultStyleContext();
@@ -204,25 +200,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		StyleConstants.Foreground, color);
 
 	try {
-	    if (!(messageBuffer.size() == 0)) {
-
-		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			getLength(), "\n[" + formattedTime + "] " + username + ": ", null);
-	    } else {
-		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			getLength(), "[" + formattedTime + "] " + username + ": ", null);
-	    }
-	} catch (Exception e ) {}
-
-	try {
 	    for (String word : list) {
-		try {
-		    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-			    || word.toLowerCase()
-			    .contains(getUsername().toLowerCase())) {
-			parent.playSound();
-		    } 
-		} catch (Exception e) {}
 		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
 		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
 			    getLength(), word + " ", null);
@@ -258,7 +236,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			getStyledMessagesDocument().getLength(), 
 			formatMessage("[Client]", 
 				user.getUsername() + " joined the room", 
-				System.currentTimeMillis()), attributes);
+				System.currentTimeMillis(), false), attributes);
 		if (!isStopMessagesAreaScrolling())
 		    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
 	    } catch (BadLocationException e) {
@@ -274,28 +252,32 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void chatMsg(JSONObject obj) throws JSONException {
 	ArrayList<String> list = new ArrayList<String>();
-	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-	//String hyperlinkRegex = "<a[^>]+href\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-	String linkRegex = ".*(http(s?):/)(/[^/]+).*";
-	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
+	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
 
-	String cleanedString = StringEscapeUtils.unescapeHtml4(obj.getString("msg"));
-	cleanedString = cleanedString.replaceAll(imgRegex, "$1 ");
-	cleanedString = cleanedString.replaceAll(htmlTagRegex, "");
-	//cleanedString = cleanedString.replaceAll(hyperlinkRegex, "$1");
+	String cleanedString = formatMessage(obj.getString("username"), 
+		obj.getString("msg"), (long) obj.get("time"), false);
 
-	if (cleanedString.matches(linkRegex)) {
+	Matcher matcher = linkPattern.matcher(cleanedString);
+
+	if (matcher.find()) {
 	    for (String string: cleanedString.split(" ")) {
 		list.add(string);
 	    }
 	    addMessageWithLinks(list, 
 		    obj.getString("username"), (long) obj.get("time"));
+	    try {
+		if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+			|| cleanedString.toLowerCase()
+			.contains(getUsername().toLowerCase())) {
+		    parent.playSound();
+		} 
+	    } catch (Exception e) {}
 	    return;
 	}
 
 	cleanedString = 
-		this.formatMessage(obj.getString("username"), 
-			cleanedString, (long) obj.get("time"));
+		formatMessage(obj.getString("username"), 
+			obj.getString("msg"), (long) obj.get("time"), false);
 
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
@@ -332,8 +314,13 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    public String formatMessage(String username, String message, long time) {
+    public String formatMessage(String username, String message, long time, boolean pm) {
+	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
+
 	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
+	cleanedString = cleanedString.replaceAll(imgRegex, "$1 ");
+	cleanedString = cleanedString.replaceAll(htmlTagRegex, "");
 
 	// Add the timestamp
 	Date date = new Date(time);
@@ -341,13 +328,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	if (!(messageBuffer.size() == 0)) {
-	    message = "\n[" + formattedTime + "] ";
-	} else {
-	    message = "[" + formattedTime + "] ";
-	}
-
-	return message += username + ": " + cleanedString;
+	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
     }
 
     public void handleGUICommand(String data) {
@@ -483,7 +464,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    getStyledMessagesDocument().insertString(
 		    getStyledMessagesDocument().getLength(), 
 		    formatMessage("[Client]", username + " left the room", 
-			    System.currentTimeMillis()), attributes);
+			    System.currentTimeMillis(), false), attributes);
 	} catch (BadLocationException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -746,32 +727,37 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private void onPrivateMessage(JSONObject obj) throws JSONException {
 	String message = 
 		this.formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"));
+			obj.getString("msg"), (long) obj.get("time"), true);
 
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equals(obj.getString("username")) &&
 		    !username.equals(obj.getString("username"))) {
 		if (!user.isInPrivateMessage()) {
 		    user.startPM(message);
+		    break;
 		} else {
 		    user.getPmFrame().addMessage(message);
+		    break;
 		}
-		break;
-	    } else if (user.getUsername().equals(obj.getString("to"))) {
+	    } else if (user.getUsername().equals(obj.getString("to")) && 
+		    username.equals(obj.getString("username"))) {
 		if (!user.isInPrivateMessage()) {
 		    user.startPM(message);
+		    break;
 		} else {
 		    user.getPmFrame().addMessage(message);
+		    break;
 		}
-		break;
 	    }
 	}
 
-	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		|| obj.getString("msg").toLowerCase().contains(getName()
-			.toLowerCase())) {
-	    parent.playSound();
-	}
+	try {
+	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+		    || obj.getString("msg").toLowerCase().contains(getName()
+			    .toLowerCase())) {
+		parent.playSound();
+	    }
+	} catch (Exception e){}
     }
 
     @Override

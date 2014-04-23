@@ -243,9 +243,11 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	roomInput.setModal(true);
 	roomInput.setVisible(true);
 
-	String room = roomInput.getRoom().replace(" ", "");
+	String room = roomInput.getRoom();
 	if (room == null)
 	    return;
+	
+	room = roomInput.getRoom().replace(" ", "");
 	String roomPassword = roomInput.getPassword();
 
 	int totalTabs = tabbedPane.getTabCount();

@@ -3,21 +3,35 @@ package com.milkbartube.tracy;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.json.JSONException;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JTextPane;
 
 public class PrivateMessageFrame extends JFrame {
 
@@ -25,10 +39,12 @@ public class PrivateMessageFrame extends JFrame {
     private JPanel contentPane;
     private JTextField newPrivateMessageTextField;
     private JScrollPane privateMessageScrollPane;
-    private JTextArea privateMessageTextArea;
+    private JTextPane privateMessageTextPane;
+    private StyledDocument privateMessageStyledDocument;
 
     private CytubeRoom room;
     private CytubeUser user;
+
 
     public PrivateMessageFrame(CytubeRoom room, final CytubeUser user) {
 	addWindowListener(new WindowAdapter() {
@@ -55,6 +71,7 @@ public class PrivateMessageFrame extends JFrame {
 
 	privateMessageScrollPane = new JScrollPane();
 	privateMessageScrollPane.setAutoscrolls(true);
+
 
 	newPrivateMessageTextField = new JTextField();
 	newPrivateMessageTextField.setFocusTraversalKeysEnabled(false);
@@ -96,9 +113,28 @@ public class PrivateMessageFrame extends JFrame {
 			.addContainerGap())
 		);
 
-	privateMessageTextArea = new JTextArea();
-	privateMessageTextArea.setEditable(false);
-	privateMessageScrollPane.setViewportView(privateMessageTextArea);
+	privateMessageTextPane = new JTextPane();
+	privateMessageTextPane.setEditable(false);
+	privateMessageScrollPane.setViewportView(privateMessageTextPane);
+	privateMessageTextPane.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		int pos = privateMessageTextPane.viewToModel(e.getPoint());
+		Element element = getPrivateMessageStyledDocument().getCharacterElement(pos);
+
+		AttributeSet as = element.getAttributes();
+		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
+		    try {
+			room.handleLink(getPrivateMessageStyledDocument().getText(element.getStartOffset(), 
+				((element.getEndOffset() - element.getStartOffset()) - 1)));
+		    } catch (BadLocationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		    }
+		}
+	    }
+	});
+	setPrivateMessageStyledDocument(privateMessageTextPane.getStyledDocument());
 	contentPane.setLayout(gl_contentPane);
     }
 
@@ -115,16 +151,50 @@ public class PrivateMessageFrame extends JFrame {
     }
 
     public void addMessage(String message) {
-	if (!privateMessageTextArea.getText().equals(""))
-	    privateMessageTextArea.append("\n" + message);
-	else
-	    privateMessageTextArea.append(message);
+	ArrayList<String> list = new ArrayList<String>();
+	Pattern linkPattern = 
+		Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
+
+	Matcher matcher = linkPattern.matcher(message);
+
+	if (matcher.find()) {
+	    for (String string: message.split(" ")) {
+		list.add(string);
+	    }
+	    addMessageWithLinks(list);
+	    return;
+	}
+	try {
+	    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+		    getLength(), message, null);
+	} catch (Exception e) {}
 
 	if (!this.isFocused())
 	    room.getFrameParent().playSound();
 
-	privateMessageTextArea.setCaretPosition(
-		privateMessageTextArea.getDocument().getLength());
+	privateMessageTextPane.setCaretPosition(
+		privateMessageTextPane.getDocument().getLength());
+    }
+
+    private void addMessageWithLinks(ArrayList<String> list) {
+
+	Color color = new Color(0x351FFF);
+	StyleContext sc = StyleContext.getDefaultStyleContext();
+	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+		StyleConstants.Foreground, color);
+
+	try {
+	    for (String word : list) {
+		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
+		    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+			    getLength(), word + " ", null);
+		} else {
+		    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+			    getLength(), word + " ", attributes);
+		}
+	    }
+	} catch (Exception e) {}
+
     }
 
     protected void handleTabComplete() {
@@ -133,7 +203,13 @@ public class PrivateMessageFrame extends JFrame {
     }
 
     protected void handleUserLeftRoom() {
-	privateMessageTextArea.append("\n" + user.getUsername() + " left the room");
+	try {
+	    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+		    getLength(),"\n" + user.getUsername() + " left the room", null);
+	} catch (BadLocationException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
 	newPrivateMessageTextField.setEditable(false);
     }
 
@@ -143,6 +219,15 @@ public class PrivateMessageFrame extends JFrame {
 
     public void setNewMessageTextField(JTextField newMessageTextField) {
 	this.newPrivateMessageTextField = newMessageTextField;
+    }
+
+    public StyledDocument getPrivateMessageStyledDocument() {
+	return privateMessageStyledDocument;
+    }
+
+    public void setPrivateMessageStyledDocument(
+	    StyledDocument privateMessageStyledDocument) {
+	this.privateMessageStyledDocument = privateMessageStyledDocument;
     }
 
     public CytubeRoom getRoom() {
