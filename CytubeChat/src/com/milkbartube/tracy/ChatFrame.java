@@ -5,7 +5,14 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -138,8 +145,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		c.getChat().disconnectChat();
 		try {
 		    c.getStyledMessagesDocument().insertString(c.getStyledMessagesDocument()
-		    	.getLength(),
-		    	"\nDisconnected!\n", null);
+			    .getLength(),
+			    "\nDisconnected!\n", null);
 		} catch (BadLocationException e1) {
 		    // TODO Auto-generated catch block
 		    e1.printStackTrace();
@@ -210,6 +217,43 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	setTitle("Now Playing: " + media);
     }
 
+    private String getSocketURL(String server) 
+	    throws MalformedURLException, IOException {
+	String urlString = server;
+	Pattern socketPattern = Pattern.compile(".*IO_URL=['? | \"?](.*)['? | \"?],WEB_URL");
+	Matcher matcher;
+
+	//TODO handle when user enters the socketURL
+	if (!urlString.startsWith("http://")) {
+	    urlString = "http://" + urlString + "/sioconfig";
+	} else {
+	    urlString = urlString + "/sioconfig";
+	}
+
+	URL url = new URL(urlString);
+	BufferedReader br = null;
+
+	try {
+	    URLConnection conn = url.openConnection();
+
+	    br = new BufferedReader(
+		    new InputStreamReader(conn.getInputStream()));
+	    String inputLine;
+	    while ((inputLine = br.readLine()) != null) {
+		matcher = socketPattern.matcher(inputLine);
+		if (matcher.find()) {
+		    return matcher.group(1);
+		}
+	    }
+	} catch (IOException e) {
+	    e.printStackTrace();
+	} finally {
+	    br.close();
+	}
+	return "Error";
+
+    }
+
     public void handleLogin() {
 	CytubeRoom panel = 
 		(CytubeRoom) tabbedPane.getSelectedComponent();
@@ -246,27 +290,44 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	String room = roomInput.getRoom();
 	if (room == null)
 	    return;
-	
+
 	room = roomInput.getRoom().replace(" ", "");
 	String roomPassword = roomInput.getPassword();
+	String server = roomInput.getServer();
 
 	int totalTabs = tabbedPane.getTabCount();
-	for(int i = 0; i < totalTabs; i++) {
-	    CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
-	    if (c.getRoom().toLowerCase().equals(room.toLowerCase()))
-		return;
-	}
 
 	if (!room.isEmpty()) {
-	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this); 
-	    tabbedPane.addTab(room, panel);
+	    try {
+		server = getSocketURL(server);
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(null, "Something is wrong with "
+			+ "your URL");
+		return;
+	    }
+	}
+
+	if (server.startsWith("http://")) {
+	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server);
+	    for (int i = 0; i < totalTabs; i++) {
+		CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
+		if (c.equals(panel))
+		    return;
+	    }
+	    tabbedPane.addTab(room + " (" +server.replaceAll("http\\:\\/\\/(.*\\.)?(.*\\..*)\\:.*", "$2")
+		    + ")", panel);
 	    getTabbedPane().setSelectedComponent(panel);
+	    panel.startChat();
+	} else {
+	    JOptionPane.showMessageDialog(null, "Something has gone wrong fetching the socketURL");
 	}
     }
 
     public void playSound() {
-	this.getClip().start();
-	this.getClip().setFramePosition(0);
+	getClip().start();
+	getClip().setFramePosition(0);
     }
 
     public boolean isWindowFocus() {

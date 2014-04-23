@@ -16,7 +16,7 @@ public class CytubeUser {
 	this.room = room;
     }
     
-    public void startPM(String message) {
+    protected void startPM(String message) {
 	setPmFrame(new PrivateMessageFrame(getRoom(), this));
 	getPmFrame().addMessage(message);
 	setInPrivateMessage(true);

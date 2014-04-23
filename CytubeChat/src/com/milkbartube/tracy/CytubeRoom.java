@@ -75,31 +75,27 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private ChatFrame parent;
     private String room;
     private String roomPassword;
+    private String server;
     private boolean stopMessagesAreaScrolling;
     private String username;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null);
 
-    public CytubeRoom(String room, String password, ChatFrame frame) {
+    public CytubeRoom(String room, String password, ChatFrame frame, String socketURL) {
 	this.room = room;
 	this.roomPassword = password;
 	this.parent = frame;
+	this.server = socketURL;
 
 	buildChatPanel();
-	setChat(new Chat(this));
-	SwingUtilities.invokeLater(new Runnable() {
-	    @Override
-	    public void run() {
-		getChat().start();
-	    }
-	});
+	setChat(new Chat(this, server));
     }
 
     /**
      * Create the panel.
      */
-    public void buildChatPanel() {
+    private void buildChatPanel() {
 
 	userListScrollPane = new JScrollPane();
 
@@ -533,6 +529,15 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	return trimmedArray[0];
     }
 
+    protected void startChat() {
+	SwingUtilities.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+		getChat().start();
+	    }
+	});
+    }
+
     private void updateUserList() {
 	// Number of users. Note: I'm ignoring anons at this time
 	userlistTextPane.setText("");
@@ -833,6 +838,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.roomPassword = roomPassword;
     }
 
+    public String getServer() {
+	return server;
+    }
+
+    public void setServer(String server) {
+	this.server = server;
+    }
+
     public boolean isStopMessagesAreaScrolling() {
 	return stopMessagesAreaScrolling;
     }
@@ -886,6 +899,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	final int prime = 31;
 	int result = 1;
 	result = prime * result + ((room == null) ? 0 : room.hashCode());
+	result = prime * result + ((server == null) ? 0 : server.hashCode());
 	return result;
     }
 
@@ -902,6 +916,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    if (other.room != null)
 		return false;
 	} else if (!room.equals(other.room))
+	    return false;
+	if (server == null) {
+	    if (other.server != null)
+		return false;
+	} else if (!server.equals(other.server))
 	    return false;
 	return true;
     }
