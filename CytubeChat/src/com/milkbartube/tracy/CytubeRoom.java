@@ -327,7 +327,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	return "[" + formattedTime + "] " + username + ": " + cleanedString + "\n";
+	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
     }
 
     public void handleGUICommand(String data) {
