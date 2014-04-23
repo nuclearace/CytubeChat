@@ -99,7 +99,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     /**
      * Create the panel.
      */
-    public void buildChatPanel() {
+    private void buildChatPanel() {
 
 	userListScrollPane = new JScrollPane();
 

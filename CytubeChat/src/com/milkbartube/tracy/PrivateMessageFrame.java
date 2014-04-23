@@ -62,7 +62,7 @@ public class PrivateMessageFrame extends JFrame {
     /**
      * Create the frame.
      */
-    public void buildPrivateMessageFrame() {
+    private void buildPrivateMessageFrame() {
 	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	setBounds(100, 100, 450, 300);
 	contentPane = new JPanel();
@@ -138,7 +138,7 @@ public class PrivateMessageFrame extends JFrame {
 	contentPane.setLayout(gl_contentPane);
     }
 
-    protected void newMessageActionPerformed() {
+    private void newMessageActionPerformed() {
 	try {
 	    String text = getNewMessageTextField().getText();
 	    room.privateMessage(user.getUsername(), 

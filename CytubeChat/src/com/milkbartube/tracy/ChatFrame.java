@@ -265,8 +265,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     }
 
     public void playSound() {
-	this.getClip().start();
-	this.getClip().setFramePosition(0);
+	getClip().start();
+	getClip().setFramePosition(0);
     }
 
     public boolean isWindowFocus() {
