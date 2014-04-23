@@ -246,7 +246,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		}
 	    }
 	} catch (IOException e) {
-	   e.printStackTrace();
+	    e.printStackTrace();
 	} finally {
 	    br.close();
 	}
@@ -303,12 +303,15 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    } catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
+		JOptionPane.showMessageDialog(null, "Something is wrong with "
+			+ "your URL");
+		return;
 	    }
 	}
 
 	if (server.startsWith("http://")) {
 	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server);
-	    for(int i = 0; i < totalTabs; i++) {
+	    for (int i = 0; i < totalTabs; i++) {
 		CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
 		if (c.equals(panel))
 		    return;
@@ -318,7 +321,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    getTabbedPane().setSelectedComponent(panel);
 	    panel.startChat();
 	} else {
-	    JOptionPane.showMessageDialog(null, "Something has gone wrong");
+	    JOptionPane.showMessageDialog(null, "Something has gone wrong fetching the socketURL");
 	}
     }
 
