@@ -28,6 +28,8 @@ public class RoomDialog extends JDialog {
     private JPasswordField passwordField;
     private String room;
     private String password;
+    private String server;
+    private JTextField serverTextField;
 
     /**
      * Launch the application.
@@ -42,7 +44,7 @@ public class RoomDialog extends JDialog {
      * Create the dialog.
      */
     public void buildRoomDialog() {
-	setBounds(100, 100, 328, 222);
+	setBounds(100, 100, 328, 276);
 	contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 	JLabel roomLabel = new JLabel("Enter Room");
@@ -64,6 +66,7 @@ public class RoomDialog extends JDialog {
 			
 			char[] passwordCharArray = passwordField.getPassword();
 			setPassword(new String(passwordCharArray));
+			setServer(serverTextField.getText());
 			setVisible(false);
 		    }
 		});
@@ -109,27 +112,39 @@ public class RoomDialog extends JDialog {
 				.addContainerGap(12, Short.MAX_VALUE))
 	);
 	passwordPanel.setLayout(gl_passwordPanel);
+	
+	JLabel lblServer = new JLabel("Server");
+	
+	serverTextField = new JTextField();
+	serverTextField.setText("cytu.be");
+	serverTextField.setColumns(10);
 	GroupLayout groupLayout = new GroupLayout(getContentPane());
 	groupLayout.setHorizontalGroup(
 		groupLayout.createParallelGroup(Alignment.LEADING)
-		.addGroup(groupLayout.createSequentialGroup()
-			.addContainerGap()
-			.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(contentPanel, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
-				.addComponent(buttonPane, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
-				.addComponent(passwordPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+			.addGroup(groupLayout.createSequentialGroup()
+				.addContainerGap()
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+					.addComponent(contentPanel, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+					.addComponent(buttonPane, GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+					.addComponent(passwordPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(lblServer)
+					.addComponent(serverTextField, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE))
 				.addContainerGap())
-		);
+	);
 	groupLayout.setVerticalGroup(
 		groupLayout.createParallelGroup(Alignment.LEADING)
-		.addGroup(groupLayout.createSequentialGroup()
-			.addComponent(contentPanel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE)
-			.addGap(23)
-			.addComponent(passwordPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-			.addPreferredGap(ComponentPlacement.RELATED)
-			.addComponent(buttonPane, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-			.addContainerGap(84, Short.MAX_VALUE))
-		);
+			.addGroup(groupLayout.createSequentialGroup()
+				.addComponent(contentPanel, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(passwordPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(lblServer)
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(serverTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+				.addComponent(buttonPane, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+				.addContainerGap())
+	);
 	getContentPane().setLayout(groupLayout);
     }
     
@@ -147,5 +162,13 @@ public class RoomDialog extends JDialog {
 
     public String getPassword() {
 	return password;
+    }
+
+    public String getServer() {
+	return server;
+    }
+
+    public void setServer(String server) {
+	this.server = server;
     }
 }

@@ -75,6 +75,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private ChatFrame parent;
     private String room;
     private String roomPassword;
+    private String server;
     private boolean stopMessagesAreaScrolling;
     private String username;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
@@ -831,6 +832,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setRoomPassword(String roomPassword) {
 	this.roomPassword = roomPassword;
+    }
+
+    public String getServer() {
+	return server;
+    }
+
+    public void setServer(String server) {
+	this.server = server;
     }
 
     public boolean isStopMessagesAreaScrolling() {
