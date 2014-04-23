@@ -236,7 +236,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			getStyledMessagesDocument().getLength(), 
 			formatMessage("[Client]", 
 				user.getUsername() + " joined the room", 
-				System.currentTimeMillis(), false), attributes);
+				System.currentTimeMillis()), attributes);
 		if (!isStopMessagesAreaScrolling())
 		    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
 	    } catch (BadLocationException e) {
@@ -255,7 +255,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
 
 	String cleanedString = formatMessage(obj.getString("username"), 
-		obj.getString("msg"), (long) obj.get("time"), false);
+		obj.getString("msg"), (long) obj.get("time"));
 
 	Matcher matcher = linkPattern.matcher(cleanedString);
 
@@ -277,7 +277,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	cleanedString = 
 		formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"), false);
+			obj.getString("msg"), (long) obj.get("time"));
 
 	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
 	    messageBuffer.remove();
@@ -314,7 +314,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    public String formatMessage(String username, String message, long time, boolean pm) {
+    public String formatMessage(String username, String message, long time) {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
 
@@ -464,7 +464,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    getStyledMessagesDocument().insertString(
 		    getStyledMessagesDocument().getLength(), 
 		    formatMessage("[Client]", username + " left the room", 
-			    System.currentTimeMillis(), false), attributes);
+			    System.currentTimeMillis()), attributes);
 	} catch (BadLocationException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -727,7 +727,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private void onPrivateMessage(JSONObject obj) throws JSONException {
 	String message = 
 		this.formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"), true);
+			obj.getString("msg"), (long) obj.get("time"));
 
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equals(obj.getString("username")) &&
