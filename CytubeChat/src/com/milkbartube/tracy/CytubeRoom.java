@@ -82,13 +82,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null);
 
-    public CytubeRoom(String room, String password, ChatFrame frame) {
+    public CytubeRoom(String room, String password, ChatFrame frame, String socketURL) {
 	this.room = room;
 	this.roomPassword = password;
 	this.parent = frame;
+	this.server = socketURL;
 
 	buildChatPanel();
-	setChat(new Chat(this));
+	setChat(new Chat(this, server));
 	SwingUtilities.invokeLater(new Runnable() {
 	    @Override
 	    public void run() {

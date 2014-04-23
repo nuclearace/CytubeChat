@@ -10,15 +10,17 @@ import org.json.JSONObject;
 public class Chat extends Thread {
     private ChatCallback callback;
     private SocketIO socket;
+    private String server;
 
-    public Chat(ChatCallbackAdapter callback) {
+    public Chat(ChatCallbackAdapter callback, String server) {
 	this.callback = new ChatCallback(callback);
+	this.server = server;
     }
 
     @Override
     public void run() {
 	try {
-	    socket = new SocketIO("http://sea.cytu.be:8880/", callback);
+	    socket = new SocketIO(server, callback);
 	} catch (MalformedURLException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -33,7 +35,7 @@ public class Chat extends Thread {
     public void reconnectChat() {
 	try {
 	    if (!socket.isConnected())
-		socket = new SocketIO("http://sea.cytu.be:8880/", callback);
+		socket = new SocketIO(server, callback);
 	} catch (MalformedURLException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -78,6 +80,14 @@ public class Chat extends Thread {
 
     public void sendRoomPassword(String password) {
 	socket.emit("channelPassword", password);
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
     }
 
     public SocketIO getSocket() {

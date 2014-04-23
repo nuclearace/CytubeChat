@@ -231,24 +231,29 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	}
 
 	URL url = new URL(urlString);
+	BufferedReader br = null;
 
-	URLConnection conn = url.openConnection();
+	try {
+	    URLConnection conn = url.openConnection();
 
-	BufferedReader br = new BufferedReader(
-		new InputStreamReader(conn.getInputStream()));
-
-	String inputLine;
-	while ((inputLine = br.readLine()) != null) {
-	    matcher = socketPattern.matcher(inputLine);
-	    if (matcher.find()) {
-		return matcher.group(1);
+	    br = new BufferedReader(
+		    new InputStreamReader(conn.getInputStream()));
+	    String inputLine;
+	    while ((inputLine = br.readLine()) != null) {
+		matcher = socketPattern.matcher(inputLine);
+		if (matcher.find()) {
+		    return matcher.group(1);
+		}
 	    }
+	} catch (IOException e) {
+	    return "Couldn't find server";
+	} finally {
+	    br.close();
 	}
-	br.close();
-	return "Couldn't find server";
+	return "Error";
 
     }
-    
+
     public void handleLogin() {
 	CytubeRoom panel = 
 		(CytubeRoom) tabbedPane.getSelectedComponent();
@@ -298,66 +303,63 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	}
 
 	if (!room.isEmpty()) {
-	    if (!server.equals("cytu.be")) {
-		try {
-		    server = getSocketURL(server);
-		    System.out.println(server);
-		} catch (IOException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-		}
+	    try {
+		server = getSocketURL(server);
+		System.out.println(server);
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	    }
-	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this); 
-	    tabbedPane.addTab(room, panel);
-	    getTabbedPane().setSelectedComponent(panel);
 	}
+	CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server); 
+	tabbedPane.addTab(room, panel);
+	getTabbedPane().setSelectedComponent(panel);
     }
 
+public void playSound() {
+    getClip().start();
+    getClip().setFramePosition(0);
+}
 
-    public void playSound() {
-	getClip().start();
-	getClip().setFramePosition(0);
-    }
+public boolean isWindowFocus() {
+    return windowFocus;
+}
 
-    public boolean isWindowFocus() {
-	return windowFocus;
-    }
+public void setWindowFocus(boolean windowFocus) {
+    this.windowFocus = windowFocus;
+}
 
-    public void setWindowFocus(boolean windowFocus) {
-	this.windowFocus = windowFocus;
-    }
+public boolean isUserMuteBoop() {
+    return userMuteBoop; 
+}
 
-    public boolean isUserMuteBoop() {
-	return userMuteBoop; 
-    }
+public void setUserMuteBoop(boolean userMuteBoop) {
+    this.userMuteBoop = userMuteBoop;
+}
 
-    public void setUserMuteBoop(boolean userMuteBoop) {
-	this.userMuteBoop = userMuteBoop;
-    }
+@Override
+public void windowGainedFocus(WindowEvent e) {
+    this.windowFocus = false;
+}
 
-    @Override
-    public void windowGainedFocus(WindowEvent e) {
-	this.windowFocus = false;
-    }
+@Override
+public void windowLostFocus(WindowEvent e) {
+    this.windowFocus = true;
+}
 
-    @Override
-    public void windowLostFocus(WindowEvent e) {
-	this.windowFocus = true;
-    }
+public Clip getClip() {
+    return clip;
+}
 
-    public Clip getClip() {
-	return clip;
-    }
+public void setClip(Clip clip) {
+    this.clip = clip;
+}
 
-    public void setClip(Clip clip) {
-	this.clip = clip;
-    }
+public JTabbedPane getTabbedPane() {
+    return tabbedPane;
+}
 
-    public JTabbedPane getTabbedPane() {
-	return tabbedPane;
-    }
-
-    public void setTabbedPane(JTabbedPane tabbedPane) {
-	this.tabbedPane = tabbedPane;
-    }
+public void setTabbedPane(JTabbedPane tabbedPane) {
+    this.tabbedPane = tabbedPane;
+}
 }
