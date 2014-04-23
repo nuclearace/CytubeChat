@@ -90,12 +90,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	buildChatPanel();
 	setChat(new Chat(this, server));
-	SwingUtilities.invokeLater(new Runnable() {
-	    @Override
-	    public void run() {
-		getChat().start();
-	    }
-	});
     }
 
     /**
@@ -535,6 +529,15 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	return trimmedArray[0];
     }
 
+    protected void startChat() {
+	SwingUtilities.invokeLater(new Runnable() {
+	    @Override
+	    public void run() {
+		getChat().start();
+	    }
+	});
+    }
+
     private void updateUserList() {
 	// Number of users. Note: I'm ignoring anons at this time
 	userlistTextPane.setText("");
@@ -896,6 +899,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	final int prime = 31;
 	int result = 1;
 	result = prime * result + ((room == null) ? 0 : room.hashCode());
+	result = prime * result + ((server == null) ? 0 : server.hashCode());
 	return result;
     }
 
@@ -912,6 +916,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    if (other.room != null)
 		return false;
 	} else if (!room.equals(other.room))
+	    return false;
+	if (server == null) {
+	    if (other.server != null)
+		return false;
+	} else if (!server.equals(other.server))
 	    return false;
 	return true;
     }

@@ -296,70 +296,76 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	String server = roomInput.getServer();
 
 	int totalTabs = tabbedPane.getTabCount();
-	for(int i = 0; i < totalTabs; i++) {
-	    CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
-	    if (c.getRoom().toLowerCase().equals(room.toLowerCase()))
-		return;
-	}
 
 	if (!room.isEmpty()) {
 	    try {
 		server = getSocketURL(server);
-		System.out.println(server);
 	    } catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
 	}
-	CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server); 
-	tabbedPane.addTab(room, panel);
-	getTabbedPane().setSelectedComponent(panel);
+
+	if (server.startsWith("http://")) {
+	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server);
+		for(int i = 0; i < totalTabs; i++) {
+		    CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
+		    if (c.equals(panel))
+			return;
+		}
+	    tabbedPane.addTab(room + " (" +server.replaceAll("http\\:\\/\\/(.*\\.)?(.*\\..*)\\:.*", "$2")
+		    + ")", panel);
+	    getTabbedPane().setSelectedComponent(panel);
+	    panel.startChat();
+	} else {
+	    JOptionPane.showMessageDialog(null, "Something has gone wrong");
+	}
     }
 
-public void playSound() {
-    getClip().start();
-    getClip().setFramePosition(0);
-}
+    public void playSound() {
+	getClip().start();
+	getClip().setFramePosition(0);
+    }
 
-public boolean isWindowFocus() {
-    return windowFocus;
-}
+    public boolean isWindowFocus() {
+	return windowFocus;
+    }
 
-public void setWindowFocus(boolean windowFocus) {
-    this.windowFocus = windowFocus;
-}
+    public void setWindowFocus(boolean windowFocus) {
+	this.windowFocus = windowFocus;
+    }
 
-public boolean isUserMuteBoop() {
-    return userMuteBoop; 
-}
+    public boolean isUserMuteBoop() {
+	return userMuteBoop; 
+    }
 
-public void setUserMuteBoop(boolean userMuteBoop) {
-    this.userMuteBoop = userMuteBoop;
-}
+    public void setUserMuteBoop(boolean userMuteBoop) {
+	this.userMuteBoop = userMuteBoop;
+    }
 
-@Override
-public void windowGainedFocus(WindowEvent e) {
-    this.windowFocus = false;
-}
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+	this.windowFocus = false;
+    }
 
-@Override
-public void windowLostFocus(WindowEvent e) {
-    this.windowFocus = true;
-}
+    @Override
+    public void windowLostFocus(WindowEvent e) {
+	this.windowFocus = true;
+    }
 
-public Clip getClip() {
-    return clip;
-}
+    public Clip getClip() {
+	return clip;
+    }
 
-public void setClip(Clip clip) {
-    this.clip = clip;
-}
+    public void setClip(Clip clip) {
+	this.clip = clip;
+    }
 
-public JTabbedPane getTabbedPane() {
-    return tabbedPane;
-}
+    public JTabbedPane getTabbedPane() {
+	return tabbedPane;
+    }
 
-public void setTabbedPane(JTabbedPane tabbedPane) {
-    this.tabbedPane = tabbedPane;
-}
+    public void setTabbedPane(JTabbedPane tabbedPane) {
+	this.tabbedPane = tabbedPane;
+    }
 }
