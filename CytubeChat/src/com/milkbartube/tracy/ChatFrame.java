@@ -220,7 +220,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private String getSocketURL(String server) 
 	    throws MalformedURLException, IOException {
 	String urlString = server;
-	Pattern socketPattern = Pattern.compile(".*IO_URL='(.*)',WEB_URL");
+	Pattern socketPattern = Pattern.compile(".*IO_URL=['? | \"?](.*)['? | \"?],WEB_URL");
 	Matcher matcher;
 
 	//TODO handle when user enters the socketURL
@@ -246,7 +246,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		}
 	    }
 	} catch (IOException e) {
-	    return "Couldn't find server";
+	   e.printStackTrace();
 	} finally {
 	    br.close();
 	}
@@ -308,11 +308,11 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 
 	if (server.startsWith("http://")) {
 	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server);
-		for(int i = 0; i < totalTabs; i++) {
-		    CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
-		    if (c.equals(panel))
-			return;
-		}
+	    for(int i = 0; i < totalTabs; i++) {
+		CytubeRoom c = (CytubeRoom) tabbedPane.getComponentAt(i);
+		if (c.equals(panel))
+		    return;
+	    }
 	    tabbedPane.addTab(room + " (" +server.replaceAll("http\\:\\/\\/(.*\\.)?(.*\\..*)\\:.*", "$2")
 		    + ")", panel);
 	    getTabbedPane().setSelectedComponent(panel);
