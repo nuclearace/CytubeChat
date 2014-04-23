@@ -189,7 +189,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void addMessageWithLinks(ArrayList<String> list, String username, long time) {
-
+	list.remove("\n");
+	
 	Color color = new Color(0x351FFF);
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
@@ -205,6 +206,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			    getLength(), word + " ", attributes);
 		}
 	    }
+	    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+		    getLength(), "\n", null);
 	} catch (Exception e) {}
 
 	messageBuffer.add("");
@@ -256,8 +259,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	Matcher matcher = linkPattern.matcher(cleanedString);
 
 	if (matcher.find()) {
-	    for (String string: cleanedString.split(" ")) {
-		list.add(string);
+	    for (String word: cleanedString.split(" ")) {
+		list.add(word);
 	    }
 	    addMessageWithLinks(list, 
 		    obj.getString("username"), (long) obj.get("time"));
@@ -324,7 +327,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
+	return "[" + formattedTime + "] " + username + ": " + cleanedString + "\n";
     }
 
     public void handleGUICommand(String data) {
