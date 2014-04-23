@@ -190,7 +190,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void addMessageWithLinks(ArrayList<String> list, String username, long time) {
 	list.remove("\n");
-	
+
 	Color color = new Color(0x351FFF);
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
@@ -609,22 +609,19 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    }
 		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes5);
 		    break;
-		case 255:
-		    AttributeSet attributes6 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			    StyleConstants.Foreground, new Color(0xFA0000));
+		default:
+		    AttributeSet attributes6 = sc.addAttribute(
+			    SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
 		    if (user.getAfk()) {
 			attributes6 = 
 				sc.addAttribute(attributes6, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
 		    }
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes6);
-		    break;
-		default:
-		    AttributeSet attributes7 = null;
-		    if (user.getAfk()) {
-			attributes7 = 
-				sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		    if (user.getRank() >= 255) {
+			attributes6 = 
+				sc.addAttribute(attributes6, StyleConstants.Foreground, new Color(0xFA0000));
 		    }
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes7);
+
+		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes6);
 		    break;
 		}
 	    }
