@@ -12,7 +12,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,17 +25,12 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 

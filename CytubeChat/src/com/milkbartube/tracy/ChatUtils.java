@@ -23,13 +23,19 @@ public class ChatUtils {
 
     private StyledDocument document;
     private CytubeRoom room;
+    private PrivateMessageFrame pm;
 
     public ChatUtils(CytubeRoom room) {
 	document = room.getStyledMessagesDocument();
 	this.setRoom(room);
     }
 
-    protected void addMessageWithLinks(ArrayList<String> list, String username, long time) 
+    public ChatUtils(CytubeRoom room, PrivateMessageFrame pm) {
+	this.room = pm.getRoom();
+	document = pm.getPrivateMessageStyledDocument();
+    }
+
+    protected void addMessageWithLinks(ArrayList<String> list, boolean pm) 
 	    throws BadLocationException {
 	list.remove("\n");
 
@@ -50,9 +56,10 @@ public class ChatUtils {
 	getDocument().insertString(getDocument().
 		getLength(), "\n", null);
 
-	room.getMessageBuffer().add("");
+	if (!pm)
+	    room.getMessageBuffer().add("");
 
-	if (room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) {
+	if (!pm && room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) {
 	    room.getMessageBuffer().remove();
 	    room.getMessagesTextPane().setText(room.getMessagesTextPane().getText()
 		    .substring(room.getMessagesTextPane().getText().indexOf('\n')+1));
@@ -76,7 +83,7 @@ public class ChatUtils {
 		list.add(word);
 	    }
 	    addMessageWithLinks(list, 
-		    obj.getString("username"), (long) obj.get("time"));
+		    false);
 
 	    if (room.getFrameParent().getClip() != null && room.getFrameParent().isWindowFocus() 
 		    && !room.getFrameParent().isUserMuteBoop()
@@ -135,6 +142,14 @@ public class ChatUtils {
 
     public void setDocument(StyledDocument document) {
 	this.document = document;
+    }
+
+    public PrivateMessageFrame getPm() {
+	return pm;
+    }
+
+    public void setPm(PrivateMessageFrame pm) {
+	this.pm = pm;
     }
 
     public CytubeRoom getRoom() {
