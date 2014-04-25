@@ -216,7 +216,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void handleGUICommand(String data) {
 	data = data.replace("\n", "").replace("\r", "");
-	
+
 	if (!data.equals("")) {
 	    String[] parts = data.split(" ");
 	    String command = parts[0];
@@ -622,24 +622,30 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			obj.getString("msg"), (long) obj.get("time"));
 
 	for (CytubeUser user : userList) {
-	    if (user.getUsername().equals(obj.getString("username")) &&
-		    !username.equals(obj.getString("username"))) {
-		if (!user.isInPrivateMessage()) {
-		    user.startPM(message);
-		    break;
-		} else {
-		    user.getPmFrame().addMessage(message);
-		    break;
+	    try {
+		if (user.getUsername().equals(obj.getString("username")) &&
+			!username.equals(obj.getString("username"))) {
+		    if (!user.isInPrivateMessage()) {
+			user.startPM(message);
+			break;
+		    } else {
+			user.getPmFrame().addMessage(message);
+			break;
+		    }
+		} else if (user.getUsername().equals(obj.getString("to")) && 
+			username.equals(obj.getString("username"))) {
+		    if (!user.isInPrivateMessage()) {
+			user.startPM(message);
+			break;
+		    } else {
+			user.getPmFrame().addMessage(message);
+			break;
+		    }
 		}
-	    } else if (user.getUsername().equals(obj.getString("to")) && 
-		    username.equals(obj.getString("username"))) {
-		if (!user.isInPrivateMessage()) {
-		    user.startPM(message);
-		    break;
-		} else {
-		    user.getPmFrame().addMessage(message);
-		    break;
-		}
+	    } catch (BadLocationException e) {
+		e.printStackTrace();
+		user.getPmFrame().setVisible(false);
+		return;
 	    }
 	}
 

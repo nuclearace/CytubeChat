@@ -1,5 +1,7 @@
 package com.milkbartube.tracy;
 
+import javax.swing.text.BadLocationException;
+
 public class CytubeUser {
     
     private boolean afk;
@@ -16,7 +18,7 @@ public class CytubeUser {
 	this.room = room;
     }
     
-    protected void startPM(String message) {
+    protected void startPM(String message) throws BadLocationException {
 	setPmFrame(new PrivateMessageFrame(getRoom(), this));
 	getPmFrame().addMessage(message);
 	setInPrivateMessage(true);

@@ -149,7 +149,7 @@ public class PrivateMessageFrame extends JFrame {
 	}
     }
 
-    public void addMessage(String message) {
+    public void addMessage(String message) throws BadLocationException {
 	ArrayList<String> list = new ArrayList<String>();
 	Pattern linkPattern = 
 		Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
@@ -170,10 +170,9 @@ public class PrivateMessageFrame extends JFrame {
 	    return;
 	}
 
-	try {
-	    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-		    getLength(), message, null);
-	} catch (Exception e) {}
+
+	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+		getLength(), message, null);
 
 	if (!this.isFocused())
 	    room.getFrameParent().playSound();

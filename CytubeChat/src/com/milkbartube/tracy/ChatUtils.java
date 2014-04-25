@@ -82,8 +82,7 @@ public class ChatUtils {
 	    for (String word: cleanedString.split(" ")) {
 		list.add(word);
 	    }
-	    addMessageWithLinks(list, 
-		    false);
+	    addMessageWithLinks(list, false);
 
 	    if (room.getFrameParent().getClip() != null && room.getFrameParent().isWindowFocus() 
 		    && !room.getFrameParent().isUserMuteBoop()
