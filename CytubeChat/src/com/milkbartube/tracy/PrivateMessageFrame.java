@@ -161,9 +161,16 @@ public class PrivateMessageFrame extends JFrame {
 	    for (String string: message.split(" ")) {
 		list.add(string);
 	    }
-	    addMessageWithLinks(list);
+
+	    try {
+		addMessageWithLinks(list);
+	    } catch (BadLocationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	    return;
 	}
+
 	try {
 	    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
 		    getLength(), message, null);
@@ -176,25 +183,23 @@ public class PrivateMessageFrame extends JFrame {
 		privateMessageTextPane.getDocument().getLength());
     }
 
-    private void addMessageWithLinks(ArrayList<String> list) {
+    private void addMessageWithLinks(ArrayList<String> list) 
+	    throws BadLocationException {
 
 	Color color = new Color(0x351FFF);
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 		StyleConstants.Foreground, color);
 
-	try {
-	    for (String word : list) {
-		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			    getLength(), word + " ", null);
-		} else {
-		    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			    getLength(), word + " ", attributes);
-		}
+	for (String word : list) {
+	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
+		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+			getLength(), word + " ", null);
+	    } else {
+		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+			getLength(), word + " ", attributes);
 	    }
-	} catch (Exception e) {}
-
+	}
     }
 
     protected void handleTabComplete() {
@@ -202,14 +207,9 @@ public class PrivateMessageFrame extends JFrame {
 	newPrivateMessageTextField.setText(room.handleTabComplete(sentence));
     }
 
-    protected void handleUserLeftRoom() {
-	try {
-	    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-		    getLength(),"\n" + user.getUsername() + " left the room", null);
-	} catch (BadLocationException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+    protected void handleUserLeftRoom() throws BadLocationException {
+	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+		getLength(),"\n" + user.getUsername() + " left the room", null);
 	newPrivateMessageTextField.setEditable(false);
     }
 

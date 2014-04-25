@@ -59,7 +59,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    this.setClip(AudioSystem.getClip());
 	    getClip().open(audioIn);
 	} catch (Exception e) {
-	    this.setClip(null);
+	    setClip(null);
 	    e.printStackTrace();
 	}
 

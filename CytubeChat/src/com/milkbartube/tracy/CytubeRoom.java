@@ -188,7 +188,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
-    private void addMessageWithLinks(ArrayList<String> list, String username, long time) {
+    private void addMessageWithLinks(ArrayList<String> list, String username, long time) 
+	    throws BadLocationException {
 	list.remove("\n");
 
 	Color color = new Color(0x351FFF);
@@ -196,19 +197,17 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 		StyleConstants.Foreground, color);
 
-	try {
-	    for (String word : list) {
-		if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			    getLength(), word + " ", null);
-		} else {
-		    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			    getLength(), word + " ", attributes);
-		}
+	for (String word : list) {
+	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
+		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			getLength(), word + " ", null);
+	    } else {
+		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			getLength(), word + " ", attributes);
 	    }
-	    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-		    getLength(), "\n", null);
-	} catch (Exception e) {}
+	}
+	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+		getLength(), "\n", null);
 
 	messageBuffer.add("");
 
@@ -222,26 +221,21 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
     }
 
-    private void addUser(CytubeUser user, boolean fromAddUser) {
+    private void addUser(CytubeUser user, boolean fromAddUser) throws BadLocationException {
 	if (user.getUsername().toLowerCase().equals(
 		this.getUser().getUsername().toLowerCase())) {
 	    setUser(user);
 	}
 	if (this.getUser().getRank() <= 1  && fromAddUser) {
-	    try {
-		SimpleAttributeSet attributes = new SimpleAttributeSet();
-		attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-		getStyledMessagesDocument().insertString(
-			getStyledMessagesDocument().getLength(), 
-			formatMessage("[Client]", 
-				user.getUsername() + " joined the room", 
-				System.currentTimeMillis()), attributes);
-		if (!isStopMessagesAreaScrolling())
-		    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
-	    } catch (BadLocationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
+	    SimpleAttributeSet attributes = new SimpleAttributeSet();
+	    attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+	    getStyledMessagesDocument().insertString(
+		    getStyledMessagesDocument().getLength(), 
+		    formatMessage("[Client]", 
+			    user.getUsername() + " joined the room", 
+			    System.currentTimeMillis()), attributes);
+	    if (!isStopMessagesAreaScrolling())
+		messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
 	}
 	if (!userList.contains(user)) {
 	    userList.add(user);
@@ -249,7 +243,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
-    private void chatMsg(JSONObject obj) throws JSONException {
+    private void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
 	ArrayList<String> list = new ArrayList<String>();
 	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
 
@@ -264,13 +258,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	    addMessageWithLinks(list, 
 		    obj.getString("username"), (long) obj.get("time"));
-	    try {
-		if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-			|| cleanedString.toLowerCase()
-			.contains(getUsername().toLowerCase())) {
-		    parent.playSound();
-		} 
-	    } catch (Exception e) {}
+
+	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+		    || cleanedString.toLowerCase()
+		    .contains(getUsername().toLowerCase())) {
+		parent.playSound();
+	    }
 	    return;
 	}
 
@@ -285,13 +278,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 
 	messageBuffer.add(cleanedString);
-	try {
-	    getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-		    getLength(), messageBuffer.peekLast(), null);
-	} catch (BadLocationException e1) {
-	    // TODO Auto-generated catch block
-	    e1.printStackTrace();
-	}
+	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+		getLength(), messageBuffer.peekLast(), null);
 
 	if (!isStopMessagesAreaScrolling())
 	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
@@ -456,18 +444,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	getNewMessageTextField().setText(null);
     }
 
-    private void removeUser(String username) {
+    private void removeUser(String username) throws BadLocationException {
 	SimpleAttributeSet attributes = new SimpleAttributeSet();
 	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
-	try {
-	    getStyledMessagesDocument().insertString(
-		    getStyledMessagesDocument().getLength(), 
-		    formatMessage("[Client]", username + " left the room", 
-			    System.currentTimeMillis()), attributes);
-	} catch (BadLocationException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	getStyledMessagesDocument().insertString(
+		getStyledMessagesDocument().getLength(), 
+		formatMessage("[Client]", username + " left the room", 
+			System.currentTimeMillis()), attributes);
+
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equals(username)) {
 		if (user.isInPrivateMessage())
@@ -541,16 +525,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	});
     }
 
-    private void updateUserList() {
+    private void updateUserList() throws BadLocationException {
 	// Number of users. Note: I'm ignoring anons at this time
 	userlistTextPane.setText("");
-	try {
-	    styledUserlist.insertString(styledUserlist.getLength(), 
-		    "Users: " + userList.size() + "\n--------------\n", null);
-	} catch (BadLocationException e1) {
-	    // TODO Auto-generated catch block
-	    e1.printStackTrace();
-	}
+	styledUserlist.insertString(styledUserlist.getLength(), 
+		"Users: " + userList.size() + "\n--------------\n", null);
 
 	// Sort userlist
 	Collections.sort(userList, new Comparator<CytubeUser>() {
@@ -561,71 +540,69 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	});
 
 	StyleContext sc = StyleContext.getDefaultStyleContext();
-	try {
-	    for (CytubeUser user : userList) {
-		switch (user.getRank()) {
-		case 0:
-		    AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			    StyleConstants.Foreground, new Color(0x969696));
-		    if (user.getAfk()) {
-			attributes = 
-				sc.addAttribute(attributes, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		    }
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes);
-		    break;
-		case 2:
-		    AttributeSet attributes2 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			    StyleConstants.Foreground, new Color(0x13BF0D));
-		    if (user.getAfk()) {
-			attributes2 = 
-				sc.addAttribute(attributes2, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		    }
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes2);
-		    break;
-		case 3:
-		    AttributeSet attributes3 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			    StyleConstants.Foreground, new Color(0xF0B22E));
-		    if (user.getAfk()) {
-			attributes3 = 
-				sc.addAttribute(attributes3, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		    }
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes3);
-		    break;
-		case 4:
-		    AttributeSet attributes4 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			    StyleConstants.Foreground, new Color(0x5C00FA));
-		    if (user.getAfk()) {
-			attributes4 = 
-				sc.addAttribute(attributes4, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		    }
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes4);
-		    break;
-		case 5:
-		    AttributeSet attributes5 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			    StyleConstants.Foreground, new Color(0xFA00BB));
-		    if (user.getAfk()) {
-			attributes5 = 
-				sc.addAttribute(attributes5, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		    }
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes5);
-		    break;
-		default:
-		    AttributeSet attributes6 = sc.addAttribute(
-			    SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
-		    if (user.getAfk()) {
-			attributes6 = 
-				sc.addAttribute(attributes6, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		    }
-		    if (user.getRank() >= 255) {
-			attributes6 = 
-				sc.addAttribute(attributes6, StyleConstants.Foreground, new Color(0xFA0000));
-		    }
-
-		    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes6);
-		    break;
+	for (CytubeUser user : userList) {
+	    switch (user.getRank()) {
+	    case 0:
+		AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			StyleConstants.Foreground, new Color(0x969696));
+		if (user.getAfk()) {
+		    attributes = 
+			    sc.addAttribute(attributes, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
 		}
+		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes);
+		break;
+	    case 2:
+		AttributeSet attributes2 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			StyleConstants.Foreground, new Color(0x13BF0D));
+		if (user.getAfk()) {
+		    attributes2 = 
+			    sc.addAttribute(attributes2, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		}
+		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes2);
+		break;
+	    case 3:
+		AttributeSet attributes3 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			StyleConstants.Foreground, new Color(0xF0B22E));
+		if (user.getAfk()) {
+		    attributes3 = 
+			    sc.addAttribute(attributes3, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		}
+		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes3);
+		break;
+	    case 4:
+		AttributeSet attributes4 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			StyleConstants.Foreground, new Color(0x5C00FA));
+		if (user.getAfk()) {
+		    attributes4 = 
+			    sc.addAttribute(attributes4, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		}
+		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes4);
+		break;
+	    case 5:
+		AttributeSet attributes5 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+			StyleConstants.Foreground, new Color(0xFA00BB));
+		if (user.getAfk()) {
+		    attributes5 = 
+			    sc.addAttribute(attributes5, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		}
+		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes5);
+		break;
+	    default:
+		AttributeSet attributes6 = sc.addAttribute(
+			SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
+		if (user.getAfk()) {
+		    attributes6 = 
+			    sc.addAttribute(attributes6, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+		}
+		if (user.getRank() >= 255) {
+		    attributes6 = 
+			    sc.addAttribute(attributes6, StyleConstants.Foreground, new Color(0xFA0000));
+		}
+
+		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes6);
+		break;
 	    }
-	} catch (Exception e) {}
+	}
     }
 
     public void privateMessage(String to, String message) throws JSONException {
@@ -676,6 +653,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
+	} catch (BadLocationException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
     }
 
@@ -690,9 +670,19 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		String username = (String) users.getJSONObject(i).get("name");
 		int rank = (int) users.getJSONObject(i).get("rank");
 		CytubeUser user = new CytubeUser(afk, username, rank, this);
-		addUser(user, false);
+		try {
+		    addUser(user, false);
+		} catch (BadLocationException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
 	    }
-	    this.updateUserList();
+	    try {
+		updateUserList();
+	    } catch (BadLocationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	}
     }
 
