@@ -252,7 +252,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
 		&& !getFrameParent().isUserMuteBoop()
 		|| getUsername() != null && cleanedString.toLowerCase()
-		.contains(getUsername().toLowerCase())) {
+		.contains(getUsername().toLowerCase()) 
+		&& getFrameParent().isWindowFocus() ) {
 	    getFrameParent().playSound();
 	}
     }
