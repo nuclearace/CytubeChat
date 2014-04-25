@@ -12,7 +12,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,17 +25,12 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -81,6 +75,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null);
+    private ChatUtils utils;
 
     public CytubeRoom(String room, String password, ChatFrame frame, String socketURL) {
 	this.room = room;
@@ -90,6 +85,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	buildChatPanel();
 	setChat(new Chat(this, server));
+	setUtils(new ChatUtils(this));
     }
 
     /**
@@ -188,39 +184,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
-    private void addMessageWithLinks(ArrayList<String> list, String username, long time) 
-	    throws BadLocationException {
-	list.remove("\n");
-
-	Color color = new Color(0x351FFF);
-	StyleContext sc = StyleContext.getDefaultStyleContext();
-	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		StyleConstants.Foreground, color);
-
-	for (String word : list) {
-	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			getLength(), word + " ", null);
-	    } else {
-		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			getLength(), word + " ", attributes);
-	    }
-	}
-	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-		getLength(), "\n", null);
-
-	messageBuffer.add("");
-
-	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
-	    messageBuffer.remove();
-	    messagesTextPane.setText(messagesTextPane.getText()
-		    .substring(messagesTextPane.getText().indexOf('\n')+1));
-	}
-
-	if (!isStopMessagesAreaScrolling())
-	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
-    }
-
     private void addUser(CytubeUser user, boolean fromAddUser) throws BadLocationException {
 	if (user.getUsername().toLowerCase().equals(
 		this.getUser().getUsername().toLowerCase())) {
@@ -231,7 +194,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	    getStyledMessagesDocument().insertString(
 		    getStyledMessagesDocument().getLength(), 
-		    formatMessage("[Client]", 
+		    getUtils().formatMessage("[Client]", 
 			    user.getUsername() + " joined the room", 
 			    System.currentTimeMillis()), attributes);
 	    if (!isStopMessagesAreaScrolling())
@@ -243,54 +206,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
-    private void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
-	ArrayList<String> list = new ArrayList<String>();
-	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
-
-	String cleanedString = formatMessage(obj.getString("username"), 
-		obj.getString("msg"), (long) obj.get("time"));
-
-	Matcher matcher = linkPattern.matcher(cleanedString);
-
-	if (matcher.find()) {
-	    for (String word: cleanedString.split(" ")) {
-		list.add(word);
-	    }
-	    addMessageWithLinks(list, 
-		    obj.getString("username"), (long) obj.get("time"));
-
-	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		    || getUsername() != null && cleanedString.toLowerCase()
-		    .contains(getUsername().toLowerCase())) {
-		parent.playSound();
-	    }
-	    return;
-	}
-
-	cleanedString = 
-		formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"));
-
-	if (messageBuffer.size() > 100 && parent.isLimitChatBuffer()) {
-	    messageBuffer.remove();
-	    messagesTextPane.setText(messagesTextPane.getText()
-		    .substring(messagesTextPane.getText().indexOf('\n')+1));
-	}
-
-	messageBuffer.add(cleanedString);
-	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-		getLength(), messageBuffer.peekLast(), null);
-
-	if (!isStopMessagesAreaScrolling())
-	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
-	
-	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		|| getUsername() != null && obj.getString("msg").toLowerCase()
-		.contains(getUsername().toLowerCase())) {
-	    parent.playSound();
-	}
-    }
-
     protected void closePMFrames() {
 	for (CytubeUser user : userList) {
 	    if (user.isInPrivateMessage()) {
@@ -299,25 +214,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    public String formatMessage(String username, String message, long time) {
-	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
-
-	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
-	cleanedString = cleanedString.replaceAll(imgRegex, "$1 ");
-	cleanedString = cleanedString.replaceAll(htmlTagRegex, "");
-
-	// Add the timestamp
-	Date date = new Date(time);
-	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss z");
-	formatter.setTimeZone(TimeZone.getDefault());
-	String formattedTime = formatter.format(date);
-
-	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
-    }
-
     public void handleGUICommand(String data) {
 	data = data.replace("\n", "").replace("\r", "");
+
 	if (!data.equals("")) {
 	    String[] parts = data.split(" ");
 	    String command = parts[0];
@@ -329,7 +228,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		handleLogin();
 	    } else if (command.equals("/clearchat")) {
 		messagesTextPane.setText("");
-		messageBuffer.clear();
+		getMessageBuffer().clear();
 	    } else if (command.equals("/pm")) {
 		// This could be done better, but I don't want to take the time
 		if (parts.length > 2) {
@@ -447,7 +346,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	getStyledMessagesDocument().insertString(
 		getStyledMessagesDocument().getLength(), 
-		formatMessage("[Client]", username + " left the room", 
+		getUtils().formatMessage("[Client]", username + " left the room", 
 			System.currentTimeMillis()), attributes);
 
 	for (CytubeUser user : userList) {
@@ -619,7 +518,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     public void on(String event, JSONObject obj) {
 	try {
 	    if (event.equals("chatMsg")) {
-		this.chatMsg(obj);
+		getUtils().chatMsg(obj);
 	    } else if (event.equals("addUser")) {
 		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
 		String username = obj.getString("name") ;
@@ -719,28 +618,34 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void onPrivateMessage(JSONObject obj) throws JSONException {
 	String message = 
-		this.formatMessage(obj.getString("username"), 
+		getUtils().formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
 
 	for (CytubeUser user : userList) {
-	    if (user.getUsername().equals(obj.getString("username")) &&
-		    !username.equals(obj.getString("username"))) {
-		if (!user.isInPrivateMessage()) {
-		    user.startPM(message);
-		    break;
-		} else {
-		    user.getPmFrame().addMessage(message);
-		    break;
+	    try {
+		if (user.getUsername().equals(obj.getString("username")) &&
+			!username.equals(obj.getString("username"))) {
+		    if (!user.isInPrivateMessage()) {
+			user.startPM(message);
+			break;
+		    } else {
+			user.getPmFrame().addMessage(message);
+			break;
+		    }
+		} else if (user.getUsername().equals(obj.getString("to")) && 
+			username.equals(obj.getString("username"))) {
+		    if (!user.isInPrivateMessage()) {
+			user.startPM(message);
+			break;
+		    } else {
+			user.getPmFrame().addMessage(message);
+			break;
+		    }
 		}
-	    } else if (user.getUsername().equals(obj.getString("to")) && 
-		    username.equals(obj.getString("username"))) {
-		if (!user.isInPrivateMessage()) {
-		    user.startPM(message);
-		    break;
-		} else {
-		    user.getPmFrame().addMessage(message);
-		    break;
-		}
+	    } catch (BadLocationException e) {
+		e.printStackTrace();
+		user.getPmFrame().setVisible(false);
+		return;
 	    }
 	}
 
@@ -783,6 +688,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setCurrentMedia(String currentMedia) {
 	this.currentMedia = currentMedia;
+    }
+
+    public LinkedList<String> getMessageBuffer() {
+	return messageBuffer;
+    }
+
+    public void setMessageBuffer(LinkedList<String> messageBuffer) {
+	this.messageBuffer = messageBuffer;
     }
 
     public JTextPane getMessagesTextPane() {
@@ -874,6 +787,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.styledUserlist = styledUserlist;
     }
 
+    public ChatUtils getUtils() {
+	return utils;
+    }
+
+    public void setUtils(ChatUtils utils) {
+	this.utils = utils;
+    }
+
     public String getUsername() {
 	return username;
     }
@@ -923,7 +844,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		+ ", userlistTextPane=" + userlistTextPane + ", chat=" + chat
 		+ ", currentMedia=" + currentMedia + ", parent=" + parent.toString()
 		+ ", room=" + room + ", roomPassword=" + roomPassword
-		+ ", username=" + username + ", messageBuffer=" + messageBuffer
+		+ ", username=" + username + ", messageBuffer=" + getMessageBuffer()
 		+ ", userList=" + userList + ", user=" + user + "]";
     }
 }

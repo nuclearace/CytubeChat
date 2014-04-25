@@ -6,9 +6,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
-import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -44,7 +42,7 @@ public class PrivateMessageFrame extends JFrame {
 
     private CytubeRoom room;
     private CytubeUser user;
-
+    private ChatUtils utils;
 
     public PrivateMessageFrame(CytubeRoom room, final CytubeUser user) {
 	addWindowListener(new WindowAdapter() {
@@ -57,6 +55,7 @@ public class PrivateMessageFrame extends JFrame {
 	this.user = user;
 	buildPrivateMessageFrame();
 	setTitle(user.getUsername() + " (" + room.getRoom() + ")");
+	setUtils(new ChatUtils(getRoom(), this));
     }
 
     /**
@@ -150,7 +149,7 @@ public class PrivateMessageFrame extends JFrame {
 	}
     }
 
-    public void addMessage(String message) {
+    public void addMessage(String message) throws BadLocationException {
 	ArrayList<String> list = new ArrayList<String>();
 	Pattern linkPattern = 
 		Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
@@ -163,7 +162,7 @@ public class PrivateMessageFrame extends JFrame {
 	    }
 
 	    try {
-		addMessageWithLinks(list);
+		getUtils().addMessageWithLinks(list, true);
 	    } catch (BadLocationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -171,35 +170,15 @@ public class PrivateMessageFrame extends JFrame {
 	    return;
 	}
 
-	try {
-	    getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-		    getLength(), message, null);
-	} catch (Exception e) {}
+
+	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+		getLength(), message, null);
 
 	if (!this.isFocused())
 	    room.getFrameParent().playSound();
 
 	privateMessageTextPane.setCaretPosition(
 		privateMessageTextPane.getDocument().getLength());
-    }
-
-    private void addMessageWithLinks(ArrayList<String> list) 
-	    throws BadLocationException {
-
-	Color color = new Color(0x351FFF);
-	StyleContext sc = StyleContext.getDefaultStyleContext();
-	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		StyleConstants.Foreground, color);
-
-	for (String word : list) {
-	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			getLength(), word + " ", null);
-	    } else {
-		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			getLength(), word + " ", attributes);
-	    }
-	}
     }
 
     protected void handleTabComplete() {
@@ -211,6 +190,14 @@ public class PrivateMessageFrame extends JFrame {
 	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
 		getLength(),"\n" + user.getUsername() + " left the room", null);
 	newPrivateMessageTextField.setEditable(false);
+    }
+
+    public ChatUtils getUtils() {
+	return utils;
+    }
+
+    public void setUtils(ChatUtils utils) {
+	this.utils = utils;
     }
 
     public JTextField getNewMessageTextField() {
