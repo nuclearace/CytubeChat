@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -16,8 +14,6 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ChatUtils {
 
@@ -69,54 +65,7 @@ public class ChatUtils {
 	    room.getMessagesTextPane().setCaretPosition(getDocument().getLength());
     }
 
-    protected void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
-	ArrayList<String> list = new ArrayList<String>();
-	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
-
-	String cleanedString = formatMessage(obj.getString("username"), 
-		obj.getString("msg"), (long) obj.get("time"));
-
-	Matcher matcher = linkPattern.matcher(cleanedString);
-
-	if (matcher.find()) {
-	    for (String word: cleanedString.split(" ")) {
-		list.add(word);
-	    }
-	    addMessageWithLinks(list, false);
-
-	    if (room.getFrameParent().getClip() != null && room.getFrameParent().isWindowFocus() 
-		    && !room.getFrameParent().isUserMuteBoop()
-		    || room.getUsername() != null && cleanedString.toLowerCase()
-		    .contains(room.getUsername().toLowerCase())) {
-		room.getFrameParent().playSound();
-	    }
-	    return;
-	}
-
-	cleanedString = 
-		formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"));
-
-	if (room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) {
-	    room.getMessageBuffer().remove();
-	    room.getMessagesTextPane().setText(room.getMessagesTextPane().getText()
-		    .substring(room.getMessagesTextPane().getText().indexOf('\n')+1));
-	}
-
-	room.getMessageBuffer().add(cleanedString);
-	getDocument().insertString(getDocument().
-		getLength(), room.getMessageBuffer().peekLast(), null);
-
-	if (!room.getFrameParent().isLimitChatBuffer())
-	    room.getMessagesTextPane().setCaretPosition(getDocument().getLength());
-
-	if (room.getFrameParent().getClip() != null && room.getFrameParent().isWindowFocus() 
-		&& !room.getFrameParent().isUserMuteBoop()
-		|| room.getUsername() != null && cleanedString.toLowerCase()
-		.contains(room.getUsername().toLowerCase())) {
-	    room.getFrameParent().playSound();
-	}
-    }
+    
 
     protected String formatMessage(String username, String message, long time) {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";

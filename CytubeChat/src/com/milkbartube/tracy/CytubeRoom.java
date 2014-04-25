@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -204,6 +206,55 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    userList.add(user);
 	}
 
+    }
+
+    protected void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
+	ArrayList<String> list = new ArrayList<String>();
+	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
+
+	String cleanedString = getUtils().formatMessage(obj.getString("username"), 
+		obj.getString("msg"), (long) obj.get("time"));
+
+	Matcher matcher = linkPattern.matcher(cleanedString);
+
+	if (matcher.find()) {
+	    for (String word: cleanedString.split(" ")) {
+		list.add(word);
+	    }
+	    getUtils().addMessageWithLinks(list, false);
+
+	    if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
+		    && !getFrameParent().isUserMuteBoop()
+		    || getUsername() != null && cleanedString.toLowerCase()
+		    .contains(getUsername().toLowerCase())) {
+		getFrameParent().playSound();
+	    }
+	    return;
+	}
+
+	cleanedString = 
+		getUtils().formatMessage(obj.getString("username"), 
+			obj.getString("msg"), (long) obj.get("time"));
+
+		if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) {
+		    getMessageBuffer().remove();
+		    getMessagesTextPane().setText(getMessagesTextPane().getText()
+			    .substring(getMessagesTextPane().getText().indexOf('\n')+1));
+		}
+
+		getMessageBuffer().add(cleanedString);
+		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			getLength(), getMessageBuffer().peekLast(), null);
+
+		if (!getFrameParent().isLimitChatBuffer())
+		    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
+
+		if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
+			&& !getFrameParent().isUserMuteBoop()
+			|| getUsername() != null && cleanedString.toLowerCase()
+			.contains(getUsername().toLowerCase())) {
+		    getFrameParent().playSound();
+		}
     }
 
     protected void closePMFrames() {
@@ -518,7 +569,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     public void on(String event, JSONObject obj) {
 	try {
 	    if (event.equals("chatMsg")) {
-		getUtils().chatMsg(obj);
+		chatMsg(obj);
 	    } else if (event.equals("addUser")) {
 		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
 		String username = obj.getString("name") ;
