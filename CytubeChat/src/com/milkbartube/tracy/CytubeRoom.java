@@ -260,7 +260,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    obj.getString("username"), (long) obj.get("time"));
 
 	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		    || cleanedString.toLowerCase()
+		    || getUsername() != null && cleanedString.toLowerCase()
 		    .contains(getUsername().toLowerCase())) {
 		parent.playSound();
 	    }
@@ -283,14 +283,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	if (!isStopMessagesAreaScrolling())
 	    messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
-
-	try {
-	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		    || obj.getString("msg").toLowerCase()
-		    .contains(getUsername().toLowerCase())) {
-		parent.playSound();
-	    }
-	} catch (Exception e) {}
+	
+	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+		|| getUsername() != null && obj.getString("msg").toLowerCase()
+		.contains(getUsername().toLowerCase())) {
+	    parent.playSound();
+	}
     }
 
     protected void closePMFrames() {
