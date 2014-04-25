@@ -65,8 +65,6 @@ public class ChatUtils {
 	    room.getMessagesTextPane().setCaretPosition(getDocument().getLength());
     }
 
-    
-
     protected String formatMessage(String username, String message, long time) {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";

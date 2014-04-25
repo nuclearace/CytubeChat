@@ -236,25 +236,25 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		getUtils().formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
 
-		if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) {
-		    getMessageBuffer().remove();
-		    getMessagesTextPane().setText(getMessagesTextPane().getText()
-			    .substring(getMessagesTextPane().getText().indexOf('\n')+1));
-		}
+	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) {
+	    getMessageBuffer().remove();
+	    getMessagesTextPane().setText(getMessagesTextPane().getText()
+		    .substring(getMessagesTextPane().getText().indexOf('\n')+1));
+	}
 
-		getMessageBuffer().add(cleanedString);
-		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			getLength(), getMessageBuffer().peekLast(), null);
+	getMessageBuffer().add(cleanedString);
+	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+		getLength(), getMessageBuffer().peekLast(), null);
 
-		if (!getFrameParent().isLimitChatBuffer())
-		    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
+	if (!getFrameParent().isLimitChatBuffer())
+	    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
 
-		if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
-			&& !getFrameParent().isUserMuteBoop()
-			|| getUsername() != null && cleanedString.toLowerCase()
-			.contains(getUsername().toLowerCase())) {
-		    getFrameParent().playSound();
-		}
+	if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
+		&& !getFrameParent().isUserMuteBoop()
+		|| getUsername() != null && cleanedString.toLowerCase()
+		.contains(getUsername().toLowerCase())) {
+	    getFrameParent().playSound();
+	}
     }
 
     protected void closePMFrames() {
