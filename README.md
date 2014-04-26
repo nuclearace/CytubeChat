@@ -27,3 +27,4 @@ Commands
 - `/login` Logs into a room
 - `/chatbuffer` limit the number of message displayed to 100
 - `/userlist` Hides the userlist
+- `/ignore username` Ignores a user
