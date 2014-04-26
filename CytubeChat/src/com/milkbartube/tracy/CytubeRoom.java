@@ -253,7 +253,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
 		getLength(), getMessageBuffer().peekLast(), null);
 
-	if (!getFrameParent().isLimitChatBuffer())
+	if (!stopMessagesAreaScrolling)
 	    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
 
 	if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
@@ -421,7 +421,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			System.currentTimeMillis()), attributes);
 
 	for (CytubeUser user : userList) {
-	    if (user.getUsername().equals(username)) {
+	    if (user.getUsername().equalsIgnoreCase(username)) {
 		if (user.isInPrivateMessage())
 		    user.getPmFrame().handleUserLeftRoom();
 		userList.remove(user);
@@ -432,7 +432,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private void setAfk(String name, boolean afk) {
 	for (CytubeUser user : userList) {
-	    if (user.getUsername().toLowerCase().equals(name.toLowerCase())) {
+	    if (user.getUsername().equalsIgnoreCase(name)) {
 		user.setAfk(afk);
 		break;
 	    }
