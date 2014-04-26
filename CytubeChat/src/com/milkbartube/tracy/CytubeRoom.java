@@ -400,8 +400,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     protected void ignoreUser(String username) {
 	for (CytubeUser user : userList) {
-	    if (user.getUsername().toLowerCase()
-		    .equals(username.toLowerCase())) {
+	    if (user.getUsername().equalsIgnoreCase(username)) {
 		user.setIgnore(!user.isIgnore());
 		return;
 	    }
