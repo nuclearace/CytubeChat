@@ -76,7 +76,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private String username;
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
-    private CytubeUser user = new CytubeUser(false, "", 0, null);
+    private CytubeUser user = new CytubeUser(false, "", 0, null, false);
     private ChatUtils utils;
 
     public CytubeRoom(String room, String password, ChatFrame frame, String socketURL) {
@@ -208,9 +208,16 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
-    protected void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
+    private void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
 	ArrayList<String> list = new ArrayList<String>();
 	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
+
+	for (CytubeUser user : userList) {
+	    if (user.getUsername().equalsIgnoreCase(obj.getString("username"))
+		    && user.isIgnore()) {
+		return;
+	    }
+	}
 
 	String cleanedString = getUtils().formatMessage(obj.getString("username"), 
 		obj.getString("msg"), (long) obj.get("time"));
@@ -313,6 +320,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		parent.joinRoom();
 	    } else if (command.equals("/userlist")) {
 		hideUserlist();
+	    } else if (command.equals("/ignore")) {
+		if (parts.length == 2) 
+		    ignoreUser(parts[1]);
 	    } else 
 		getChat().sendMessage(data);
 	} else
@@ -348,7 +358,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    public String handleTabComplete(String[] sentence) {
+    protected String handleTabComplete(String[] sentence) {
 
 	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
 	ArrayList<String> users = new ArrayList<String>();
@@ -386,6 +396,16 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     protected void hideUserlist() {
 	userListScrollPane.setVisible(!userListScrollPane.isVisible());
 	parent.repaint();
+    }
+
+    protected void ignoreUser(String username) {
+	for (CytubeUser user : userList) {
+	    if (user.getUsername().toLowerCase()
+		    .equals(username.toLowerCase())) {
+		user.setIgnore(!user.isIgnore());
+		return;
+	    }
+	}
     }
 
     private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
@@ -554,7 +574,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    public void privateMessage(String to, String message) throws JSONException {
+    protected void privateMessage(String to, String message) throws JSONException {
 	JSONObject json = new JSONObject();
 	json.putOpt("to", to);
 	json.putOpt("msg", message);
@@ -575,7 +595,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
 		String username = obj.getString("name") ;
 		int rank = (int) obj.get("rank");
-		CytubeUser user = new CytubeUser(afk, username, rank, this);
+		CytubeUser user = new CytubeUser(afk, username, rank, this, false);
 		this.addUser(user, true);
 		this.updateUserList();
 	    } else if (event.equals("userLeave")) {
@@ -618,7 +638,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 			.get("afk");
 		String username = (String) users.getJSONObject(i).get("name");
 		int rank = (int) users.getJSONObject(i).get("rank");
-		CytubeUser user = new CytubeUser(afk, username, rank, this);
+		CytubeUser user = new CytubeUser(afk, username, rank, this, false);
 		try {
 		    addUser(user, false);
 		} catch (BadLocationException e) {
@@ -669,6 +689,13 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     public void onMessage(JSONObject json) {}
 
     private void onPrivateMessage(JSONObject obj) throws JSONException {
+	for (CytubeUser user : userList) {
+	    if (user.getUsername().equalsIgnoreCase(obj.getString("username"))
+		    && user.isIgnore()) {
+		return;
+	    }
+	}
+
 	String message = 
 		getUtils().formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
@@ -701,13 +728,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	}
 
-	try {
-	    if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
-		    || obj.getString("msg").toLowerCase().contains(getName()
-			    .toLowerCase())) {
-		parent.playSound();
-	    }
-	} catch (Exception e){}
+	if (parent.getClip() != null && parent.isWindowFocus() && !parent.isUserMuteBoop()
+		|| obj.getString("msg").toLowerCase().contains(getName()
+			.toLowerCase())) {
+	    parent.playSound();
+	}
     }
 
     @Override

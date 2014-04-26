@@ -3,34 +3,36 @@ package com.milkbartube.tracy;
 import javax.swing.text.BadLocationException;
 
 public class CytubeUser {
-    
+
     private boolean afk;
+    private boolean ignore;
     private boolean inPrivateMessage;
     private String username;
     private int rank;
     private CytubeRoom room;
     private PrivateMessageFrame pmFrame;
-   
-    public CytubeUser(boolean afk, String name, int rank, CytubeRoom room) {
+
+    public CytubeUser(boolean afk, String name, int rank, CytubeRoom room, boolean ignore) {
 	this.afk = afk;
 	this.username = name;
 	this.rank = rank;
 	this.room = room;
+	this.ignore = ignore;
     }
-    
+
     protected void startPM(String message) throws BadLocationException {
 	setPmFrame(new PrivateMessageFrame(getRoom(), this));
 	getPmFrame().addMessage(message);
 	setInPrivateMessage(true);
 	getPmFrame().setVisible(true);
     }
-    
+
     public boolean getAfk() {
-        return afk;
+	return afk;
     }
 
     public void setAfk(boolean afk) {
-        this.afk = afk;
+	this.afk = afk;
     }
 
     public String getUsername() {
@@ -40,6 +42,14 @@ public class CytubeUser {
     public void setUsername(String name) {
 	this.username = name;
     }
+    public boolean isIgnore() {
+	return ignore;
+    }
+
+    public void setIgnore(boolean ignore) {
+	this.ignore = ignore;
+    }
+
     public boolean isInPrivateMessage() {
 	return inPrivateMessage;
     }
