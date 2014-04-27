@@ -48,7 +48,6 @@ import javax.swing.text.LabelView;
 import javax.swing.text.ParagraphView;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
@@ -507,69 +506,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	});
 
-	StyleContext sc = StyleContext.getDefaultStyleContext();
+	// Print the userlist
 	for (CytubeUser user : userList) {
-	    switch (user.getRank()) {
-	    case 0:
-		AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			StyleConstants.Foreground, new Color(0x969696));
-		if (user.getAfk()) {
-		    attributes = 
-			    sc.addAttribute(attributes, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		}
-		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes);
-		break;
-	    case 2:
-		AttributeSet attributes2 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			StyleConstants.Foreground, new Color(0x13BF0D));
-		if (user.getAfk()) {
-		    attributes2 = 
-			    sc.addAttribute(attributes2, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		}
-		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes2);
-		break;
-	    case 3:
-		AttributeSet attributes3 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			StyleConstants.Foreground, new Color(0xF0B22E));
-		if (user.getAfk()) {
-		    attributes3 = 
-			    sc.addAttribute(attributes3, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		}
-		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes3);
-		break;
-	    case 4:
-		AttributeSet attributes4 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			StyleConstants.Foreground, new Color(0x5C00FA));
-		if (user.getAfk()) {
-		    attributes4 = 
-			    sc.addAttribute(attributes4, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		}
-		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes4);
-		break;
-	    case 5:
-		AttributeSet attributes5 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-			StyleConstants.Foreground, new Color(0xFA00BB));
-		if (user.getAfk()) {
-		    attributes5 = 
-			    sc.addAttribute(attributes5, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		}
-		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes5);
-		break;
-	    default:
-		AttributeSet attributes6 = sc.addAttribute(
-			SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
-		if (user.getAfk()) {
-		    attributes6 = 
-			    sc.addAttribute(attributes6, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-		}
-		if (user.getRank() >= 255) {
-		    attributes6 = 
-			    sc.addAttribute(attributes6, StyleConstants.Foreground, new Color(0xFA0000));
-		}
-
-		styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() + "\n", attributes6);
-		break;
-	    }
+	    styledUserlist.insertString(styledUserlist.getLength(), user.getUsername() 
+		    + "\n", user.getUserlistStyle());
 	}
     }
 
