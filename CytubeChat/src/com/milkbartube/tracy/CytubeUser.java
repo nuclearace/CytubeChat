@@ -13,6 +13,7 @@ public class CytubeUser {
     private boolean afk;
     private boolean ignore;
     private boolean inPrivateMessage;
+    private boolean muted;
     private String username;
     private int rank;
     private CytubeRoom room;
@@ -35,9 +36,18 @@ public class CytubeUser {
 	return attributes;
     }
 
+    private AttributeSet addMutedStyle(AttributeSet attributes) {
+	StyleContext sc = StyleContext.getDefaultStyleContext();
+	if (isMuted()) {
+	    attributes = 
+		    sc.addAttribute(attributes, StyleConstants.CharacterConstants.StrikeThrough, Boolean.TRUE);
+	}
+	return attributes;
+    }
+
     private AttributeSet addRankStyle() {
 	StyleContext sc = StyleContext.getDefaultStyleContext();
-	
+
 	switch (getRank()) {
 	case 0:
 	    AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
@@ -80,7 +90,7 @@ public class CytubeUser {
     }
 
     protected AttributeSet getUserlistStyle() {
-	return addAfkStyle(addRankStyle());
+	return addAfkStyle(addMutedStyle(addRankStyle()));
     }
 
     protected void startPM(String message) throws BadLocationException {
@@ -111,6 +121,14 @@ public class CytubeUser {
 
     public void setIgnore(boolean ignore) {
 	this.ignore = ignore;
+    }
+
+    public boolean isMuted() {
+	return muted;
+    }
+
+    public void setMuted(boolean muted) {
+	this.muted = muted;
     }
 
     public boolean isInPrivateMessage() {

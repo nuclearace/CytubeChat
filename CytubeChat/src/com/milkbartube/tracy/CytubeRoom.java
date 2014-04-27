@@ -392,6 +392,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
+    private void handleUserMeta(JSONObject data) throws JSONException {
+	for (CytubeUser user : userList) {
+	    if (user.getUsername().equalsIgnoreCase(data.getString("name"))) 
+		user.setMuted(data.getJSONObject("meta").getBoolean("muted"));
+	}
+
+    }
+
     protected void hideUserlist() {
 	userListScrollPane.setVisible(!userListScrollPane.isVisible());
 	parent.repaint();
@@ -558,6 +566,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		    JOptionPane.showMessageDialog(null, obj.get("error"));
 		    setUsername(null);
 		}
+	    }  else if (event.equals("setUserMeta")) {
+		handleUserMeta(obj);
+		updateUserList();
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
