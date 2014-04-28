@@ -68,6 +68,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private Chat chat;
     private String currentMedia;
     private ChatFrame parent;
+    private LinkedList<CytubeVideo> playlist = new LinkedList<CytubeVideo>();
     private String room;
     private String roomPassword;
     private String server;
@@ -288,7 +289,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		messagesTextPane.setText("");
 		getMessageBuffer().clear();
 	    } else if (command.equals("/pm")) {
-		// This could be done better, but I don't want to take the time
 		if (parts.length > 2) {
 		    String to = parts[1];
 		    String message = "";
@@ -414,7 +414,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    private void NewMessageActionPerformed(java.awt.event.ActionEvent evt) {
+    private void NewMessageActionPerformed(ActionEvent evt) {
 	this.handleGUICommand(getNewMessageTextField().getText());
 	getNewMessageTextField().setText(null);
     }
@@ -602,6 +602,13 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
+	} else if (event.equals("playlist")) {
+	    JSONArray videoArray =  data.getJSONArray(0);
+	    
+	    for (int i = 0; i < videoArray.length(); i++) {
+		playlist.add(new CytubeVideo(videoArray.getJSONObject(i)));
+	    }
+	    System.out.println(playlist.peekLast().toString());
 	}
     }
 
@@ -748,6 +755,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setFrameParent(ChatFrame parent) {
 	this.parent = parent;
+    }
+
+    public LinkedList<CytubeVideo> getPlayList() {
+	return playlist;
+    }
+
+    public void setPlayList(LinkedList<CytubeVideo> playList) {
+	this.playlist = playList;
     }
 
     public String getRoom() {
