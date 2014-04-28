@@ -130,7 +130,8 @@ public class CytubePlaylist extends JFrame {
     protected void parseAddVideo(String url, String pos) {
 	String[] parsedURL = CytubeUtils.parseVideoUrl(url);
 	try {
-	    getRoom().sendVideo(parsedURL[0], parsedURL[1], pos, chckbxTemp.isSelected());
+	    if (parsedURL != null)
+		getRoom().sendVideo(parsedURL[0], parsedURL[1], pos, chckbxTemp.isSelected());
 	} catch (JSONException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();

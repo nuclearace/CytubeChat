@@ -27,8 +27,7 @@ public class CytubeVideo {
 	setQueueBy(json.getString("queueby"));
     }
 
-
-    public String getId() {
+    public String gestId() {
 	return id;
     }
     public void setId(String id) {
