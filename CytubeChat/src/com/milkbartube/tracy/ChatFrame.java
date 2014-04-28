@@ -44,6 +44,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private JMenuItem mntmJoinRoom;
     private JMenuItem mntmCloseTab;
     private JMenuItem mntmHideUserlist;
+    private JMenuItem mntmPlaylist;
     // End variables
 
     public ChatFrame() {
@@ -78,18 +79,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	mnMenu.setBackground(Color.WHITE);
 	menuBar.add(mnMenu);
 
-	mntmLogin = new JMenuItem("Login");
-	mntmLogin.setAccelerator(
-		KeyStroke.getKeyStroke(KeyEvent.VK_L, (Toolkit.getDefaultToolkit()
-			.getMenuShortcutKeyMask())));
-	mntmLogin.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		handleLogin();
-	    }
-	});
-	mnMenu.add(mntmLogin);
-
 	mntmHideUserlist = new JMenuItem("Hide Userlist");
 	mntmHideUserlist.setAccelerator(
 		KeyStroke.getKeyStroke(KeyEvent.VK_U, (Toolkit.getDefaultToolkit()
@@ -100,6 +89,18 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		c.hideUserlist();
 	    }
 	});
+	
+		mntmLogin = new JMenuItem("Login");
+		mnMenu.add(mntmLogin);
+		mntmLogin.setAccelerator(
+			KeyStroke.getKeyStroke(KeyEvent.VK_L, (Toolkit.getDefaultToolkit()
+				.getMenuShortcutKeyMask())));
+		mntmLogin.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			handleLogin();
+		    }
+		});
 	mnMenu.add(mntmHideUserlist);
 
 	mntmJoinRoom = new JMenuItem("Join Room");
@@ -112,6 +113,18 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		joinRoom();
 	    }
 	});
+	
+	mntmPlaylist = new JMenuItem("Playlist");
+	mntmPlaylist.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
+		    c.showPlaylist();
+		}
+	});
+	mntmPlaylist.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_P, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mnMenu.add(mntmPlaylist);
 	mnMenu.add(mntmJoinRoom);
 
 	mntmCloseTab = new JMenuItem("Close Tab");

@@ -42,7 +42,7 @@ public class PrivateMessageFrame extends JFrame {
 
     private CytubeRoom room;
     private CytubeUser user;
-    private ChatUtils utils;
+    private CytubeUtils utils;
 
     public PrivateMessageFrame(CytubeRoom room, final CytubeUser user) {
 	addWindowListener(new WindowAdapter() {
@@ -55,7 +55,7 @@ public class PrivateMessageFrame extends JFrame {
 	this.user = user;
 	buildPrivateMessageFrame();
 	setTitle(user.getUsername() + " (" + room.getRoom() + ")");
-	setUtils(new ChatUtils(getRoom(), this));
+	setUtils(new CytubeUtils(getRoom(), this));
     }
 
     /**
@@ -192,11 +192,11 @@ public class PrivateMessageFrame extends JFrame {
 	newPrivateMessageTextField.setEditable(false);
     }
 
-    public ChatUtils getUtils() {
+    public CytubeUtils getUtils() {
 	return utils;
     }
 
-    public void setUtils(ChatUtils utils) {
+    public void setUtils(CytubeUtils utils) {
 	this.utils = utils;
     }
 

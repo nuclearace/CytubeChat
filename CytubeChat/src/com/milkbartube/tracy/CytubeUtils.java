@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -15,20 +17,24 @@ import javax.swing.text.StyledDocument;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-public class ChatUtils {
+public class CytubeUtils {
 
     private StyledDocument document;
     private CytubeRoom room;
     private PrivateMessageFrame pm;
 
-    public ChatUtils(CytubeRoom room) {
+    public CytubeUtils(CytubeRoom room) {
 	document = room.getStyledMessagesDocument();
 	this.setRoom(room);
     }
 
-    public ChatUtils(CytubeRoom room, PrivateMessageFrame pm) {
+    public CytubeUtils(CytubeRoom room, PrivateMessageFrame pm) {
 	this.room = pm.getRoom();
 	document = pm.getPrivateMessageStyledDocument();
+    }
+
+    public CytubeUtils() {
+
     }
 
     protected void addMessageWithLinks(ArrayList<String> list, boolean pm) 
@@ -80,6 +86,80 @@ public class ChatUtils {
 	String formattedTime = formatter.format(date);
 
 	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
+    }
+
+    protected static String[] parseVideoUrl(String url) {
+	// This is really ugly
+	Pattern youtubePattern1 = Pattern.compile("youtube\\.com\\/watch\\?v=([^&#]+)");
+	Pattern youtubePattern2 = Pattern.compile("youtu\\.be\\/([^&#]+)");
+	Pattern youtubePlaylist = Pattern.compile("youtube\\.com\\/playlist\\?list=([^&#]+)");
+	Pattern twitchPattern = Pattern.compile("twitch\\.tv\\/([^&#]+)");
+	Pattern justintvPattern = Pattern.compile("justin\\.tv\\/([^&#]+)");
+	Pattern livestreamPattern = Pattern.compile("livestream\\.com\\/([^&#]+)");
+	Pattern ustreamPattern = Pattern.compile("ustream\\.tv\\/([^&#]+)");
+	Pattern vimeoPattern = Pattern.compile("vimeo\\.com\\/([^&#]+)");
+	Pattern dailymotionPattern = Pattern.compile("dailymotion\\.com\\/video\\/([^&#]+)");
+	Pattern soundcloudPattern = Pattern.compile("soundcloud\\.com\\/([^&#]+)");
+	Pattern googlePattern = Pattern.compile("docs\\.google\\.com\\/file\\/d\\/(.*?)\\/edit");
+
+	Matcher matcher1 = youtubePattern1.matcher(url);
+	Matcher matcher2 = youtubePattern2.matcher(url);
+	Matcher matcher3 = youtubePlaylist.matcher(url);
+	Matcher matcher4 = twitchPattern.matcher(url);
+	Matcher matcher5 = justintvPattern.matcher(url);
+	Matcher matcher6 = livestreamPattern.matcher(url);
+	Matcher matcher7 = ustreamPattern.matcher(url);
+	Matcher matcher8 = vimeoPattern.matcher(url);
+	Matcher matcher9 = dailymotionPattern.matcher(url);
+	Matcher matcher10 = soundcloudPattern.matcher(url);
+	Matcher matcher11 = googlePattern.matcher(url);
+
+	if (matcher1.find()) {
+	    return new String[]{matcher1.group(1), "yt"};
+	}
+
+	if (matcher2.find()) {
+	    return new String[]{matcher2.group(1), "yt"};
+	}
+
+	if (matcher3.find()) {
+	    return new String[]{matcher3.group(1), "yp"};
+	}
+
+	if (matcher4.find()) {
+	    return new String[]{matcher4.group(1), "tw"};
+	}
+
+	if (matcher5.find()) {
+	    return new String[]{matcher5.group(1), "jt"};
+	}
+
+	if (matcher6.find()) {
+	    return new String[]{matcher6.group(1), "li"};
+	}
+
+	if (matcher7.find()) {
+	    return new String[]{matcher7.group(1), "us"};
+	}
+
+	if (matcher8.find()) {
+	    return new String[]{matcher8.group(1), "vm"};
+	}
+
+	if (matcher9.find()) {
+	    return new String[]{matcher9.group(1), "dm"};
+	}
+
+	if (matcher10.find()) {
+	    return new String[]{url, "sc"};
+	}
+
+	if (matcher11.find()) {
+	    return new String[]{matcher11.group(1), "gd"};
+	}
+
+
+	return null;
     }
 
     public StyledDocument getDocument() {
