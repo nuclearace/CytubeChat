@@ -41,7 +41,7 @@ public class CytubePlaylist extends JFrame {
 	setRoom(room);
 	buildCytubePlaylist();
 	setPlaylist(playlist);
-	
+
     }
 
     /**
@@ -122,8 +122,8 @@ public class CytubePlaylist extends JFrame {
 	playlistTextPane.setText("");
 	for (int i = 0; i < playlist.size(); i++) {
 	    getPlaylistStyledDocument().insertString(
-		    getPlaylistStyledDocument().getLength(), playlist.get(i).getTitle() + "    "
-			    + playlist.get(i).getDuration() + "\n", null);
+		    getPlaylistStyledDocument().getLength(), i + 1 + " " 
+			    + playlist.get(i).getTitle() + "\n", null);
 	}
     }
 
