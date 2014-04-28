@@ -209,8 +209,19 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    private void addVideoToPlaylist(JSONObject obj) throws JSONException, BadLocationException {
+    private void addVideo(JSONObject obj, boolean isMove, int uid, CytubeVideo movedVideo) 
+	    throws JSONException, BadLocationException {
 	int posInPlaylist = 0;
+	if (isMove) {
+	    for (int i = 0; i <playlist.size(); i++) {
+		if (playlist.get(i).getUid() == uid) {
+		    posInPlaylist = i + 1;
+		    break;
+		}
+	    }
+	    playlist.add(posInPlaylist, movedVideo);
+	    return;
+	}
 	JSONObject item = obj.getJSONObject("item");
 	CytubeVideo video = new CytubeVideo(item);
 
@@ -285,29 +296,27 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    protected void closePMFrames() throws BadLocationException {
+    protected void closePMFrames() {
 	for (CytubeUser user : userList) {
 	    if (user.isInPrivateMessage()) {
 		user.getPmFrame().setVisible(false);
 	    }
 	}
-	if (getPlaylistFrame() != null) {
-	    getPlaylistFrame().setPlaylist(playlist);
-	    getPlaylistFrame().drawPlaylist();
-	}
-
     }
 
-    private void deleteVideo(int uid) throws BadLocationException {
+    private CytubeVideo deleteVideo(int uid, boolean isMove) throws BadLocationException {
 	for (int i = 0; i < playlist.size(); i++) {
 	    if (playlist.get(i).getUid() == uid) {
-		playlist.remove(i);
-		getPlaylistFrame().setPlaylist(playlist);
-		getPlaylistFrame().drawPlaylist();
-		break;
+		CytubeVideo removedVideo = playlist.remove(i);
+		
+		if (getPlaylistFrame() != null && !isMove) {
+		    getPlaylistFrame().setPlaylist(playlist);
+		    getPlaylistFrame().drawPlaylist();
+		}
+		return removedVideo;
 	    }
 	}
-
+	return null;
     }
 
     public void handleGUICommand(String data) {
@@ -458,6 +467,18 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		return;
 	    }
 	}
+    }
+
+    private void moveVideo(JSONObject obj) throws JSONException, BadLocationException {
+	int from = obj.getInt("from");
+	int after = obj.getInt("after");
+
+	addVideo(null, true, after, deleteVideo(from, true));
+	if (getPlaylistFrame() != null) {
+	    getPlaylistFrame().setPlaylist(playlist);
+	    getPlaylistFrame().drawPlaylist();
+	}
+
     }
 
     private void NewMessageActionPerformed(ActionEvent evt) {
@@ -616,9 +637,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		handleUserMeta(obj);
 		updateUserList();
 	    } else if (event.equals("queue")) {
-		addVideoToPlaylist(obj);
+		addVideo(obj, false, 0, null);
 	    } else if (event.equals("delete")) {
-		deleteVideo(obj.getInt("uid"));
+		deleteVideo(obj.getInt("uid"), false);
+	    } else if (event.equals("moveVideo")) {
+		moveVideo(obj);
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
