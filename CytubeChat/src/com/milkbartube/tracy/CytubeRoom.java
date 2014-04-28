@@ -65,6 +65,8 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private JTextPane userlistTextPane;
     private StyledDocument styledUserlist;
 
+    private CytubePlaylist playlistFrame;
+
     private Chat chat;
     private String currentMedia;
     private ChatFrame parent;
@@ -322,6 +324,15 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    } else if (command.equals("/ignore")) {
 		if (parts.length == 2) 
 		    ignoreUser(parts[1]);
+	    } else if (command.equals("/playlist")) {
+		setPlaylistFrame(new CytubePlaylist(getPlayList()));
+		getPlaylistFrame().setVisible(true);
+		try {
+		    getPlaylistFrame().drawPlaylist();
+		} catch (BadLocationException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
 	    } else 
 		getChat().sendMessage(data);
 	} else
@@ -604,11 +615,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	} else if (event.equals("playlist")) {
 	    JSONArray videoArray =  data.getJSONArray(0);
-	    
+
 	    for (int i = 0; i < videoArray.length(); i++) {
 		playlist.add(new CytubeVideo(videoArray.getJSONObject(i)));
 	    }
-	    System.out.println(playlist.peekLast().toString());
+	    System.out.println(playlist);
 	}
     }
 
@@ -722,6 +733,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setCurrentMedia(String currentMedia) {
 	this.currentMedia = currentMedia;
+    }
+
+    public CytubePlaylist getPlaylistFrame() {
+	return playlistFrame;
+    }
+
+    public void setPlaylistFrame(CytubePlaylist playlistFrame) {
+	this.playlistFrame = playlistFrame;
     }
 
     public LinkedList<String> getMessageBuffer() {
