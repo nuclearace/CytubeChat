@@ -85,6 +85,10 @@ public class CytubePlaylist extends JFrame {
 	contentPane.setLayout(gl_contentPane);
     }
     
+    protected void clearPlaylist() {
+	playlistTextPane.setText("");
+    }
+    
     protected void drawPlaylist() throws BadLocationException {
 	playlistTextPane.setText("");
 	for (int i = 0; i < playlist.size(); i++) {
