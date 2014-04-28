@@ -79,7 +79,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null, false);
-    private ChatUtils utils;
+    private CytubeUtils utils;
 
     public CytubeRoom(String room, String password, ChatFrame frame, String socketURL) {
 	this.room = room;
@@ -89,7 +89,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	buildChatPanel();
 	setChat(new Chat(this, server));
-	setUtils(new ChatUtils(this));
+	setUtils(new CytubeUtils(this));
     }
 
     /**
@@ -308,7 +308,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	for (int i = 0; i < playlist.size(); i++) {
 	    if (playlist.get(i).getUid() == uid) {
 		CytubeVideo removedVideo = playlist.remove(i);
-		
+
 		if (getPlaylistFrame() != null && !isMove) {
 		    getPlaylistFrame().setPlaylist(playlist);
 		    getPlaylistFrame().drawPlaylist();
@@ -369,14 +369,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		if (parts.length == 2) 
 		    ignoreUser(parts[1]);
 	    } else if (command.equals("/playlist")) {
-		setPlaylistFrame(new CytubePlaylist(getPlayList()));
-		getPlaylistFrame().setVisible(true);
-		try {
-		    getPlaylistFrame().drawPlaylist();
-		} catch (BadLocationException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-		}
+		showPlaylist();
 	    } else 
 		getChat().sendMessage(data);
 	} else
@@ -504,12 +497,35 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
+    protected void sendVideo(String id, String type, String pos, boolean temp) throws JSONException {
+	JSONObject json = new JSONObject();
+	json.putOpt("id", id);
+	json.putOpt("type", type);
+	json.putOpt("pos", pos);
+	json.put("duration", 0);
+	json.put("temp", temp);
+
+	chat.getSocket().emit("queue", json);
+
+    }
+
     private void setAfk(String name, boolean afk) {
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(name)) {
 		user.setAfk(afk);
 		break;
 	    }
+	}
+    }
+
+    protected void showPlaylist() {
+	setPlaylistFrame(new CytubePlaylist(getPlayList(), this));
+	getPlaylistFrame().setVisible(true);
+	try {
+	    getPlaylistFrame().drawPlaylist();
+	} catch (BadLocationException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
     }
 
@@ -677,7 +693,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	} else if (event.equals("playlist")) {
 	    JSONArray videoArray =  data.getJSONArray(0);
-	    
+
 	    if (videoArray.length() == 0) {
 		getPlaylistFrame().clearPlaylist();
 	    }
@@ -913,11 +929,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.styledUserlist = styledUserlist;
     }
 
-    public ChatUtils getUtils() {
+    public CytubeUtils getUtils() {
 	return utils;
     }
 
-    public void setUtils(ChatUtils utils) {
+    public void setUtils(CytubeUtils utils) {
 	this.utils = utils;
     }
 

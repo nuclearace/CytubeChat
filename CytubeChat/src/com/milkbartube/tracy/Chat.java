@@ -83,11 +83,11 @@ public class Chat extends Thread {
     }
 
     public String getServer() {
-        return server;
+	return server;
     }
 
     public void setServer(String server) {
-        this.server = server;
+	this.server = server;
     }
 
     public SocketIO getSocket() {
