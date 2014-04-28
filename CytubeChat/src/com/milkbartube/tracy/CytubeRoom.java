@@ -207,7 +207,25 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	if (!userList.contains(user)) {
 	    userList.add(user);
 	}
+    }
 
+    private void addVideoToPlaylist(JSONObject obj) throws JSONException, BadLocationException {
+	int posInPlaylist = 0;
+	JSONObject item = obj.getJSONObject("item");
+	CytubeVideo video = new CytubeVideo(item);
+
+	for (int i = 0; i < playlist.size(); i++) {
+	    if (playlist.get(i).getUid() == obj.getInt("after")) {
+		posInPlaylist = i + 1;
+		break;
+	    }
+	}
+	playlist.add(posInPlaylist, video);
+
+	if (getPlaylistFrame() != null) {
+	    getPlaylistFrame().setPlaylist(playlist);
+	    getPlaylistFrame().drawPlaylist();
+	}
     }
 
     private void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
@@ -267,12 +285,29 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    protected void closePMFrames() {
+    protected void closePMFrames() throws BadLocationException {
 	for (CytubeUser user : userList) {
 	    if (user.isInPrivateMessage()) {
 		user.getPmFrame().setVisible(false);
 	    }
 	}
+	if (getPlaylistFrame() != null) {
+	    getPlaylistFrame().setPlaylist(playlist);
+	    getPlaylistFrame().drawPlaylist();
+	}
+
+    }
+
+    private void deleteVideo(int uid) throws BadLocationException {
+	for (int i = 0; i < playlist.size(); i++) {
+	    if (playlist.get(i).getUid() == uid) {
+		playlist.remove(i);
+		getPlaylistFrame().setPlaylist(playlist);
+		getPlaylistFrame().drawPlaylist();
+		break;
+	    }
+	}
+
     }
 
     public void handleGUICommand(String data) {
@@ -580,6 +615,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }  else if (event.equals("setUserMeta")) {
 		handleUserMeta(obj);
 		updateUserList();
+	    } else if (event.equals("queue")) {
+		addVideoToPlaylist(obj);
+	    } else if (event.equals("delete")) {
+		deleteVideo(obj.getInt("uid"));
 	    }
 	} catch (JSONException ex) {
 	    ex.printStackTrace();
@@ -619,7 +658,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    for (int i = 0; i < videoArray.length(); i++) {
 		playlist.add(new CytubeVideo(videoArray.getJSONObject(i)));
 	    }
-	    System.out.println(playlist);
 	}
     }
 

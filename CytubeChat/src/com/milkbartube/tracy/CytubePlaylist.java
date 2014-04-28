@@ -33,12 +33,6 @@ public class CytubePlaylist extends JFrame {
     public CytubePlaylist(LinkedList<CytubeVideo> playlist) {
 	buildCytubePlaylist();
 	this.setPlaylist(playlist);
-	try {
-	    drawPlaylist();
-	} catch (BadLocationException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
     }
 
     /**
@@ -92,6 +86,7 @@ public class CytubePlaylist extends JFrame {
     }
     
     protected void drawPlaylist() throws BadLocationException {
+	playlistTextPane.setText("");
 	for (int i = 0; i < playlist.size(); i++) {
 	    getPlaylistStyledDocument().insertString(
 		    getPlaylistStyledDocument().getLength(), playlist.get(i).getTitle() + "    "
