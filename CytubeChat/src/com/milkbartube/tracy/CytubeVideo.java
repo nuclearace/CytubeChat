@@ -13,6 +13,7 @@ public class CytubeVideo {
     private int uid;
     private boolean temp;
     private String queueBy;
+    private String URL;
 
     public CytubeVideo(JSONObject json) throws JSONException {
 	JSONObject media = json.getJSONObject("media");
@@ -26,7 +27,6 @@ public class CytubeVideo {
 	setTemp(json.getBoolean("temp"));
 	setQueueBy(json.getString("queueby"));
     }
-
 
     public String getId() {
 	return id;
@@ -77,6 +77,14 @@ public class CytubeVideo {
 	this.queueBy = queueBy;
     }
 
+
+    public String getURL() {
+	return URL;
+    }
+
+    public void setURL(String uRL) {
+	URL = uRL;
+    }
 
     @Override
     public int hashCode() {
