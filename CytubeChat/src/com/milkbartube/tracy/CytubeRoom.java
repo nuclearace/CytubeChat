@@ -79,7 +79,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     private LinkedList<String> messageBuffer = new LinkedList<String>();
     private ArrayList<CytubeUser> userList = new ArrayList<CytubeUser>();
     private CytubeUser user = new CytubeUser(false, "", 0, null, false);
-    private CytubeUtils utils;
 
     public CytubeRoom(String room, String password, ChatFrame frame, String socketURL) {
 	this.room = room;
@@ -89,7 +88,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	buildChatPanel();
 	setChat(new Chat(this, server));
-	setUtils(new CytubeUtils(this));
     }
 
     /**
@@ -198,7 +196,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	    getStyledMessagesDocument().insertString(
 		    getStyledMessagesDocument().getLength(), 
-		    getUtils().formatMessage("[Client]", 
+		    CytubeUtils.formatMessage("[Client]", 
 			    user.getUsername() + " joined the room", 
 			    System.currentTimeMillis()), attributes);
 	    if (!isStopMessagesAreaScrolling())
@@ -250,7 +248,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	}
 
-	String cleanedString = getUtils().formatMessage(obj.getString("username"), 
+	String cleanedString = CytubeUtils.formatMessage(obj.getString("username"), 
 		obj.getString("msg"), (long) obj.get("time"));
 
 	Matcher matcher = linkPattern.matcher(cleanedString);
@@ -259,7 +257,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    for (String word: cleanedString.split(" ")) {
 		list.add(word);
 	    }
-	    getUtils().addMessageWithLinks(list, false);
+	    CytubeUtils.addMessageWithLinks(list, false, getStyledMessagesDocument(), this);
 
 	    if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
 		    && !getFrameParent().isUserMuteBoop()
@@ -271,7 +269,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 
 	cleanedString = 
-		getUtils().formatMessage(obj.getString("username"), 
+		CytubeUtils.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
 
 	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) {
@@ -484,7 +482,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	getStyledMessagesDocument().insertString(
 		getStyledMessagesDocument().getLength(), 
-		getUtils().formatMessage("[Client]", username + " left the room", 
+		CytubeUtils.formatMessage("[Client]", username + " left the room", 
 			System.currentTimeMillis()), attributes);
 
 	for (CytubeUser user : userList) {
@@ -746,7 +744,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 
 	String message = 
-		getUtils().formatMessage(obj.getString("username"), 
+		CytubeUtils.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
 
 	for (CytubeUser user : userList) {
@@ -928,15 +926,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     public void setStyledUserlist(StyledDocument styledUserlist) {
 	this.styledUserlist = styledUserlist;
     }
-
-    public CytubeUtils getUtils() {
-	return utils;
-    }
-
-    public void setUtils(CytubeUtils utils) {
-	this.utils = utils;
-    }
-
+    
     public String getUsername() {
 	return username;
     }

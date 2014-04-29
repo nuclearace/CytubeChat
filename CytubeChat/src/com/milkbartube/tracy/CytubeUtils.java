@@ -20,23 +20,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 public class CytubeUtils {
 
-    private StyledDocument document;
-    private CytubeRoom room;
-    private PrivateMessageFrame pm;
-
-    public CytubeUtils() {}
-
-    public CytubeUtils(CytubeRoom room) {
-	document = room.getStyledMessagesDocument();
-	this.setRoom(room);
-    }
-
-    public CytubeUtils(CytubeRoom room, PrivateMessageFrame pm) {
-	this.room = pm.getRoom();
-	document = pm.getPrivateMessageStyledDocument();
-    }
-
-    protected void addMessageWithLinks(ArrayList<String> list, boolean pm) 
+    protected static void addMessageWithLinks(ArrayList<String> list, boolean pm, StyledDocument doc, CytubeRoom room) 
 	    throws BadLocationException {
 	list.remove("\n");
 
@@ -46,14 +30,14 @@ public class CytubeUtils {
 
 	for (String word : list) {
 	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		getDocument().insertString(getDocument().
+		doc.insertString(doc.
 			getLength(), word + " ", null);
 	    } else {
-		getDocument().insertString(getDocument().
+		doc.insertString(doc.
 			getLength(), word + " ", attributes);
 	    }
 	}
-	getDocument().insertString(getDocument().
+	doc.insertString(doc.
 		getLength(), "\n", null);
 
 	if (!pm)
@@ -66,10 +50,10 @@ public class CytubeUtils {
 	}
 
 	if (!room.isStopMessagesAreaScrolling())
-	    room.getMessagesTextPane().setCaretPosition(getDocument().getLength());
+	    room.getMessagesTextPane().setCaretPosition(doc.getLength());
     }
 
-    protected String formatMessage(String username, String message, long time) {
+    protected static String formatMessage(String username, String message, long time) {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
 
@@ -206,29 +190,4 @@ public class CytubeUtils {
 
 	return null;
     }
-
-    public StyledDocument getDocument() {
-	return document;
-    }
-
-    public void setDocument(StyledDocument document) {
-	this.document = document;
-    }
-
-    public PrivateMessageFrame getPm() {
-	return pm;
-    }
-
-    public void setPm(PrivateMessageFrame pm) {
-	this.pm = pm;
-    }
-
-    public CytubeRoom getRoom() {
-	return room;
-    }
-
-    public void setRoom(CytubeRoom room) {
-	this.room = room;
-    }
-
 }

@@ -42,7 +42,6 @@ public class PrivateMessageFrame extends JFrame {
 
     private CytubeRoom room;
     private CytubeUser user;
-    private CytubeUtils utils;
 
     public PrivateMessageFrame(CytubeRoom room, final CytubeUser user) {
 	addWindowListener(new WindowAdapter() {
@@ -55,7 +54,6 @@ public class PrivateMessageFrame extends JFrame {
 	this.user = user;
 	buildPrivateMessageFrame();
 	setTitle(user.getUsername() + " (" + room.getRoom() + ")");
-	setUtils(new CytubeUtils(getRoom(), this));
     }
 
     /**
@@ -162,7 +160,7 @@ public class PrivateMessageFrame extends JFrame {
 	    }
 
 	    try {
-		getUtils().addMessageWithLinks(list, true);
+		CytubeUtils.addMessageWithLinks(list, true, getPrivateMessageStyledDocument(), getRoom());
 	    } catch (BadLocationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -190,14 +188,6 @@ public class PrivateMessageFrame extends JFrame {
 	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
 		getLength(),"\n" + user.getUsername() + " left the room", null);
 	newPrivateMessageTextField.setEditable(false);
-    }
-
-    public CytubeUtils getUtils() {
-	return utils;
-    }
-
-    public void setUtils(CytubeUtils utils) {
-	this.utils = utils;
     }
 
     public JTextField getNewMessageTextField() {
