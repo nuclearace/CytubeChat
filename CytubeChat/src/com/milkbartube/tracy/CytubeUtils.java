@@ -1,6 +1,7 @@
 package com.milkbartube.tracy;
 
 import java.awt.Color;
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,8 @@ public class CytubeUtils {
     private CytubeRoom room;
     private PrivateMessageFrame pm;
 
+    public CytubeUtils() {}
+
     public CytubeUtils(CytubeRoom room) {
 	document = room.getStyledMessagesDocument();
 	this.setRoom(room);
@@ -33,18 +36,13 @@ public class CytubeUtils {
 	document = pm.getPrivateMessageStyledDocument();
     }
 
-    public CytubeUtils() {
-
-    }
-
     protected void addMessageWithLinks(ArrayList<String> list, boolean pm) 
 	    throws BadLocationException {
 	list.remove("\n");
 
-	Color color = new Color(0x351FFF);
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		StyleConstants.Foreground, color);
+		StyleConstants.Foreground, new Color(0x351FFF));
 
 	for (String word : list) {
 	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
@@ -86,6 +84,53 @@ public class CytubeUtils {
 	String formattedTime = formatter.format(date);
 
 	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
+    }
+
+    protected static String idToURL(String id, String type) 
+	    throws BadLocationException, MalformedURLException {
+	String url;
+	
+	switch (type) {
+	case "yt":
+	    url = "http://youtube.com/watch?v=" + id;
+	    break;
+	case "vi":
+	    url = "http://vimeo.com/" + id;
+	    break;
+	case "dm":
+	    url = "http://dailymotion.com/video/" + id;
+	    break;
+	case "sc":
+	    url = id;
+	    break;
+	case "li":
+	    url = "http://livestream.com/" + id;
+	    break;
+	case "tw":
+	    url = "http://twitch.tv/" + id;
+	    break;
+	case "jt":
+	    url = "http://justin.tv/" + id;
+	    break;
+	case "rt":
+	    url = id;
+	    break;
+	case "jw":
+	    url = id;
+	    break;
+	case "im":
+	    url = "http://imgur.com/a/" + id;
+	    break;
+	case "us":
+	    url = "http://ustream.tv/" + id;
+	    break;
+	case "gd":
+	    url = id;
+	    break;
+	default:
+	    url = id;
+	}
+	return url;
     }
 
     protected static String[] parseVideoUrl(String url) {

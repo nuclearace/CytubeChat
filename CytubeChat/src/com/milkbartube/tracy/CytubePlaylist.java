@@ -1,11 +1,17 @@
 package com.milkbartube.tracy;
 
+import java.net.MalformedURLException;
 import java.util.LinkedList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -15,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -61,7 +68,7 @@ public class CytubePlaylist extends JFrame {
 	btnAddVideoNext.addMouseListener(new MouseAdapter() {
 	    @Override
 	    public void mouseClicked(MouseEvent e) {
-		parseAddVideo(newVideoTextField.getText(), "next");
+		addVideo(newVideoTextField.getText(), "next");
 		newVideoTextField.setText("");
 	    }
 	});
@@ -73,7 +80,7 @@ public class CytubePlaylist extends JFrame {
 	btnAddEnd.addMouseListener(new MouseAdapter() {
 	    @Override
 	    public void mouseClicked(MouseEvent e) {
-		parseAddVideo(newVideoTextField.getText(), "end");
+		addVideo(newVideoTextField.getText(), "end");
 		newVideoTextField.setText("");
 	    }
 	});
@@ -109,6 +116,27 @@ public class CytubePlaylist extends JFrame {
 
 	playlistTextPane = new JTextPane();
 	playlistTextPane.setEditable(false);
+	playlistTextPane.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		int pos = playlistTextPane.viewToModel(e.getPoint());
+		Element element = getPlaylistStyledDocument().getCharacterElement(pos);
+
+		AttributeSet as = element.getAttributes();
+		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
+		    try {
+			playlistHandleLink(playlistTextPane.getText(element.getStartOffset(), 
+				((element.getEndOffset() - element.getStartOffset()) - 1)));
+		    } catch (BadLocationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		    } catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		    }
+		}
+	    }
+	});
 	playlistScrollPane.setViewportView(playlistTextPane);
 	setPlaylistStyledDocument(playlistTextPane.getStyledDocument());
 	contentPane.setLayout(gl_contentPane);
@@ -120,14 +148,19 @@ public class CytubePlaylist extends JFrame {
 
     protected void drawPlaylist() throws BadLocationException {
 	playlistTextPane.setText("");
+	StyleContext sc = StyleContext.getDefaultStyleContext();
+	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+		StyleConstants.Foreground, new Color(0x351FFF));
 	for (int i = 0; i < playlist.size(); i++) {
 	    getPlaylistStyledDocument().insertString(
-		    getPlaylistStyledDocument().getLength(), i + 1 + " " 
-			    + playlist.get(i).getTitle() + "\n", null);
+		    getPlaylistStyledDocument().getLength(), Integer.toString(i + 1) + ". ", null);
+	    getPlaylistStyledDocument().insertString(
+		    getPlaylistStyledDocument().getLength(), 
+		    playlist.get(i).getTitle() + "\n", attributes);
 	}
     }
 
-    protected void parseAddVideo(String url, String pos) {
+    protected void addVideo(String url, String pos) {
 	String[] parsedURL = CytubeUtils.parseVideoUrl(url);
 	try {
 	    if (parsedURL != null)
@@ -136,6 +169,17 @@ public class CytubePlaylist extends JFrame {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+    }
+
+    protected void playlistHandleLink(String text) throws MalformedURLException, BadLocationException {
+	for (int i = 0; i < playlist.size(); i++) {
+	    if (playlist.get(i).getTitle().equals(text)) {
+		room.handleLink(
+			CytubeUtils.idToURL(playlist.get(i).getId(), 
+				playlist.get(i).getType()));
+	    }
+	}
+
     }
 
     public LinkedList<CytubeVideo> getPlaylist() {
