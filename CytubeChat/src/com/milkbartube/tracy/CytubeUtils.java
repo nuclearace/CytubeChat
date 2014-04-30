@@ -24,8 +24,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 public class CytubeUtils {
 
-    protected static void addMessageWithLinks(ArrayList<String> list, boolean pm, StyledDocument doc, CytubeRoom room) 
-	    throws BadLocationException {
+    protected static void addMessageWithLinks(String sentence, ArrayList<String> list, 
+	    boolean pm, StyledDocument doc, CytubeRoom room) 
+		    throws BadLocationException {
+
 	list.remove("\n");
 
 	StyleContext sc = StyleContext.getDefaultStyleContext();
@@ -42,13 +44,10 @@ public class CytubeUtils {
 	doc.insertString(doc.getLength(), "\n", null);
 
 	if (!pm)
-	    room.getMessageBuffer().add("");
+	    room.getMessageBuffer().add(sentence);
 
-	if (!pm && room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) {
-	    room.getMessageBuffer().remove();
-	    room.getMessagesTextPane().setText(room.getMessagesTextPane().getText()
-		    .substring(room.getMessagesTextPane().getText().indexOf('\n')+1));
-	}
+	if (!pm && room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) 
+	    doc.remove(0, room.getMessageBuffer().remove().length());
 
 	if (!room.isStopMessagesAreaScrolling())
 	    room.getMessagesTextPane().setCaretPosition(doc.getLength());
