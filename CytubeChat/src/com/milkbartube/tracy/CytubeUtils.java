@@ -83,7 +83,7 @@ public class CytubeUtils {
     protected static String idToURL(String id, String type) 
 	    throws BadLocationException, MalformedURLException {
 	String url;
-	
+
 	switch (type) {
 	case "yt":
 	    url = "http://youtube.com/watch?v=" + id;

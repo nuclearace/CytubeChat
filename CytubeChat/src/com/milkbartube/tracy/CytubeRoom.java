@@ -268,11 +268,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		CytubeUtils.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
 
-	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) {
-	    getMessageBuffer().remove();
-	    getMessagesTextPane().setText(getMessagesTextPane().getText()
-		    .substring(getMessagesTextPane().getText().indexOf('\n')+1));
-	}
+//	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) {
+//	    getMessageBuffer().remove();
+//	    getStyledMessagesDocument().
+//	    getMessagesTextPane().setText(getMessagesTextPane().getText()
+//		    .substring(getMessagesTextPane().getText().indexOf('\n')+1));
+//	}
 
 	getMessageBuffer().add(cleanedString);
 	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
@@ -313,7 +314,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	return null;
     }
 
-    public void handleGUICommand(String data) {
+    private void handleGUICommand(String data) {
 	data = data.replace("\n", "").replace("\r", "");
 
 	if (!data.equals("")) {
@@ -369,7 +370,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	} else
 	    return;
     }
-    
+
     public void handleLogin() {
 	if (this.username != null) {
 	    JOptionPane.showMessageDialog(null, "Already logged in");
@@ -913,7 +914,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     public void setStyledUserlist(StyledDocument styledUserlist) {
 	this.styledUserlist = styledUserlist;
     }
-    
+
     public String getUsername() {
 	return username;
     }
