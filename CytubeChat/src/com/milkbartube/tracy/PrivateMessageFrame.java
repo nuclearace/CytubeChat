@@ -122,7 +122,7 @@ public class PrivateMessageFrame extends JFrame {
 		AttributeSet as = element.getAttributes();
 		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
 		    try {
-			room.handleLink(getPrivateMessageStyledDocument().getText(element.getStartOffset(), 
+			CytubeUtils.handleLink(getPrivateMessageStyledDocument().getText(element.getStartOffset(), 
 				((element.getEndOffset() - element.getStartOffset()) - 1)));
 		    } catch (BadLocationException e1) {
 			// TODO Auto-generated catch block

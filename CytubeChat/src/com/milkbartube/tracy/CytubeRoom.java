@@ -17,14 +17,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -137,7 +133,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		AttributeSet as = element.getAttributes();
 		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
 		    try {
-			handleLink(messagesTextPane.getText(element.getStartOffset(), 
+			CytubeUtils.handleLink(messagesTextPane.getText(element.getStartOffset(), 
 				((element.getEndOffset() - element.getStartOffset()) - 1)));
 		    } catch (BadLocationException e1) {
 			// TODO Auto-generated catch block
@@ -373,16 +369,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	} else
 	    return;
     }
-
-    protected void handleLink(String uri) {
-	try {
-	    Desktop.getDesktop().browse(new URI(uri));
-	} catch (IOException | URISyntaxException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-    }
-
+    
     public void handleLogin() {
 	if (this.username != null) {
 	    JOptionPane.showMessageDialog(null, "Already logged in");

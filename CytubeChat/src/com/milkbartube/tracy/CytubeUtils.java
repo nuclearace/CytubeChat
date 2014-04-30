@@ -1,7 +1,11 @@
 package com.milkbartube.tracy;
 
 import java.awt.Color;
+import java.awt.Desktop;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,15 +34,12 @@ public class CytubeUtils {
 
 	for (String word : list) {
 	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		doc.insertString(doc.
-			getLength(), word + " ", null);
+		doc.insertString(doc.getLength(), word + " ", null);
 	    } else {
-		doc.insertString(doc.
-			getLength(), word + " ", attributes);
+		doc.insertString(doc.getLength(), word + " ", attributes);
 	    }
 	}
-	doc.insertString(doc.
-		getLength(), "\n", null);
+	doc.insertString(doc.getLength(), "\n", null);
 
 	if (!pm)
 	    room.getMessageBuffer().add("");
@@ -68,6 +69,15 @@ public class CytubeUtils {
 	String formattedTime = formatter.format(date);
 
 	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
+    }
+
+    protected static void handleLink(String uri) {
+	try {
+	    Desktop.getDesktop().browse(new URI(uri));
+	} catch (IOException | URISyntaxException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     protected static String idToURL(String id, String type) 
@@ -186,7 +196,6 @@ public class CytubeUtils {
 	if (matcher11.find()) {
 	    return new String[]{matcher11.group(1), "gd"};
 	}
-
 
 	return null;
     }

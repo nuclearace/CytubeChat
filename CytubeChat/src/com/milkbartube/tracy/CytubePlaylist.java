@@ -174,7 +174,7 @@ public class CytubePlaylist extends JFrame {
     protected void playlistHandleLink(String text) throws MalformedURLException, BadLocationException {
 	for (int i = 0; i < playlist.size(); i++) {
 	    if (playlist.get(i).getTitle().equals(text)) {
-		room.handleLink(
+		CytubeUtils.handleLink(
 			CytubeUtils.idToURL(playlist.get(i).getId(), 
 				playlist.get(i).getType()));
 	    }
