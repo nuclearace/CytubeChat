@@ -188,13 +188,16 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    setUser(user);
 	}
 	if (this.getUser().getRank() <= 1  && fromAddUser) {
+	    String message = CytubeUtils.formatMessage("[Client]", 
+		    user.getUsername() + " joined the room", 
+		    System.currentTimeMillis());
+
+	    messageBuffer.add(message);
 	    SimpleAttributeSet attributes = new SimpleAttributeSet();
 	    attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	    getStyledMessagesDocument().insertString(
-		    getStyledMessagesDocument().getLength(), 
-		    CytubeUtils.formatMessage("[Client]", 
-			    user.getUsername() + " joined the room", 
-			    System.currentTimeMillis()), attributes);
+		    getStyledMessagesDocument().getLength(), message, attributes);
+
 	    if (!isStopMessagesAreaScrolling())
 		messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
 	}
@@ -463,12 +466,16 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void removeUser(String username) throws BadLocationException {
+	String message = CytubeUtils.formatMessage("[Client]", username + " left the room", 
+		System.currentTimeMillis());
+	messageBuffer.add(message);
+
 	SimpleAttributeSet attributes = new SimpleAttributeSet();
 	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+
 	getStyledMessagesDocument().insertString(
 		getStyledMessagesDocument().getLength(), 
-		CytubeUtils.formatMessage("[Client]", username + " left the room", 
-			System.currentTimeMillis()), attributes);
+		message, attributes);
 
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(username)) {
