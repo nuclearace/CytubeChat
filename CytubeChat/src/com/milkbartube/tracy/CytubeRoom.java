@@ -265,10 +265,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    return;
 	}
 
-	cleanedString = 
-		CytubeUtils.formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"));
-
 	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
 	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
