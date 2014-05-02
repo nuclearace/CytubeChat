@@ -180,7 +180,7 @@ public class PrivateMessageFrame extends JFrame {
 
     protected void handleTabComplete() {
 	String[] sentence = newPrivateMessageTextField.getText().toString().split(" ");
-	newPrivateMessageTextField.setText(room.handleTabComplete(sentence));
+	newPrivateMessageTextField.setText(CytubeUtils.handleTabComplete(sentence, room.getUserList()));
     }
 
     protected void handleUserLeftRoom() throws BadLocationException {

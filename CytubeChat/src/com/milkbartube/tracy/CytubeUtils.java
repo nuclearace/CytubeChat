@@ -8,7 +8,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +23,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 public class CytubeUtils {
@@ -76,6 +80,41 @@ public class CytubeUtils {
 	} catch (IOException | URISyntaxException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
+	}
+    }
+
+    protected static String handleTabComplete(String[] sentence, ArrayList<CytubeUser> userlist) {
+
+	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
+	ArrayList<String> users = new ArrayList<String>();
+	String replacedSentence = "";
+
+	for (CytubeUser user : userlist) {
+	    if (user.getUsername().toLowerCase().matches(partialName)) {
+		users.add(user.getUsername());
+	    }
+	}
+	if (users.size() == 0) {
+	    for (String word : sentence) {
+		replacedSentence += word + " ";
+	    }
+	    return replacedSentence; 
+	}
+
+	if (users.size() == 1) {
+	    sentence[sentence.length - 1] = users.get(0);
+	    for (String word : sentence) {
+		replacedSentence += word + " ";
+	    }
+	    return replacedSentence;
+	} else {
+	    sentence[sentence.length - 1] = smallestComplete(users);
+	    for (String word : sentence) {
+		replacedSentence += word + " ";
+	    }
+	    replacedSentence = 
+		    replacedSentence.substring(0, replacedSentence.length() - 1);
+	    return replacedSentence;
 	}
     }
 
@@ -197,5 +236,50 @@ public class CytubeUtils {
 	}
 
 	return null;
+    }
+
+    private static String smallestComplete(ArrayList<String> users) {
+	int[] smallestCompleteIntArray = new int[users.size()];
+	String[] trimmedArray = new String[users.size()];
+
+	for (int i = 0; i < users.size(); i++) {
+	    smallestCompleteIntArray[i] = users.get(i).length();
+	}
+
+	@SuppressWarnings("rawtypes")
+	List smallestCompleteIntObject = Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
+
+	@SuppressWarnings("unchecked")
+	int smallestCompleteInt = Collections.min(smallestCompleteIntObject);
+
+	for (int i = 0; i < users.size(); i++) {
+	    trimmedArray[i] = users.get(i).substring(0, smallestCompleteInt);
+	}
+
+	boolean changed = true;
+	int maxIterations = 21;
+	while (changed) {
+	    changed = false;
+	    String first = trimmedArray[0].toLowerCase();
+
+	    for (int i = 0; i < trimmedArray.length; i++) {
+		if (!trimmedArray[i].toLowerCase().equals(first)) {
+		    changed = true;
+		    break;
+		}
+	    }
+
+	    if (changed) {
+		for (int i = 0; i < trimmedArray.length; i++) {
+		    trimmedArray[i] = trimmedArray[i]
+			    .substring(0, trimmedArray[i].length() - 1);
+		}
+	    }
+
+	    if (--maxIterations < 0) {
+		break;
+	    }
+	}
+	return trimmedArray[0];
     }
 }
