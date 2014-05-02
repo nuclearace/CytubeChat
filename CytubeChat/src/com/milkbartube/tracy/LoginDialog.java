@@ -31,6 +31,7 @@ public class LoginDialog extends JDialog {
     public LoginDialog() {
 	buildLoginDialog();
 	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	setTitle("Login");
 	setLocationRelativeTo(null);
     }
 

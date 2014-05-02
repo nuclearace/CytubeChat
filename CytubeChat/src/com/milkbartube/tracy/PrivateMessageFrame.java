@@ -168,7 +168,6 @@ public class PrivateMessageFrame extends JFrame {
 	    return;
 	}
 
-
 	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
 		getLength(), message, null);
 

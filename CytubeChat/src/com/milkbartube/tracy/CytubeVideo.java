@@ -77,7 +77,6 @@ public class CytubeVideo {
 	this.queueBy = queueBy;
     }
 
-
     public String getURL() {
 	return URL;
     }
@@ -101,7 +100,6 @@ public class CytubeVideo {
 	result = prime * result + uid;
 	return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
