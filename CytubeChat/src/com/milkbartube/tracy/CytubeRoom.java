@@ -11,7 +11,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.awt.event.MouseAdapter;
@@ -168,7 +166,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    public void keyTyped(KeyEvent e) {
 		if (e.getKeyChar() == '\t') {
 		    String[] sentence = newMessageTextField.getText().toString().split(" ");
-		    newMessageTextField.setText(handleTabComplete(sentence));
+		    newMessageTextField.setText(CytubeUtils.handleTabComplete(sentence, userList));
 		}
 	    }
 
@@ -391,41 +389,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    protected String handleTabComplete(String[] sentence) {
-
-	String partialName = sentence[sentence.length - 1].toLowerCase() + "(.*)";
-	ArrayList<String> users = new ArrayList<String>();
-	String replacedSentence = "";
-
-	for (CytubeUser user : userList) {
-	    if (user.getUsername().toLowerCase().matches(partialName)) {
-		users.add(user.getUsername());
-	    }
-	}
-	if (users.size() == 0) {
-	    for (String word : sentence) {
-		replacedSentence += word + " ";
-	    }
-	    return replacedSentence; 
-	}
-
-	if (users.size() == 1) {
-	    sentence[sentence.length - 1] = users.get(0);
-	    for (String word : sentence) {
-		replacedSentence += word + " ";
-	    }
-	    return replacedSentence;
-	} else {
-	    sentence[sentence.length - 1] = this.smallestComplete(users);
-	    for (String word : sentence) {
-		replacedSentence += word + " ";
-	    }
-	    replacedSentence = 
-		    replacedSentence.substring(0, replacedSentence.length() - 1);
-	    return replacedSentence;
-	}
-    }
-
     private void handleUserMeta(JSONObject data) throws JSONException {
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(data.getString("name"))) 
@@ -517,51 +480,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-    }
-
-    private String smallestComplete(ArrayList<String> users) {
-	int[] smallestCompleteIntArray = new int[users.size()];
-	String[] trimmedArray = new String[users.size()];
-
-	for (int i = 0; i < users.size(); i++) {
-	    smallestCompleteIntArray[i] = users.get(i).length();
-	}
-
-	@SuppressWarnings("rawtypes")
-	List smallestCompleteIntObject = Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
-
-	@SuppressWarnings("unchecked")
-	int smallestCompleteInt = Collections.min(smallestCompleteIntObject);
-
-	for (int i = 0; i < users.size(); i++) {
-	    trimmedArray[i] = users.get(i).substring(0, smallestCompleteInt);
-	}
-
-	boolean changed = true;
-	int maxIterations = 21;
-	while (changed) {
-	    changed = false;
-	    String first = trimmedArray[0].toLowerCase();
-
-	    for (int i = 0; i < trimmedArray.length; i++) {
-		if (!trimmedArray[i].toLowerCase().equals(first)) {
-		    changed = true;
-		    break;
-		}
-	    }
-
-	    if (changed) {
-		for (int i = 0; i < trimmedArray.length; i++) {
-		    trimmedArray[i] = trimmedArray[i]
-			    .substring(0, trimmedArray[i].length() - 1);
-		}
-	    }
-
-	    if (--maxIterations < 0) {
-		break;
-	    }
-	}
-	return trimmedArray[0];
     }
 
     protected void startChat() {
@@ -901,6 +819,14 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     public void setUser(CytubeUser user) {
 	this.user = user;
+    }
+
+    public ArrayList<CytubeUser> getUserList() {
+	return userList;
+    }
+
+    public void setUserList(ArrayList<CytubeUser> userList) {
+	this.userList = userList;
     }
 
     public JTextPane getUserlistTextPane() {
