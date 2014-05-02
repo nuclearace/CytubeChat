@@ -604,6 +604,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	    if (videoArray.length() == 0) {
 		getPlaylistFrame().clearPlaylist();
+		playlist.clear();
 	    }
 
 	    for (int i = 0; i < videoArray.length(); i++) {
