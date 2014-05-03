@@ -195,14 +195,18 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		message += word + " ";
 	    }
 
-	    messageBuffer.add(message);
+	    messageBuffer.add(message + "\n");
+
+	    if (getMessageBuffer().size() > 10 && getFrameParent().isLimitChatBuffer()) 
+		getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
+
 	    SimpleAttributeSet attributes = new SimpleAttributeSet();
 	    attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	    getStyledMessagesDocument().insertString(
 		    getStyledMessagesDocument().getLength(), message, attributes);
-	    
+
 	    getStyledMessagesDocument().insertString(
-			getStyledMessagesDocument().getLength(), "\n", null);
+		    getStyledMessagesDocument().getLength(), " \n", null);
 
 	    if (!isStopMessagesAreaScrolling())
 		messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
@@ -255,15 +259,15 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 
 	ArrayList<String> cleanedArrayList = CytubeUtils.formatMessage(obj.getString("username"), 
-		obj.getString("msg"), (long) obj.get("time"));
+		obj.getString("msg"), obj.getLong("time"));
 
 	String cleanedString = "";
 	for (String part : cleanedArrayList) {
-	    cleanedString += part;
+	    cleanedString += part + " ";
 	}
 
 	Matcher matcher = linkPattern.matcher(cleanedString);
-	getMessageBuffer().add(cleanedString);
+	getMessageBuffer().add(cleanedString + "\n");
 
 	if (matcher.find()) {
 	    CytubeUtils.addMessageWithLinks(cleanedArrayList, false, getStyledMessagesDocument(), this);
@@ -281,7 +285,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    return;
 	}
 
-	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
+	if (getMessageBuffer().size() > 10 && getFrameParent().isLimitChatBuffer()) 
 	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
 	for (int i = 0; i < cleanedArrayList.size(); i++) {
@@ -442,7 +446,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    getPlaylistFrame().setPlaylist(playlist);
 	    getPlaylistFrame().drawPlaylist();
 	}
-
     }
 
     private void NewMessageActionPerformed(ActionEvent evt) {
@@ -459,7 +462,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	for (String word : messageArrayList) {
 	    message += word + " ";
 	}
-	messageBuffer.add(message);
+	messageBuffer.add(message + "\n");
+	if (getMessageBuffer().size() > 10 && getFrameParent().isLimitChatBuffer()) 
+	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
 	SimpleAttributeSet attributes = new SimpleAttributeSet();
 	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
@@ -467,10 +472,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	getStyledMessagesDocument().insertString(
 		getStyledMessagesDocument().getLength(), 
 		message, attributes);
-	
+
 	getStyledMessagesDocument().insertString(
-		getStyledMessagesDocument().getLength(), "\n", null);
-	
+		getStyledMessagesDocument().getLength(), " \n", null);
+
 	if (!stopMessagesAreaScrolling)
 	    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
 

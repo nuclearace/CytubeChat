@@ -61,7 +61,7 @@ public class CytubeUtils {
 	}
 	doc.insertString(doc.getLength(), "\n", null);
 
-	if (!pm && room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) 
+	if (!pm && room.getMessageBuffer().size() > 10 && room.getFrameParent().isLimitChatBuffer()) 
 	    doc.remove(0, room.getMessageBuffer().remove().length());
 
 	if (!room.isStopMessagesAreaScrolling())
