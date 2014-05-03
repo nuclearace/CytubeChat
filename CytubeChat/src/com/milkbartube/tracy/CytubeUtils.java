@@ -47,8 +47,7 @@ public class CytubeUtils {
 	for (int i = 0; i < messageList.size(); i++) {
 	    if (i == 0) {
 		doc.insertString(doc.getLength(), messageList.get(i), null);
-	    }
-	    if (i == 1) {
+	    } else if (i == 1) {
 		doc.insertString(doc.getLength(), messageList.get(i), attributes2);
 	    } else if (i == 2) {
 		for (String word : message) {
