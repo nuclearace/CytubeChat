@@ -28,27 +28,38 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 public class CytubeUtils {
 
-    protected static void addMessageWithLinks(String sentence, ArrayList<String> list, 
-	    boolean pm, StyledDocument doc, CytubeRoom room) 
+    protected static void addMessageWithLinks(ArrayList<String> messageList, boolean pm, 
+	    StyledDocument doc, CytubeRoom room) 
 		    throws BadLocationException {
 
-	list.remove("\n");
-
+	ArrayList<String> message = new ArrayList<String>();
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 		StyleConstants.Foreground, new Color(0x351FFF));
 
-	for (String word : list) {
-	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		doc.insertString(doc.getLength(), word + " ", null);
-	    } else {
-		doc.insertString(doc.getLength(), word + " ", attributes);
+	SimpleAttributeSet attributes2 = new SimpleAttributeSet();
+	attributes2.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+
+	for (String word : messageList.get(2).split(" ")) {
+	    message.add(word + " ");
+	}
+
+	for (int i = 0; i < messageList.size(); i++) {
+	    if (i == 0) {
+		doc.insertString(doc.getLength(), messageList.get(i) + " ", null);
+	    } else if (i == 1) {
+		doc.insertString(doc.getLength(), messageList.get(i) + " ", attributes2);
+	    } else if (i == 2) {
+		for (String word : message) {
+		    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
+			doc.insertString(doc.getLength(), word, null);
+		    } else if (word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
+			doc.insertString(doc.getLength(), word, attributes);
+		    } 
+		}
 	    }
 	}
 	doc.insertString(doc.getLength(), "\n", null);
-
-	if (!pm)
-	    room.getMessageBuffer().add(sentence);
 
 	if (!pm && room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) 
 	    doc.remove(0, room.getMessageBuffer().remove().length());
@@ -57,12 +68,13 @@ public class CytubeUtils {
 	    room.getMessagesTextPane().setCaretPosition(doc.getLength());
     }
 
-    protected static String formatMessage(String username, String message, long time) {
+    protected static ArrayList<String> formatMessage(String username, String message, long time) {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
+	ArrayList<String> messageArray = new ArrayList<String>();
 
 	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
-	cleanedString = cleanedString.replaceAll(imgRegex, "$1 ");
+	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
 	cleanedString = cleanedString.replaceAll(htmlTagRegex, "");
 
 	// Add the timestamp
@@ -71,10 +83,15 @@ public class CytubeUtils {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
+	messageArray.add("[" + formattedTime + "]");
+	messageArray.add(username + ":");
+	messageArray.add(cleanedString);
+
+	return  messageArray;
     }
 
     protected static void handleLink(String uri) {
+	uri.replaceAll("\n", "");
 	try {
 	    Desktop.getDesktop().browse(new URI(uri));
 	} catch (IOException | URISyntaxException e) {

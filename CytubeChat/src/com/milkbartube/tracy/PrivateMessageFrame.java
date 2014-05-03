@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.GroupLayout;
@@ -147,20 +148,22 @@ public class PrivateMessageFrame extends JFrame {
 	}
     }
 
-    public void addMessage(String message) throws BadLocationException {
-	ArrayList<String> list = new ArrayList<String>();
+    public void addMessage(ArrayList<String> messageArrayList) throws BadLocationException {
 	Pattern linkPattern = 
 		Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
+	SimpleAttributeSet attributes = new SimpleAttributeSet();
+	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 
-	Matcher matcher = linkPattern.matcher(message);
+	String cleanedString = "";
+	for (String part : messageArrayList) {
+	    cleanedString += part;
+	}
 
+	Matcher matcher = linkPattern.matcher(cleanedString);
+	
 	if (matcher.find()) {
-	    for (String string: message.split(" ")) {
-		list.add(string);
-	    }
-
 	    try {
-		CytubeUtils.addMessageWithLinks(null, list, true, getPrivateMessageStyledDocument(), getRoom());
+		CytubeUtils.addMessageWithLinks(messageArrayList, true, getPrivateMessageStyledDocument(), getRoom());
 	    } catch (BadLocationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -168,8 +171,17 @@ public class PrivateMessageFrame extends JFrame {
 	    return;
 	}
 
-	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-		getLength(), message, null);
+	for (int i = 0; i < messageArrayList.size(); i++) {
+	    if (i == 1) {
+		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+			getLength(), messageArrayList.get(i) + " ", attributes);
+	    } else {
+		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+			getLength(), messageArrayList.get(i) + " ", null);
+	    }
+	}
+	getPrivateMessageStyledDocument().insertString(
+		getPrivateMessageStyledDocument().getLength(), "\n", null);
 
 	if (!this.isFocused())
 	    room.getFrameParent().playSound();

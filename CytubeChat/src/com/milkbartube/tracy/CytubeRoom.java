@@ -186,15 +186,27 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    setUser(user);
 	}
 	if (this.getUser().getRank() <= 1  && fromAddUser) {
-	    String message = CytubeUtils.formatMessage("[Client]", 
+	    ArrayList<String> messageArrayList = CytubeUtils.formatMessage("[Client]", 
 		    user.getUsername() + " joined the room", 
 		    System.currentTimeMillis());
 
-	    messageBuffer.add(message);
+	    String message = "";
+	    for (String word : messageArrayList) {
+		message += word + " ";
+	    }
+
+	    messageBuffer.add(message + "\n");
+
+	    if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
+		getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
+
 	    SimpleAttributeSet attributes = new SimpleAttributeSet();
 	    attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 	    getStyledMessagesDocument().insertString(
 		    getStyledMessagesDocument().getLength(), message, attributes);
+
+	    getStyledMessagesDocument().insertString(
+		    getStyledMessagesDocument().getLength(), " \n", null);
 
 	    if (!isStopMessagesAreaScrolling())
 		messagesTextPane.setCaretPosition(getStyledMessagesDocument().getLength());
@@ -235,8 +247,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
-	ArrayList<String> list = new ArrayList<String>();
 	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
+	SimpleAttributeSet attributes = new SimpleAttributeSet();
+	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(obj.getString("username"))
@@ -245,48 +258,61 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	}
 
-	String cleanedString = CytubeUtils.formatMessage(obj.getString("username"), 
-		obj.getString("msg"), (long) obj.get("time"));
+	ArrayList<String> cleanedArrayList = CytubeUtils.formatMessage(obj.getString("username"), 
+		obj.getString("msg"), obj.getLong("time"));
 
-	Matcher matcher = linkPattern.matcher(cleanedString);
-
-	if (matcher.find()) {
-	    for (String word: cleanedString.split(" ")) {
-		list.add(word);
-	    }
-	    CytubeUtils.addMessageWithLinks(cleanedString, list, false, getStyledMessagesDocument(), this);
-
-	    if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
-		    && !getFrameParent().isUserMuteBoop()
-		    || getUsername() != null && cleanedString.toLowerCase()
-		    .contains(getUsername().toLowerCase())) {
-		getFrameParent().playSound();
-	    }
-	    return;
+	String cleanedString = "";
+	for (String part : cleanedArrayList) {
+	    cleanedString += part + " ";
 	}
 
-	cleanedString = 
-		CytubeUtils.formatMessage(obj.getString("username"), 
-			obj.getString("msg"), (long) obj.get("time"));
+	Matcher matcher = linkPattern.matcher(cleanedString);
+	getMessageBuffer().add(cleanedString + "\n");
+
+	if (matcher.find()) {
+	    CytubeUtils.addMessageWithLinks(cleanedArrayList, false, getStyledMessagesDocument(), this);
+
+	    boolean shouldPlaySound = getFrameParent().getClip() != null 
+		    && getFrameParent().isWindowFocus() 
+		    && !getFrameParent().isUserMuteBoop()
+		    || getUsername() != null 
+		    && cleanedString.toLowerCase()
+		    .contains(getUsername().toLowerCase()) 
+		    && getFrameParent().isWindowFocus();
+
+	    if (shouldPlaySound)
+		getFrameParent().playSound();
+	    return;
+	}
 
 	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
 	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
-
-	getMessageBuffer().add(cleanedString);
-	getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-		getLength(), getMessageBuffer().peekLast(), null);
+	for (int i = 0; i < cleanedArrayList.size(); i++) {
+	    if (i == 1) {
+		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			getLength(), cleanedArrayList.get(i) + " ", attributes);
+	    } else {
+		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
+			getLength(), cleanedArrayList.get(i) + " ", null);
+	    }
+	}
+	getStyledMessagesDocument().insertString(
+		getStyledMessagesDocument().getLength(), "\n", null);
 
 	if (!stopMessagesAreaScrolling)
 	    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
 
-	if (getFrameParent().getClip() != null && getFrameParent().isWindowFocus() 
+	boolean shouldPlaySound = getFrameParent().getClip() != null 
+		&& getFrameParent().isWindowFocus() 
 		&& !getFrameParent().isUserMuteBoop()
-		|| getUsername() != null && cleanedString.toLowerCase()
+		|| getUsername() != null 
+		&& cleanedString.toLowerCase()
 		.contains(getUsername().toLowerCase()) 
-		&& getFrameParent().isWindowFocus() ) {
+		&& getFrameParent().isWindowFocus();
+
+	if (shouldPlaySound)
 	    getFrameParent().playSound();
-	}
     }
 
     protected void closePMFrames() {
@@ -420,7 +446,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    getPlaylistFrame().setPlaylist(playlist);
 	    getPlaylistFrame().drawPlaylist();
 	}
-
     }
 
     private void NewMessageActionPerformed(ActionEvent evt) {
@@ -429,9 +454,17 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     private void removeUser(String username) throws BadLocationException {
-	String message = CytubeUtils.formatMessage("[Client]", username + " left the room", 
-		System.currentTimeMillis());
-	messageBuffer.add(message);
+	ArrayList<String> messageArrayList = CytubeUtils
+		.formatMessage("[Client]", username + " left the room", 
+			System.currentTimeMillis());
+
+	String message = "";
+	for (String word : messageArrayList) {
+	    message += word + " ";
+	}
+	messageBuffer.add(message + "\n");
+	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
+	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
 	SimpleAttributeSet attributes = new SimpleAttributeSet();
 	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
@@ -439,6 +472,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	getStyledMessagesDocument().insertString(
 		getStyledMessagesDocument().getLength(), 
 		message, attributes);
+
+	getStyledMessagesDocument().insertString(
+		getStyledMessagesDocument().getLength(), " \n", null);
+
+	if (!stopMessagesAreaScrolling)
+	    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
 
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(username)) {
@@ -654,7 +693,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    }
 	}
 
-	String message = 
+	ArrayList<String> messageArrayList = 
 		CytubeUtils.formatMessage(obj.getString("username"), 
 			obj.getString("msg"), (long) obj.get("time"));
 
@@ -663,19 +702,19 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		if (user.getUsername().equals(obj.getString("username")) &&
 			!username.equals(obj.getString("username"))) {
 		    if (!user.isInPrivateMessage()) {
-			user.startPM(message);
+			user.startPM(messageArrayList);
 			break;
 		    } else {
-			user.getPmFrame().addMessage(message);
+			user.getPmFrame().addMessage(messageArrayList);
 			break;
 		    }
 		} else if (user.getUsername().equals(obj.getString("to")) && 
 			username.equals(obj.getString("username"))) {
 		    if (!user.isInPrivateMessage()) {
-			user.startPM(message);
+			user.startPM(messageArrayList);
 			break;
 		    } else {
-			user.getPmFrame().addMessage(message);
+			user.getPmFrame().addMessage(messageArrayList);
 			break;
 		    }
 		}
