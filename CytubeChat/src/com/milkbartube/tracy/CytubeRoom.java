@@ -263,9 +263,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
 
 	Matcher matcher = linkPattern.matcher(cleanedString);
+	getMessageBuffer().add(cleanedString);
 
 	if (matcher.find()) {
-	    CytubeUtils.addMessageWithLinks(cleanedString, cleanedArrayList, false, getStyledMessagesDocument(), this);
+	    CytubeUtils.addMessageWithLinks(cleanedArrayList, false, getStyledMessagesDocument(), this);
 
 	    boolean shouldPlaySound = getFrameParent().getClip() != null 
 		    && getFrameParent().isWindowFocus() 
@@ -282,9 +283,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
 	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
-
-
-	getMessageBuffer().add(cleanedString);
 
 	for (int i = 0; i < cleanedArrayList.size(); i++) {
 	    if (i == 1) {

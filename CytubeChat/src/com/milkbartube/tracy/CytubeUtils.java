@@ -28,10 +28,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 public class CytubeUtils {
 
-    protected static void addMessageWithLinks(String sentence, ArrayList<String> list, 
-	    boolean pm, StyledDocument doc, CytubeRoom room) 
+    protected static void addMessageWithLinks(ArrayList<String> messageList, boolean pm, 
+	    StyledDocument doc, CytubeRoom room) 
 		    throws BadLocationException {
 
+	ArrayList<String> message = new ArrayList<String>();
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 		StyleConstants.Foreground, new Color(0x351FFF));
@@ -39,20 +40,27 @@ public class CytubeUtils {
 	SimpleAttributeSet attributes2 = new SimpleAttributeSet();
 	attributes2.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 
-	for (int i = 0; i < list.size(); i++) {
-	    System.out.println(list.get(i));
+	for (String word : messageList.get(2).split(" ")) {
+	    message.add(word);
+	}
+
+	for (int i = 0; i < messageList.size(); i++) {
+	    if (i == 0) {
+		doc.insertString(doc.getLength(), messageList.get(i), null);
+	    }
 	    if (i == 1) {
-		doc.insertString(doc.getLength(), list.get(i), attributes2);
-	    } else if (!list.get(i).matches("(.*)(http(s?):/)(/[^/]+).*") && i != 1) {
-		doc.insertString(doc.getLength(), list.get(i), null);
-	    } else if (list.get(i).matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		doc.insertString(doc.getLength(), list.get(i) + " ", attributes);
+		doc.insertString(doc.getLength(), messageList.get(i), attributes2);
+	    } else if (i == 2) {
+		for (String word : message) {
+		    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*") && i != 1) {
+			doc.insertString(doc.getLength(), word + " ", null);
+		    } else if (word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
+			doc.insertString(doc.getLength(), word + " ", attributes);
+		    } 
+		}
 	    }
 	}
 	doc.insertString(doc.getLength(), "\n", null);
-
-	if (!pm)
-	    room.getMessageBuffer().add(sentence);
 
 	if (!pm && room.getMessageBuffer().size() > 100 && room.getFrameParent().isLimitChatBuffer()) 
 	    doc.remove(0, room.getMessageBuffer().remove().length());

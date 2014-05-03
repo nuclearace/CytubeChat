@@ -163,7 +163,7 @@ public class PrivateMessageFrame extends JFrame {
 	
 	if (matcher.find()) {
 	    try {
-		CytubeUtils.addMessageWithLinks(null, messageArrayList, true, getPrivateMessageStyledDocument(), getRoom());
+		CytubeUtils.addMessageWithLinks(messageArrayList, true, getPrivateMessageStyledDocument(), getRoom());
 	    } catch (BadLocationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
