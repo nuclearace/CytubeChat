@@ -41,20 +41,20 @@ public class CytubeUtils {
 	attributes2.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 
 	for (String word : messageList.get(2).split(" ")) {
-	    message.add(word);
+	    message.add(word + " ");
 	}
 
 	for (int i = 0; i < messageList.size(); i++) {
 	    if (i == 0) {
-		doc.insertString(doc.getLength(), messageList.get(i), null);
+		doc.insertString(doc.getLength(), messageList.get(i) + " ", null);
 	    } else if (i == 1) {
-		doc.insertString(doc.getLength(), messageList.get(i), attributes2);
+		doc.insertString(doc.getLength(), messageList.get(i) + " ", attributes2);
 	    } else if (i == 2) {
 		for (String word : message) {
 		    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-			doc.insertString(doc.getLength(), word + " ", null);
+			doc.insertString(doc.getLength(), word, null);
 		    } else if (word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-			doc.insertString(doc.getLength(), word + " ", attributes);
+			doc.insertString(doc.getLength(), word, attributes);
 		    } 
 		}
 	    }
@@ -74,7 +74,7 @@ public class CytubeUtils {
 	ArrayList<String> messageArray = new ArrayList<String>();
 
 	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
-	cleanedString = cleanedString.replaceAll(imgRegex, "$1 ");
+	cleanedString = cleanedString.replaceAll(imgRegex, "$1");
 	cleanedString = cleanedString.replaceAll(htmlTagRegex, "");
 
 	// Add the timestamp
@@ -83,8 +83,8 @@ public class CytubeUtils {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	messageArray.add("[" + formattedTime + "] ");
-	messageArray.add(username + ": ");
+	messageArray.add("[" + formattedTime + "]");
+	messageArray.add(username + ":");
 	messageArray.add(cleanedString);
 
 	return  messageArray;

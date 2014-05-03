@@ -192,7 +192,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	    String message = "";
 	    for (String word : messageArrayList) {
-		message += word;
+		message += word + " ";
 	    }
 
 	    messageBuffer.add(message);
@@ -287,10 +287,10 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	for (int i = 0; i < cleanedArrayList.size(); i++) {
 	    if (i == 1) {
 		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			getLength(), cleanedArrayList.get(i), attributes);
+			getLength(), cleanedArrayList.get(i) + " ", attributes);
 	    } else {
 		getStyledMessagesDocument().insertString(getStyledMessagesDocument().
-			getLength(), cleanedArrayList.get(i), null);
+			getLength(), cleanedArrayList.get(i) + " ", null);
 	    }
 	}
 	getStyledMessagesDocument().insertString(
@@ -457,7 +457,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	String message = "";
 	for (String word : messageArrayList) {
-	    message += word;
+	    message += word + " ";
 	}
 	messageBuffer.add(message);
 

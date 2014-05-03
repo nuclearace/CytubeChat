@@ -174,10 +174,10 @@ public class PrivateMessageFrame extends JFrame {
 	for (int i = 0; i < messageArrayList.size(); i++) {
 	    if (i == 1) {
 		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			getLength(), messageArrayList.get(i), attributes);
+			getLength(), messageArrayList.get(i) + " ", attributes);
 	    } else {
 		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			getLength(), messageArrayList.get(i), null);
+			getLength(), messageArrayList.get(i) + " ", null);
 	    }
 	}
 	getPrivateMessageStyledDocument().insertString(
