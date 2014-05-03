@@ -51,7 +51,7 @@ public class CytubeUtils {
 		doc.insertString(doc.getLength(), messageList.get(i), attributes2);
 	    } else if (i == 2) {
 		for (String word : message) {
-		    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*") && i != 1) {
+		    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
 			doc.insertString(doc.getLength(), word + " ", null);
 		    } else if (word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
 			doc.insertString(doc.getLength(), word + " ", attributes);
