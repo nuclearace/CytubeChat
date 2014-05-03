@@ -1,6 +1,7 @@
 package com.milkbartube.tracy;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -93,7 +94,7 @@ public class CytubeUser {
 	return addAfkStyle(addMutedStyle(addRankStyle()));
     }
 
-    protected void startPM(String message) throws BadLocationException {
+    protected void startPM(ArrayList<String> message) throws BadLocationException {
 	setPmFrame(new PrivateMessageFrame(getRoom(), this));
 	getPmFrame().addMessage(message);
 	setInPrivateMessage(true);

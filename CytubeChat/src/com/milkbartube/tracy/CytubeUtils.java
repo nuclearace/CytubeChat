@@ -32,17 +32,21 @@ public class CytubeUtils {
 	    boolean pm, StyledDocument doc, CytubeRoom room) 
 		    throws BadLocationException {
 
-	list.remove("\n");
-
 	StyleContext sc = StyleContext.getDefaultStyleContext();
 	AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
 		StyleConstants.Foreground, new Color(0x351FFF));
 
-	for (String word : list) {
-	    if (!word.matches("(.*)(http(s?):/)(/[^/]+).*")) {
-		doc.insertString(doc.getLength(), word + " ", null);
-	    } else {
-		doc.insertString(doc.getLength(), word + " ", attributes);
+	SimpleAttributeSet attributes2 = new SimpleAttributeSet();
+	attributes2.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+
+	for (int i = 0; i < list.size(); i++) {
+	    System.out.println(list.get(i));
+	    if (i == 1) {
+		doc.insertString(doc.getLength(), list.get(i), attributes2);
+	    } else if (!list.get(i).matches("(.*)(http(s?):/)(/[^/]+).*") && i != 1) {
+		doc.insertString(doc.getLength(), list.get(i), null);
+	    } else if (list.get(i).matches("(.*)(http(s?):/)(/[^/]+).*")) {
+		doc.insertString(doc.getLength(), list.get(i) + " ", attributes);
 	    }
 	}
 	doc.insertString(doc.getLength(), "\n", null);
@@ -57,9 +61,10 @@ public class CytubeUtils {
 	    room.getMessagesTextPane().setCaretPosition(doc.getLength());
     }
 
-    protected static String formatMessage(String username, String message, long time) {
+    protected static ArrayList<String> formatMessage(String username, String message, long time) {
 	String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 	String htmlTagRegex = "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>";
+	ArrayList<String> messageArray = new ArrayList<String>();
 
 	String cleanedString = StringEscapeUtils.unescapeHtml4(message);
 	cleanedString = cleanedString.replaceAll(imgRegex, "$1 ");
@@ -71,10 +76,15 @@ public class CytubeUtils {
 	formatter.setTimeZone(TimeZone.getDefault());
 	String formattedTime = formatter.format(date);
 
-	return "[" + formattedTime + "] " + username + ": " + cleanedString + " \n";
+	messageArray.add("[" + formattedTime + "] ");
+	messageArray.add(username + ": ");
+	messageArray.add(cleanedString);
+
+	return  messageArray;
     }
 
     protected static void handleLink(String uri) {
+	uri.replaceAll("\n", "");
 	try {
 	    Desktop.getDesktop().browse(new URI(uri));
 	} catch (IOException | URISyntaxException e) {
