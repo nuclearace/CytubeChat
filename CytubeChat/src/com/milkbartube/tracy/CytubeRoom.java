@@ -197,7 +197,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
 	    messageBuffer.add(message + "\n");
 
-	    if (getMessageBuffer().size() > 10 && getFrameParent().isLimitChatBuffer()) 
+	    if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
 		getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
 	    SimpleAttributeSet attributes = new SimpleAttributeSet();
@@ -285,7 +285,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    return;
 	}
 
-	if (getMessageBuffer().size() > 10 && getFrameParent().isLimitChatBuffer()) 
+	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
 	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
 	for (int i = 0; i < cleanedArrayList.size(); i++) {
@@ -463,7 +463,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    message += word + " ";
 	}
 	messageBuffer.add(message + "\n");
-	if (getMessageBuffer().size() > 10 && getFrameParent().isLimitChatBuffer()) 
+	if (getMessageBuffer().size() > 100 && getFrameParent().isLimitChatBuffer()) 
 	    getStyledMessagesDocument().remove(0, getMessageBuffer().remove().length());
 
 	SimpleAttributeSet attributes = new SimpleAttributeSet();
