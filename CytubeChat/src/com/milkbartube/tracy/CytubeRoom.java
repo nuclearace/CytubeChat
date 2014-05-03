@@ -470,6 +470,9 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	
 	getStyledMessagesDocument().insertString(
 		getStyledMessagesDocument().getLength(), "\n", null);
+	
+	if (!stopMessagesAreaScrolling)
+	    getMessagesTextPane().setCaretPosition(getStyledMessagesDocument().getLength());
 
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(username)) {
