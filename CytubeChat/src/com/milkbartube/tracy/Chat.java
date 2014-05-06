@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Chat extends Thread {
+    
     private ChatCallback callback;
     private SocketIO socket;
     private String server;
@@ -30,16 +31,6 @@ public class Chat extends Thread {
     public void disconnectChat() {
 	if (socket.isConnected())
 	    socket.disconnect();
-    }
-
-    public void reconnectChat() {
-	try {
-	    if (!socket.isConnected())
-		socket = new SocketIO(server, callback);
-	} catch (MalformedURLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
     }
 
     public void sendMessage(String message) {

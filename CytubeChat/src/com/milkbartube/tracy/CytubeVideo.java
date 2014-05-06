@@ -144,7 +144,6 @@ public class CytubeVideo {
 	return true;
     }
 
-
     @Override
     public String toString() {
 	StringBuilder builder = new StringBuilder();

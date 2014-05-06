@@ -420,7 +420,6 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    if (user.getUsername().equalsIgnoreCase(data.getString("name"))) 
 		user.setMuted(data.getJSONObject("meta").getBoolean("muted"));
 	}
-
     }
 
     protected void hideUserlist() {
