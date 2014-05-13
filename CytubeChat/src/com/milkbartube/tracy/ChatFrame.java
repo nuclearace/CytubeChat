@@ -233,7 +233,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private String getSocketURL(String server) 
 	    throws MalformedURLException, IOException {
 	String urlString = server;
-	Pattern socketPattern = Pattern.compile(".*IO_URL=['? | \"?](.*)['? | \"?],WEB_URL");
+	Pattern socketPattern = Pattern.compile(";var IO_URL=['? | \"?](.*)['? | \"?];");
 	Matcher matcher;
 
 	//TODO handle when user enters the socketURL
