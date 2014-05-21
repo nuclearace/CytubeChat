@@ -220,7 +220,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    throws JSONException, BadLocationException {
 	int posInPlaylist = 0;
 	if (isMove) {
-	    for (int i = 0; i <playlist.size(); i++) {
+	    for (int i = 0; i < playlist.size(); i++) {
 		if (playlist.get(i).getUid() == uid) {
 		    posInPlaylist = i + 1;
 		    break;
