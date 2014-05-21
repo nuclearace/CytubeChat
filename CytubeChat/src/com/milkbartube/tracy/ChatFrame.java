@@ -89,18 +89,18 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		c.hideUserlist();
 	    }
 	});
-	
-		mntmLogin = new JMenuItem("Login");
-		mnMenu.add(mntmLogin);
-		mntmLogin.setAccelerator(
-			KeyStroke.getKeyStroke(KeyEvent.VK_L, (Toolkit.getDefaultToolkit()
-				.getMenuShortcutKeyMask())));
-		mntmLogin.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			handleLogin();
-		    }
-		});
+
+	mntmLogin = new JMenuItem("Login");
+	mnMenu.add(mntmLogin);
+	mntmLogin.setAccelerator(
+		KeyStroke.getKeyStroke(KeyEvent.VK_L, (Toolkit.getDefaultToolkit()
+			.getMenuShortcutKeyMask())));
+	mntmLogin.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		handleLogin();
+	    }
+	});
 	mnMenu.add(mntmHideUserlist);
 
 	mntmJoinRoom = new JMenuItem("Join Room");
@@ -113,13 +113,13 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		joinRoom();
 	    }
 	});
-	
+
 	mntmPlaylist = new JMenuItem("Playlist");
 	mntmPlaylist.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
-		    c.showPlaylist();
-		}
+	    public void actionPerformed(ActionEvent e) {
+		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
+		c.showPlaylist();
+	    }
 	});
 	mntmPlaylist.setAccelerator(
 		KeyStroke.getKeyStroke(KeyEvent.VK_P, (Toolkit.getDefaultToolkit()
@@ -233,7 +233,9 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private String getSocketURL(String server) 
 	    throws MalformedURLException, IOException {
 	String urlString = server;
-	Pattern socketPattern = Pattern.compile(";var IO_URL=['? | \"?](.*)['? | \"?];");
+	String urlPattern = "var IO_URLS=\\{['? | \"?]ipv4-nossl['? | \"?]"
+		+ ":['? | \"?](.*)['? | \"?],['? | \"?]ipv4-ssl";
+	Pattern socketPattern = Pattern.compile(urlPattern);
 	Matcher matcher;
 
 	//TODO handle when user enters the socketURL
