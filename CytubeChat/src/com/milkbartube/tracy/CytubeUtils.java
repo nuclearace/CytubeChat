@@ -267,7 +267,7 @@ public class CytubeUtils {
 	List smallestCompleteIntObject = Arrays.asList(ArrayUtils.toObject(smallestCompleteIntArray));
 
 	@SuppressWarnings("unchecked")
-	int smallestCompleteInt = Collections.min(smallestCompleteIntObject);
+	int smallestCompleteInt = (int) Collections.min(smallestCompleteIntObject);
 
 	for (int i = 0; i < users.size(); i++) {
 	    trimmedArray[i] = users.get(i).substring(0, smallestCompleteInt);

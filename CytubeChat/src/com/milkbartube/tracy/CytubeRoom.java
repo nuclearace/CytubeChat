@@ -47,7 +47,7 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
-public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
+public class CytubeRoom extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JScrollPane messagesScrollPane;
@@ -61,7 +61,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     private CytubePlaylist playlistFrame;
 
-    private Chat chat;
+    private CytubeSocket socket;
     private String currentMedia;
     private ChatFrame parent;
     private LinkedList<CytubeVideo> playlist = new LinkedList<CytubeVideo>();
@@ -81,7 +81,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.server = socketURL;
 
 	buildChatPanel();
-	setChat(new Chat(this, server));
+	setSocket(new CytubeSocket(server, this));
     }
 
     /**
@@ -180,7 +180,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 
     }
 
-    private void addUser(CytubeUser user, boolean fromAddUser) throws BadLocationException {
+    protected void addUser(CytubeUser user, boolean fromAddUser) throws BadLocationException {
 	if (user.getUsername().toLowerCase().equals(
 		this.getUser().getUsername().toLowerCase())) {
 	    setUser(user);
@@ -246,6 +246,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
+    @SuppressWarnings("unused")
     private void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
 	Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
 	SimpleAttributeSet attributes = new SimpleAttributeSet();
@@ -345,7 +346,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    String[] parts = data.split(" ");
 	    String command = parts[0];
 	    if (command.equals("/disconnect")) {
-		getChat().disconnectChat();
+		getSocket().disconnect();
 		userlistTextPane.setText("");
 		messagesTextPane.setText("Disconnected");
 	    } else if (command.equals("/login")) {
@@ -390,7 +391,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	    } else if (command.equals("/playlist")) {
 		showPlaylist();
 	    } else 
-		getChat().sendMessage(data);
+		getSocket().sendMessage(data);
 	} else
 	    return;
     }
@@ -411,10 +412,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	String password = login.getPassword();
 
 	if (!username.isEmpty()) {
-	    getChat().login(username, password);
+	    getSocket().login(username, password);
 	}
     }
 
+    @SuppressWarnings("unused")
     private void handleUserMeta(JSONObject data) throws JSONException {
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(data.getString("name"))) 
@@ -436,6 +438,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
+    @SuppressWarnings("unused")
     private void moveVideo(JSONObject obj) throws JSONException, BadLocationException {
 	int from = obj.getInt("from");
 	int after = obj.getInt("after");
@@ -452,6 +455,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	getNewMessageTextField().setText(null);
     }
 
+    @SuppressWarnings("unused")
     private void removeUser(String username) throws BadLocationException {
 	ArrayList<String> messageArrayList = CytubeUtils
 		.formatMessage("[Client]", username + " left the room", 
@@ -496,10 +500,11 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	json.put("duration", 0);
 	json.put("temp", temp);
 
-	chat.getSocket().emit("queue", json);
+	socket.getSocket().emit("queue", json);
 
     }
 
+    @SuppressWarnings("unused")
     private void setAfk(String name, boolean afk) {
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(name)) {
@@ -510,7 +515,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
     }
 
     protected void showPlaylist() {
-	setPlaylistFrame(new CytubePlaylist(getPlayList(), this));
+	setPlaylistFrame(new CytubePlaylist(getPlaylist(), this));
 	getPlaylistFrame().setVisible(true);
 	try {
 	    getPlaylistFrame().drawPlaylist();
@@ -524,12 +529,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	SwingUtilities.invokeLater(new Runnable() {
 	    @Override
 	    public void run() {
-		getChat().start();
+		getSocket().connect();
 	    }
 	});
     }
 
-    private void updateUserList() throws BadLocationException {
+    protected void updateUserList() throws BadLocationException {
 	// Number of users. Note: I'm ignoring anons at this time
 	userlistTextPane.setText("");
 	styledUserlist.insertString(styledUserlist.getLength(), 
@@ -556,134 +561,135 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	json.putOpt("msg", message);
 	json.putOpt("meta", "");
 
-	getChat().privateMessage(json);
+	getSocket().privateMessage(json);
     }
 
-    @Override
-    public void callback(JSONArray data) throws JSONException {}
+//    @Override
+//    public void callback(JSONArray data) throws JSONException {}
+//
+//    @Override
+//    public void on(String event, JSONObject obj) {
+//	try {
+//	    if (event.equals("chatMsg")) {
+//		chatMsg(obj);
+//	    } else if (event.equals("addUser")) {
+//		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
+//		String username = obj.getString("name") ;
+//		int rank = (int) obj.get("rank");
+//		CytubeUser user = new CytubeUser(afk, username, rank, this, false);
+//		this.addUser(user, true);
+//		this.updateUserList();
+//	    } else if (event.equals("userLeave")) {
+//		this.removeUser(obj.getString("name"));
+//		this.updateUserList();
+//	    } else if (event.equals("changeMedia")) {
+//		setCurrentMedia(obj.getString("title"));
+//		if (parent.getTabbedPane().getSelectedComponent().equals(this))
+//		    parent.setTitle(getCurrentMedia());
+//	    } else if (event.equals("pm")) {
+//		this.onPrivateMessage(obj);
+//	    } else if (event.equals("setAFK")) {
+//		setAfk(obj.getString("name"), (boolean) obj.get("afk"));
+//		updateUserList();
+//	    } else if (event.equals("login")) {
+//		if ((boolean) obj.get("success")) {
+//		    System.out.println("Logged in");
+//		    setUsername(obj.getString("name"));
+//		    user.setUsername(obj.getString("name"));
+//		} else {
+//		    JOptionPane.showMessageDialog(null, obj.get("error"));
+//		    setUsername(null);
+//		}
+//	    }  else if (event.equals("setUserMeta")) {
+//		handleUserMeta(obj);
+//		updateUserList();
+//	    } else if (event.equals("queue")) {
+//		addVideo(obj, false, 0, null);
+//	    } else if (event.equals("delete")) {
+//		deleteVideo(obj.getInt("uid"), false);
+//	    } else if (event.equals("moveVideo")) {
+//		moveVideo(obj);
+//	    }
+//	} catch (JSONException ex) {
+//	    ex.printStackTrace();
+//	} catch (BadLocationException e) {
+//	    // TODO Auto-generated catch block
+//	    e.printStackTrace();
+//	}
+//    }
+//
+//    @Override
+//    public void onArray(String event, JSONArray data) throws JSONException {
+//	if (event.equals("userlist")) {
+//	    userList.clear();
+//	    JSONArray users = data.getJSONArray(0);
+//	    for (int i=0; i<users.length();i++) {
+//		boolean afk = (boolean) users.getJSONObject(i).getJSONObject("meta")
+//			.get("afk");
+//		String username = (String) users.getJSONObject(i).get("name");
+//		int rank = (int) users.getJSONObject(i).get("rank");
+//		CytubeUser user = new CytubeUser(afk, username, rank, this, false);
+//		try {
+//		    addUser(user, false);
+//		} catch (BadLocationException e) {
+//		    // TODO Auto-generated catch block
+//		    e.printStackTrace();
+//		}
+//	    }
+//	    try {
+//		updateUserList();
+//	    } catch (BadLocationException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	    }
+//	} else if (event.equals("playlist")) {
+//	    JSONArray videoArray =  data.getJSONArray(0);
+//
+//	    if (videoArray.length() == 0) {
+//		getPlaylistFrame().clearPlaylist();
+//		playlist.clear();
+//	    }
+//
+//	    for (int i = 0; i < videoArray.length(); i++) {
+//		playlist.add(new CytubeVideo(videoArray.getJSONObject(i)));
+//	    }
+//	}
+//    }
+//
+//    @Override
+//    public void onBoolean(String event, boolean bool) {
+//	if (event.equals("needPassword")) {
+//	    if (!getRoomPassword().equals("")) {
+//		getSocket().sendRoomPassword(roomPassword);
+//		setRoomPassword("");
+//	    } else {
+//		JPanel panel = new JPanel();
+//		JLabel label = new JLabel("Enter Room Password:");
+//		JPasswordField pass = new JPasswordField(10);
+//		panel.add(label);
+//		panel.add(pass);
+//		String[] options = new String[]{"OK", "Cancel"};
+//		int option = JOptionPane.showOptionDialog(null, panel, "Room Password",
+//			JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+//			null, options, options[0]);
+//		if (option == 0) {
+//		    char[] password = pass.getPassword();
+//		    getSocket().sendRoomPassword(new String(password));
+//		} else {
+//		    parent.getTabbedPane().remove(this);
+//		    return;
+//		}
+//	    }
+//	}
+//    }
+//
+//    @Override
+//    public void onMessage(String message) {}
+//
+//    @Override
+//    public void onMessage(JSONObject json) {}
 
-    @Override
-    public void on(String event, JSONObject obj) {
-	try {
-	    if (event.equals("chatMsg")) {
-		chatMsg(obj);
-	    } else if (event.equals("addUser")) {
-		boolean afk = (boolean) obj.getJSONObject("meta").get("afk");
-		String username = obj.getString("name") ;
-		int rank = (int) obj.get("rank");
-		CytubeUser user = new CytubeUser(afk, username, rank, this, false);
-		this.addUser(user, true);
-		this.updateUserList();
-	    } else if (event.equals("userLeave")) {
-		this.removeUser(obj.getString("name"));
-		this.updateUserList();
-	    } else if (event.equals("changeMedia")) {
-		setCurrentMedia(obj.getString("title"));
-		if (parent.getTabbedPane().getSelectedComponent().equals(this))
-		    parent.setTitle(getCurrentMedia());
-	    } else if (event.equals("pm")) {
-		this.onPrivateMessage(obj);
-	    } else if (event.equals("setAFK")) {
-		setAfk(obj.getString("name"), (boolean) obj.get("afk"));
-		updateUserList();
-	    } else if (event.equals("login")) {
-		if ((boolean) obj.get("success")) {
-		    System.out.println("Logged in");
-		    setUsername(obj.getString("name"));
-		    user.setUsername(obj.getString("name"));
-		} else {
-		    JOptionPane.showMessageDialog(null, obj.get("error"));
-		    setUsername(null);
-		}
-	    }  else if (event.equals("setUserMeta")) {
-		handleUserMeta(obj);
-		updateUserList();
-	    } else if (event.equals("queue")) {
-		addVideo(obj, false, 0, null);
-	    } else if (event.equals("delete")) {
-		deleteVideo(obj.getInt("uid"), false);
-	    } else if (event.equals("moveVideo")) {
-		moveVideo(obj);
-	    }
-	} catch (JSONException ex) {
-	    ex.printStackTrace();
-	} catch (BadLocationException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-    }
-
-    @Override
-    public void onArray(String event, JSONArray data) throws JSONException {
-	if (event.equals("userlist")) {
-	    userList.clear();
-	    JSONArray users = data.getJSONArray(0);
-	    for (int i=0; i<users.length();i++) {
-		boolean afk = (boolean) users.getJSONObject(i).getJSONObject("meta")
-			.get("afk");
-		String username = (String) users.getJSONObject(i).get("name");
-		int rank = (int) users.getJSONObject(i).get("rank");
-		CytubeUser user = new CytubeUser(afk, username, rank, this, false);
-		try {
-		    addUser(user, false);
-		} catch (BadLocationException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-		}
-	    }
-	    try {
-		updateUserList();
-	    } catch (BadLocationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
-	} else if (event.equals("playlist")) {
-	    JSONArray videoArray =  data.getJSONArray(0);
-
-	    if (videoArray.length() == 0) {
-		getPlaylistFrame().clearPlaylist();
-		playlist.clear();
-	    }
-
-	    for (int i = 0; i < videoArray.length(); i++) {
-		playlist.add(new CytubeVideo(videoArray.getJSONObject(i)));
-	    }
-	}
-    }
-
-    @Override
-    public void onBoolean(String event, boolean bool) {
-	if (event.equals("needPassword")) {
-	    if (!getRoomPassword().equals("")) {
-		getChat().sendRoomPassword(roomPassword);
-		setRoomPassword("");
-	    } else {
-		JPanel panel = new JPanel();
-		JLabel label = new JLabel("Enter Room Password:");
-		JPasswordField pass = new JPasswordField(10);
-		panel.add(label);
-		panel.add(pass);
-		String[] options = new String[]{"OK", "Cancel"};
-		int option = JOptionPane.showOptionDialog(null, panel, "Room Password",
-			JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-			null, options, options[0]);
-		if (option == 0) {
-		    char[] password = pass.getPassword();
-		    getChat().sendRoomPassword(new String(password));
-		} else {
-		    parent.getTabbedPane().remove(this);
-		    return;
-		}
-	    }
-	}
-    }
-
-    @Override
-    public void onMessage(String message) {}
-
-    @Override
-    public void onMessage(JSONObject json) {}
-
+    @SuppressWarnings("unused")
     private void onPrivateMessage(JSONObject obj) throws JSONException {
 	for (CytubeUser user : userList) {
 	    if (user.getUsername().equalsIgnoreCase(obj.getString("username"))
@@ -731,28 +737,12 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	}
     }
 
-    @Override
-    public void onConnect() {
-	getChat().join(room);
+    public CytubeSocket getSocket() {
+	return socket;
     }
 
-    @Override
-    public void onDisconnect() {
-	setUsername(null);
-	JOptionPane.showMessageDialog(null, "Disconnected");
-    }
-
-    @Override
-    public void onConnectFailure() {
-	JOptionPane.showMessageDialog(null, "Could not connect");
-    }
-
-    public Chat getChat() {
-	return chat;
-    }
-
-    public void setChat(Chat chat) {
-	this.chat = chat;
+    public void setSocket(CytubeSocket chat) {
+	this.socket = chat;
     }
 
     public String getCurrentMedia() {
@@ -804,7 +794,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 	this.parent = parent;
     }
 
-    public LinkedList<CytubeVideo> getPlayList() {
+    public LinkedList<CytubeVideo> getPlaylist() {
 	return playlist;
     }
 
@@ -930,7 +920,7 @@ public class CytubeRoom extends JPanel implements ChatCallbackAdapter {
 		+ ", newMessageScrollPane=" + newMessageScrollPane
 		+ ", newMessageTextField=" + newMessageTextField
 		+ ", userListScrollPane=" + userListScrollPane
-		+ ", userlistTextPane=" + userlistTextPane + ", chat=" + chat
+		+ ", userlistTextPane=" + userlistTextPane + ", chat=" + socket
 		+ ", currentMedia=" + currentMedia + ", parent=" + parent.toString()
 		+ ", room=" + room + ", roomPassword=" + roomPassword
 		+ ", username=" + username + ", messageBuffer=" + getMessageBuffer()

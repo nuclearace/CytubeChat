@@ -133,7 +133,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
 		try {
 		    System.out.println("Closing room " + c.getRoom());
-		    c.getChat().disconnectChat();
+		    c.getSocket().disconnectChat();
 		    c.closePMFrames();
 		} catch (Exception e1) {
 		    e1.printStackTrace();
@@ -155,7 +155,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		CytubeRoom c = (CytubeRoom) tabbedPane.getSelectedComponent();
-		c.getChat().disconnectChat();
+		c.getSocket().disconnectChat();
 		try {
 		    c.getStyledMessagesDocument().insertString(c.getStyledMessagesDocument()
 			    .getLength(),
@@ -283,7 +283,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 	String password = login.getPassword();
 
 	if (!username.isEmpty()) {
-	    panel.getChat().login(username, password);
+	    panel.getSocket().login(username, password);
 	}
     }
 
