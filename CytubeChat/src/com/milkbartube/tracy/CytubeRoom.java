@@ -222,7 +222,7 @@ public class CytubeRoom extends JPanel {
         }
     }
 
-    private void addVideo(JSONObject obj, boolean isMove, int uid, CytubeVideo movedVideo) 
+    protected void addVideo(JSONObject obj, boolean isMove, int uid, CytubeVideo movedVideo) 
             throws JSONException, BadLocationException {
         int posInPlaylist = 0;
         if (isMove) {
@@ -330,7 +330,7 @@ public class CytubeRoom extends JPanel {
         }
     }
 
-    private CytubeVideo deleteVideo(int uid, boolean isMove) throws BadLocationException {
+    protected CytubeVideo deleteVideo(int uid, boolean isMove) throws BadLocationException {
         for (int i = 0; i < playlist.size(); i++) {
             if (playlist.get(i).getUid() == uid) {
                 CytubeVideo removedVideo = playlist.remove(i);
@@ -422,8 +422,7 @@ public class CytubeRoom extends JPanel {
         }
     }
 
-    @SuppressWarnings("unused")
-    private void handleUserMeta(JSONObject data) throws JSONException {
+    protected void handleUserMeta(JSONObject data) throws JSONException {
         for (CytubeUser user : userList) {
             if (user.getUsername().equalsIgnoreCase(data.getString("name"))) 
                 user.setMuted(data.getJSONObject("meta").getBoolean("muted"));
@@ -444,8 +443,7 @@ public class CytubeRoom extends JPanel {
         }
     }
 
-    @SuppressWarnings("unused")
-    private void moveVideo(JSONObject obj) throws JSONException, BadLocationException {
+    protected void moveVideo(JSONObject obj) throws JSONException, BadLocationException {
         int from = obj.getInt("from");
         int after = obj.getInt("after");
 
@@ -461,8 +459,7 @@ public class CytubeRoom extends JPanel {
         getNewMessageTextField().setText(null);
     }
 
-    @SuppressWarnings("unused")
-    private void removeUser(String username) throws BadLocationException {
+    protected void removeUser(String username) throws BadLocationException {
         ArrayList<String> messageArrayList = CytubeUtils
                 .formatMessage("[Client]", username + " left the room", 
                         System.currentTimeMillis());
@@ -570,8 +567,7 @@ public class CytubeRoom extends JPanel {
         getSocket().privateMessage(json);
     }
 
-    @SuppressWarnings("unused")
-    private void onPrivateMessage(JSONObject obj) throws JSONException {
+    protected void onPrivateMessage(JSONObject obj) throws JSONException {
         for (CytubeUser user : userList) {
             if (user.getUsername().equalsIgnoreCase(obj.getString("username"))
                     && user.isIgnore()) {
