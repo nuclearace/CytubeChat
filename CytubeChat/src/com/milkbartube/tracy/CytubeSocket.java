@@ -16,20 +16,15 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
-public class CytubeSocket {
+public final class CytubeSocket {
 
     private Socket socket;
     private CytubeRoom room;
 
-    public CytubeSocket(String server, CytubeRoom room) {
+    public CytubeSocket(String server, CytubeRoom room) throws URISyntaxException {
         this.room = room;
-        try {
-            this.socket = IO.socket(server);
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
+        this.socket = IO.socket(server);
+        
         addHandlers();
     }
 
@@ -37,10 +32,11 @@ public class CytubeSocket {
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+                System.out.println("Connected.");
                 join(room.getRoom());
             }
         });
-        
+
         socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -52,7 +48,7 @@ public class CytubeSocket {
         socket.on("chatMsg", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                socket.emit("foo", "hi");
+                // room.chatMsg(obj);
             }
         });
 
@@ -215,11 +211,12 @@ public class CytubeSocket {
             }
         });
     }
-    
+
     public void connect() {
+        System.out.println("Connecting.");
         socket.connect();
-     }
-    
+    }
+
     public void disconnect() {
         socket.disconnect();
     }

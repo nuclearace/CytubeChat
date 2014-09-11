@@ -233,7 +233,8 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
     private String getSocketURL(String server) 
 	    throws MalformedURLException, IOException {
 	String urlString = server;
-	Pattern socketPattern = Pattern.compile(".*IO_URL=['? | \"?](.*)['? | \"?],WEB_URL");
+	Pattern socketPattern = Pattern.compile("var IO_URLS=\\{['? | \"?]ipv4-nossl['? | \"?]"
+                + ":['? | \"?](.*)['? | \"?],['? | \"?]ipv4-ssl");
 	Matcher matcher;
 
 	//TODO handle when user enters the socketURL
@@ -321,7 +322,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		return;
 	    }
 	}
-	System.out.println(server);
 	if (server.startsWith("http://")) {
 	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server);
 	    for (int i = 0; i < totalTabs; i++) {
