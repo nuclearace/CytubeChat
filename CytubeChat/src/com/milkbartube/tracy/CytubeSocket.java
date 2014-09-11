@@ -260,9 +260,8 @@ public class CytubeSocket {
         socket.emit("pm", json);
     }
 
-    protected void sendRoomPassword(String string) {
-        // TODO Auto-generated method stub
-
+    protected void sendRoomPassword(String password) {
+        socket.emit("channelPassword", password);
     }
 
     /**

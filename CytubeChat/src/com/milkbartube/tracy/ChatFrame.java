@@ -321,7 +321,7 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
 		return;
 	    }
 	}
-
+	System.out.println(server);
 	if (server.startsWith("http://")) {
 	    CytubeRoom panel = new CytubeRoom(room, roomPassword, this, server);
 	    for (int i = 0; i < totalTabs; i++) {
