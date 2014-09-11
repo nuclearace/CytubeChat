@@ -21,180 +21,180 @@ public class CytubeUser {
     private PrivateMessageFrame pmFrame;
 
     public CytubeUser(boolean afk, String name, int rank, CytubeRoom room, boolean ignore) {
-	this.afk = afk;
-	this.username = name;
-	this.rank = rank;
-	this.room = room;
-	this.ignore = ignore;
+        this.afk = afk;
+        this.username = name;
+        this.rank = rank;
+        this.room = room;
+        this.ignore = ignore;
     }
 
     private AttributeSet addAfkStyle(AttributeSet attributes) {
-	StyleContext sc = StyleContext.getDefaultStyleContext();
-	if (getAfk()) {
-	    attributes = 
-		    sc.addAttribute(attributes, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
-	}
-	return attributes;
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        if (getAfk()) {
+            attributes = 
+                    sc.addAttribute(attributes, StyleConstants.CharacterConstants.Italic, Boolean.TRUE);
+        }
+        return attributes;
     }
 
     private AttributeSet addMutedStyle(AttributeSet attributes) {
-	StyleContext sc = StyleContext.getDefaultStyleContext();
-	if (isMuted()) {
-	    attributes = 
-		    sc.addAttribute(attributes, StyleConstants.CharacterConstants.StrikeThrough, Boolean.TRUE);
-	}
-	return attributes;
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        if (isMuted()) {
+            attributes = 
+                    sc.addAttribute(attributes, StyleConstants.CharacterConstants.StrikeThrough, Boolean.TRUE);
+        }
+        return attributes;
     }
 
     private AttributeSet addRankStyle() {
-	StyleContext sc = StyleContext.getDefaultStyleContext();
+        StyleContext sc = StyleContext.getDefaultStyleContext();
 
-	switch (getRank()) {
-	case 0:
-	    AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		    StyleConstants.Foreground, new Color(0x969696));
-	    return attributes;
-	case 2:
-	    AttributeSet attributes2 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		    StyleConstants.Foreground, new Color(0x13BF0D));
+        switch (getRank()) {
+        case 0:
+            AttributeSet attributes = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+                    StyleConstants.Foreground, new Color(0x969696));
+            return attributes;
+        case 2:
+            AttributeSet attributes2 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+                    StyleConstants.Foreground, new Color(0x13BF0D));
 
-	    return attributes2;
+            return attributes2;
 
-	case 3:
-	    AttributeSet attributes3 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		    StyleConstants.Foreground, new Color(0xF0B22E));
+        case 3:
+            AttributeSet attributes3 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+                    StyleConstants.Foreground, new Color(0xF0B22E));
 
-	    return attributes3;
+            return attributes3;
 
-	case 4:
-	    AttributeSet attributes4 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		    StyleConstants.Foreground, new Color(0x5C00FA));
+        case 4:
+            AttributeSet attributes4 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+                    StyleConstants.Foreground, new Color(0x5C00FA));
 
-	    return attributes4;
+            return attributes4;
 
-	case 5:
-	    AttributeSet attributes5 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
-		    StyleConstants.Foreground, new Color(0xFA00BB));
+        case 5:
+            AttributeSet attributes5 = sc.addAttribute(SimpleAttributeSet.EMPTY, 
+                    StyleConstants.Foreground, new Color(0xFA00BB));
 
-	    return attributes5;
+            return attributes5;
 
-	default:
-	    AttributeSet attributes6 = sc.addAttribute(
-		    SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
+        default:
+            AttributeSet attributes6 = sc.addAttribute(
+                    SimpleAttributeSet.EMPTY, StyleConstants.CharacterConstants.Bold, Boolean.FALSE);
 
-	    if (getRank() >= 255) {
-		attributes6 = 
-			sc.addAttribute(attributes6, StyleConstants.Foreground, new Color(0xFA0000));
-	    }
-	    return attributes6;
-	}
+            if (getRank() >= 255) {
+                attributes6 = 
+                        sc.addAttribute(attributes6, StyleConstants.Foreground, new Color(0xFA0000));
+            }
+            return attributes6;
+        }
     }
 
     protected AttributeSet getUserlistStyle() {
-	return addAfkStyle(addMutedStyle(addRankStyle()));
+        return addAfkStyle(addMutedStyle(addRankStyle()));
     }
 
     protected void startPM(ArrayList<String> message) throws BadLocationException {
-	setPmFrame(new PrivateMessageFrame(getRoom(), this));
-	getPmFrame().addMessage(message);
-	setInPrivateMessage(true);
-	getPmFrame().setVisible(true);
+        setPmFrame(new PrivateMessageFrame(getRoom(), this));
+        getPmFrame().addMessage(message);
+        setInPrivateMessage(true);
+        getPmFrame().setVisible(true);
     }
 
     public boolean getAfk() {
-	return afk;
+        return afk;
     }
 
     public void setAfk(boolean afk) {
-	this.afk = afk;
+        this.afk = afk;
     }
 
     public String getUsername() {
-	return username;
+        return username;
     }
 
     public void setUsername(String name) {
-	this.username = name;
+        this.username = name;
     }
     public boolean isIgnore() {
-	return ignore;
+        return ignore;
     }
 
     public void setIgnore(boolean ignore) {
-	this.ignore = ignore;
+        this.ignore = ignore;
     }
 
     public boolean isMuted() {
-	return muted;
+        return muted;
     }
 
     public void setMuted(boolean muted) {
-	this.muted = muted;
+        this.muted = muted;
     }
 
     public boolean isInPrivateMessage() {
-	return inPrivateMessage;
+        return inPrivateMessage;
     }
 
     public void setInPrivateMessage(boolean inPrivateMessage) {
-	this.inPrivateMessage = inPrivateMessage;
+        this.inPrivateMessage = inPrivateMessage;
     }
 
     public PrivateMessageFrame getPmFrame() {
-	return pmFrame;
+        return pmFrame;
     }
 
     public void setPmFrame(PrivateMessageFrame pmFrame) {
-	this.pmFrame = pmFrame;
+        this.pmFrame = pmFrame;
     }
 
     public int getRank() {
-	return rank;
+        return rank;
     }
 
     public void setRank(int rank) {
-	this.rank = rank;
+        this.rank = rank;
     }
 
     public CytubeRoom getRoom() {
-	return room;
+        return room;
     }
 
     public void setRoom(CytubeRoom room) {
-	this.room = room;
+        this.room = room;
     }
 
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + ((username == null) ? 0 : username.hashCode());
-	result = prime * result + rank;
-	return result;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + rank;
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	CytubeUser other = (CytubeUser) obj;
-	if (username == null) {
-	    if (other.username != null)
-		return false;
-	} else if (!username.equals(other.username))
-	    return false;
-	if (rank != other.rank)
-	    return false;
-	return true;
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CytubeUser other = (CytubeUser) obj;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        if (rank != other.rank)
+            return false;
+        return true;
     }
 
     @Override
     public String toString() {
-	return "CyTubeUser [afk=" + afk + ", name=" + username + ", rank=" + rank
-		+ "]";
+        return "CyTubeUser [afk=" + afk + ", name=" + username + ", rank=" + rank
+                + "]";
     }
 }

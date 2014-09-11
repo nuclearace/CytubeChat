@@ -24,7 +24,7 @@ public final class CytubeSocket {
     public CytubeSocket(String server, CytubeRoom room) throws URISyntaxException {
         this.room = room;
         this.socket = IO.socket(server);
-        
+
         addHandlers();
     }
 

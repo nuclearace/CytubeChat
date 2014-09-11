@@ -45,192 +45,192 @@ public class PrivateMessageFrame extends JFrame {
     private CytubeUser user;
 
     public PrivateMessageFrame(CytubeRoom room, final CytubeUser user) {
-	addWindowListener(new WindowAdapter() {
-	    @Override
-	    public void windowClosed(WindowEvent e) {
-		user.setInPrivateMessage(false);
-	    }
-	});
-	this.room = room;
-	this.user = user;
-	buildPrivateMessageFrame();
-	setTitle(user.getUsername() + " (" + room.getRoom() + ")");
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                user.setInPrivateMessage(false);
+            }
+        });
+        this.room = room;
+        this.user = user;
+        buildPrivateMessageFrame();
+        setTitle(user.getUsername() + " (" + room.getRoom() + ")");
     }
 
     /**
      * Create the frame.
      */
     private void buildPrivateMessageFrame() {
-	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	setBounds(100, 100, 450, 300);
-	contentPane = new JPanel();
-	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-	setContentPane(contentPane);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(100, 100, 450, 300);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
 
-	privateMessageScrollPane = new JScrollPane();
-	privateMessageScrollPane.setAutoscrolls(true);
+        privateMessageScrollPane = new JScrollPane();
+        privateMessageScrollPane.setAutoscrolls(true);
 
 
-	newPrivateMessageTextField = new JTextField();
-	newPrivateMessageTextField.setFocusTraversalKeysEnabled(false);
-	newPrivateMessageTextField.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		newMessageActionPerformed();
-	    }
-	});
-	newPrivateMessageTextField.addKeyListener(new KeyListener() {
-	    @Override
-	    public void keyTyped(KeyEvent e) {
-		if (e.getKeyChar() == '\t') {
-		    handleTabComplete();
-		}
-	    }
+        newPrivateMessageTextField = new JTextField();
+        newPrivateMessageTextField.setFocusTraversalKeysEnabled(false);
+        newPrivateMessageTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                newMessageActionPerformed();
+            }
+        });
+        newPrivateMessageTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == '\t') {
+                    handleTabComplete();
+                }
+            }
 
-	    @Override
-	    public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyPressed(KeyEvent e) {}
 
-	    @Override
-	    public void keyReleased(KeyEvent e) {}
-	});
-	newPrivateMessageTextField.setColumns(10);
-	GroupLayout gl_contentPane = new GroupLayout(contentPane);
-	gl_contentPane.setHorizontalGroup(
-		gl_contentPane.createParallelGroup(Alignment.LEADING)
-		.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-			.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addComponent(newPrivateMessageTextField, GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
-				.addComponent(privateMessageScrollPane, GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE))
-				.addGap(0))
-		);
-	gl_contentPane.setVerticalGroup(
-		gl_contentPane.createParallelGroup(Alignment.LEADING)
-		.addGroup(gl_contentPane.createSequentialGroup()
-			.addComponent(privateMessageScrollPane, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-			.addPreferredGap(ComponentPlacement.RELATED)
-			.addComponent(newPrivateMessageTextField, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-			.addContainerGap())
-		);
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        });
+        newPrivateMessageTextField.setColumns(10);
+        GroupLayout gl_contentPane = new GroupLayout(contentPane);
+        gl_contentPane.setHorizontalGroup(
+                gl_contentPane.createParallelGroup(Alignment.LEADING)
+                .addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+                        .addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+                                .addComponent(newPrivateMessageTextField, GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                                .addComponent(privateMessageScrollPane, GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE))
+                                .addGap(0))
+                );
+        gl_contentPane.setVerticalGroup(
+                gl_contentPane.createParallelGroup(Alignment.LEADING)
+                .addGroup(gl_contentPane.createSequentialGroup()
+                        .addComponent(privateMessageScrollPane, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(newPrivateMessageTextField, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                );
 
-	privateMessageTextPane = new JTextPane();
-	privateMessageTextPane.setEditable(false);
-	privateMessageScrollPane.setViewportView(privateMessageTextPane);
-	privateMessageTextPane.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
-		int pos = privateMessageTextPane.viewToModel(e.getPoint());
-		Element element = getPrivateMessageStyledDocument().getCharacterElement(pos);
+        privateMessageTextPane = new JTextPane();
+        privateMessageTextPane.setEditable(false);
+        privateMessageScrollPane.setViewportView(privateMessageTextPane);
+        privateMessageTextPane.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int pos = privateMessageTextPane.viewToModel(e.getPoint());
+                Element element = getPrivateMessageStyledDocument().getCharacterElement(pos);
 
-		AttributeSet as = element.getAttributes();
-		if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
-		    try {
-			CytubeUtils.handleLink(getPrivateMessageStyledDocument().getText(element.getStartOffset(), 
-				((element.getEndOffset() - element.getStartOffset()) - 1)));
-		    } catch (BadLocationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
-		}
-	    }
-	});
-	setPrivateMessageStyledDocument(privateMessageTextPane.getStyledDocument());
-	contentPane.setLayout(gl_contentPane);
+                AttributeSet as = element.getAttributes();
+                if (StyleConstants.getForeground(as).equals(new Color(0x351FFF))) {
+                    try {
+                        CytubeUtils.handleLink(getPrivateMessageStyledDocument().getText(element.getStartOffset(), 
+                                ((element.getEndOffset() - element.getStartOffset()) - 1)));
+                    } catch (BadLocationException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
+        setPrivateMessageStyledDocument(privateMessageTextPane.getStyledDocument());
+        contentPane.setLayout(gl_contentPane);
     }
 
     private void newMessageActionPerformed() {
-	try {
-	    String text = getNewMessageTextField().getText();
-	    room.privateMessage(user.getUsername(), 
-		    text);
-	    getNewMessageTextField().setText("");
-	} catch (JSONException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+        try {
+            String text = getNewMessageTextField().getText();
+            room.privateMessage(user.getUsername(), 
+                    text);
+            getNewMessageTextField().setText("");
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void addMessage(ArrayList<String> messageArrayList) throws BadLocationException {
-	Pattern linkPattern = 
-		Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
-	SimpleAttributeSet attributes = new SimpleAttributeSet();
-	attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+        Pattern linkPattern = 
+                Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
+        SimpleAttributeSet attributes = new SimpleAttributeSet();
+        attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 
-	String cleanedString = "";
-	for (String part : messageArrayList) {
-	    cleanedString += part;
-	}
+        String cleanedString = "";
+        for (String part : messageArrayList) {
+            cleanedString += part;
+        }
 
-	Matcher matcher = linkPattern.matcher(cleanedString);
-	
-	if (matcher.find()) {
-	    try {
-		CytubeUtils.addMessageWithLinks(messageArrayList, true, getPrivateMessageStyledDocument(), getRoom());
-	    } catch (BadLocationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
-	    return;
-	}
+        Matcher matcher = linkPattern.matcher(cleanedString);
 
-	for (int i = 0; i < messageArrayList.size(); i++) {
-	    if (i == 1) {
-		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			getLength(), messageArrayList.get(i) + " ", attributes);
-	    } else {
-		getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-			getLength(), messageArrayList.get(i) + " ", null);
-	    }
-	}
-	getPrivateMessageStyledDocument().insertString(
-		getPrivateMessageStyledDocument().getLength(), "\n", null);
+        if (matcher.find()) {
+            try {
+                CytubeUtils.addMessageWithLinks(messageArrayList, true, getPrivateMessageStyledDocument(), getRoom());
+            } catch (BadLocationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return;
+        }
 
-	if (!this.isFocused())
-	    room.getFrameParent().playSound();
+        for (int i = 0; i < messageArrayList.size(); i++) {
+            if (i == 1) {
+                getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+                        getLength(), messageArrayList.get(i) + " ", attributes);
+            } else {
+                getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+                        getLength(), messageArrayList.get(i) + " ", null);
+            }
+        }
+        getPrivateMessageStyledDocument().insertString(
+                getPrivateMessageStyledDocument().getLength(), "\n", null);
 
-	privateMessageTextPane.setCaretPosition(
-		privateMessageTextPane.getDocument().getLength());
+        if (!this.isFocused())
+            room.getFrameParent().playSound();
+
+        privateMessageTextPane.setCaretPosition(
+                privateMessageTextPane.getDocument().getLength());
     }
 
     protected void handleTabComplete() {
-	String[] sentence = newPrivateMessageTextField.getText().toString().split(" ");
-	newPrivateMessageTextField.setText(CytubeUtils.handleTabComplete(sentence, room.getUserList()));
+        String[] sentence = newPrivateMessageTextField.getText().toString().split(" ");
+        newPrivateMessageTextField.setText(CytubeUtils.handleTabComplete(sentence, room.getUserList()));
     }
 
     protected void handleUserLeftRoom() throws BadLocationException {
-	getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
-		getLength(),"\n" + user.getUsername() + " left the room", null);
-	newPrivateMessageTextField.setEditable(false);
+        getPrivateMessageStyledDocument().insertString(getPrivateMessageStyledDocument().
+                getLength(),"\n" + user.getUsername() + " left the room", null);
+        newPrivateMessageTextField.setEditable(false);
     }
 
     public JTextField getNewMessageTextField() {
-	return newPrivateMessageTextField;
+        return newPrivateMessageTextField;
     }
 
     public void setNewMessageTextField(JTextField newMessageTextField) {
-	this.newPrivateMessageTextField = newMessageTextField;
+        this.newPrivateMessageTextField = newMessageTextField;
     }
 
     public StyledDocument getPrivateMessageStyledDocument() {
-	return privateMessageStyledDocument;
+        return privateMessageStyledDocument;
     }
 
     public void setPrivateMessageStyledDocument(
-	    StyledDocument privateMessageStyledDocument) {
-	this.privateMessageStyledDocument = privateMessageStyledDocument;
+            StyledDocument privateMessageStyledDocument) {
+        this.privateMessageStyledDocument = privateMessageStyledDocument;
     }
 
     public CytubeRoom getRoom() {
-	return room;
+        return room;
     }
 
     public void setRoom(CytubeRoom room) {
-	this.room = room;
+        this.room = room;
     }
 
     public CytubeUser getUser() {
-	return user;
+        return user;
     }
 
     public void setUser(CytubeUser user) {
-	this.user = user;
+        this.user = user;
     }
 }
