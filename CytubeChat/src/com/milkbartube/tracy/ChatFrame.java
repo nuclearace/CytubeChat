@@ -265,7 +265,6 @@ public class ChatFrame extends JFrame implements WindowFocusListener {
             br.close();
         }
         return "Error";
-
     }
 
     public void handleLogin() {

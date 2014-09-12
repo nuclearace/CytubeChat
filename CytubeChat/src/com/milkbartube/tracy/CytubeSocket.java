@@ -49,7 +49,13 @@ public final class CytubeSocket {
         socket.on("chatMsg", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                // room.chatMsg(obj);
+                JSONObject obj = (JSONObject) args[0];
+                try {
+                    room.chatMsg(obj);
+                } catch (JSONException | BadLocationException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -252,18 +258,26 @@ public final class CytubeSocket {
                         sendRoomPassword(new String(password));
                     } else {
                         room.getFrameParent().getTabbedPane().remove(room);
+                        socket.disconnect();
                         return;
                     }
                 }
             }
         });
 
-        //        socket.on("chatMsg", new Emitter.Listener() {
-        //            @Override
-        //            public void call(Object... args) {
-        //                socket.emit("foo", "hi");
-        //            }
-        //        });
+        socket.on("setAFK", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject obj = (JSONObject) args[0];
+                try {
+                room.setAfk(obj.getString("name"), (boolean) obj.get("afk"));
+                room.updateUserList();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     public void connect() {

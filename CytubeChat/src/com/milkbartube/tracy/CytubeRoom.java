@@ -252,8 +252,7 @@ public class CytubeRoom extends JPanel {
         }
     }
 
-    @SuppressWarnings("unused")
-    private void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
+    protected void chatMsg(JSONObject obj) throws JSONException, BadLocationException {
         Pattern linkPattern = Pattern.compile("(\\w+:\\/\\/(?:[^:\\/\\[\\]\\s]+|\\[[0-9a-f:]+\\])(?::\\d+)?(?:\\/[^\\/\\s]*)*)");
         SimpleAttributeSet attributes = new SimpleAttributeSet();
         attributes.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
@@ -504,11 +503,9 @@ public class CytubeRoom extends JPanel {
         json.put("temp", temp);
 
         socket.getSocket().emit("queue", json);
-
     }
 
-    @SuppressWarnings("unused")
-    private void setAfk(String name, boolean afk) {
+    protected void setAfk(String name, boolean afk) {
         for (CytubeUser user : userList) {
             if (user.getUsername().equalsIgnoreCase(name)) {
                 user.setAfk(afk);
