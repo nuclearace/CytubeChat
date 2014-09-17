@@ -59,9 +59,8 @@ public class CytubeRoom extends JPanel {
     private StyledDocument styledMessagesDocument;
     private JTextPane userlistTextPane;
     private StyledDocument styledUserlist;
-
+    
     private CytubePlaylist playlistFrame;
-
     private CytubeSocket socket;
     private String currentMedia;
     private ChatFrame parent;

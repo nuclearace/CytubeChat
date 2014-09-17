@@ -24,7 +24,9 @@ public final class CytubeSocket {
 
     public CytubeSocket(String server, CytubeRoom room) throws URISyntaxException {
         this.room = room;
-        this.socket = IO.socket(server);
+        IO.Options opts = new IO.Options();
+        opts.forceNew = true;
+        this.socket = IO.socket(server, opts);
 
         addHandlers();
     }
@@ -42,7 +44,6 @@ public final class CytubeSocket {
             @Override
             public void call(Object... args) {
                 room.setUsername(null);
-                JOptionPane.showMessageDialog(null, "Disconnected");
             }
         });
 
@@ -221,7 +222,7 @@ public final class CytubeSocket {
             public void call(Object... args) {
                 JSONArray videoArray =  (JSONArray) args[0];
 
-                if (videoArray.length() == 0) {
+                if (videoArray.length() == 0 && room.getPlaylistFrame() != null) {
                     room.getPlaylistFrame().clearPlaylist();
                     room.getPlaylist().clear();
                 }
@@ -270,8 +271,8 @@ public final class CytubeSocket {
             public void call(Object... args) {
                 JSONObject obj = (JSONObject) args[0];
                 try {
-                room.setAfk(obj.getString("name"), (boolean) obj.get("afk"));
-                room.updateUserList();
+                    room.setAfk(obj.getString("name"), (boolean) obj.get("afk"));
+                    room.updateUserList();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
