@@ -9,7 +9,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-public final class CytubeUser {
+public class CytubeUser {
 
     private boolean afk;
     private boolean ignore;

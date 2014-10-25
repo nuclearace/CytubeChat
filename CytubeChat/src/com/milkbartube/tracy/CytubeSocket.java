@@ -54,7 +54,6 @@ public final class CytubeSocket {
                 try {
                     room.chatMsg(obj);
                 } catch (JSONException | BadLocationException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -97,7 +96,6 @@ public final class CytubeSocket {
                 try {
                     room.setCurrentMedia(obj.getString("title"));
                 } catch (JSONException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 if (room.getFrameParent().getTabbedPane().getSelectedComponent().equals(this))
@@ -112,7 +110,6 @@ public final class CytubeSocket {
                 try {
                     room.onPrivateMessage(obj);
                 } catch (JSONException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -132,7 +129,6 @@ public final class CytubeSocket {
                         room.setUsername(null);
                     }
                 } catch (HeadlessException | JSONException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -158,7 +154,6 @@ public final class CytubeSocket {
                 try {
                     room.addVideo(obj, false, 0, null);
                 } catch (JSONException | BadLocationException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -171,7 +166,6 @@ public final class CytubeSocket {
                 try {
                     room.deleteVideo(obj.getInt("uid"), false);
                 } catch (BadLocationException | JSONException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -184,7 +178,6 @@ public final class CytubeSocket {
                 try {
                     room.moveVideo(obj);
                 } catch (JSONException | BadLocationException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -205,13 +198,11 @@ public final class CytubeSocket {
                         try {
                             room.addUser(user, false);
                         } catch (BadLocationException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
                     room.updateUserList();
                 } catch (BadLocationException | JSONException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -231,7 +222,6 @@ public final class CytubeSocket {
                     try {
                         room.getPlaylist().add(new CytubeVideo(videoArray.getJSONObject(i)));
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
