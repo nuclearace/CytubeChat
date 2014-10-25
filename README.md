@@ -6,7 +6,7 @@ Simple chat client for Cytu.be using https://github.com/Gottox/socket.io-java-cl
 Download
 --------
 
-[Here](https://www.dropbox.com/s/u4w9bg6xliik6gp/cytubechat.jar) is a .jar if you just want to run it. 
+[Here](https://dl.dropboxusercontent.com/u/25841884/Programs/cytubechat.jar) is a .jar if you just want to run it. 
 
 
 Features
